@@ -1,0 +1,208 @@
+<mvc:View
+    controllerName="printjobcard.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+>
+    <f:DynamicPage
+        id="dynamicPage"
+        class="pjcPage"
+        fitContent="true"
+        toggleHeaderOnTitleClick="true"
+        busyIndicatorDelay="0"
+    >
+        <!-- ══════════════════════════════════════════
+             DYNAMIC PAGE TITLE
+        ══════════════════════════════════════════ -->
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <HBox alignItems="Center">
+                        <Image
+                            id="logoImage"
+                            height="36px"
+                            class="sapUiSmallMarginEnd pjcLogoRounded"
+                        />
+                        <Title text="{i18n>title}" />
+                    </HBox>
+                </f:heading>
+                <f:actions>
+                    <Button
+                        icon="sap-icon://employee"
+                        text="{appModel>/employeeId}"
+                        type="Ghost"
+                        enabled="false"
+                        class="sapUiSmallMarginEnd headerBadgeBtn"
+                    >
+                        <layoutData>
+                            <OverflowToolbarLayoutData priority="Low" />
+                        </layoutData>
+                    </Button>
+                    <Button
+                        icon="sap-icon://factory"
+                        text="{appModel>/plant}"
+                        type="Ghost"
+                        enabled="false"
+                        class="sapUiSmallMarginEnd headerBadgeBtn"
+                    >
+                        <layoutData>
+                            <OverflowToolbarLayoutData priority="Low" />
+                        </layoutData>
+                    </Button>
+                    <Button
+                        icon="sap-icon://log"
+                        text="Logout"
+                        type="Negative"
+                        press="onLogout"
+                    >
+                        <layoutData>
+                            <OverflowToolbarLayoutData priority="Low" />
+                        </layoutData>
+                    </Button>
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <!-- ══════════════════════════════════════════
+             DYNAMIC PAGE HEADER  –  Order / Shift Selection
+        ══════════════════════════════════════════ -->
+        <f:header>
+            <f:DynamicPageHeader pinnable="true">
+                <HBox
+                    alignItems="End"
+                    wrap="Wrap"
+                    justifyContent="End"
+                    class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop sapUiSmallMarginBottom"
+                >
+                    <VBox class="sapUiSmallMarginEnd">
+                        <Label text="Order ID" />
+                        <Input
+                            id="orderInput"
+                            width="180px"
+                            value="{appModel>/orderInput}"
+                            placeholder="Enter order ID"
+                            submit=".onGoPrintJobCard"
+                        />
+                    </VBox>
+                    <VBox class="sapUiSmallMarginEnd">
+                        <Label text="Date" />
+                        <DatePicker
+                            id="dateInput"
+                            width="160px"
+                            value="{appModel>/selectedDate}"
+                            valueFormat="yyyy-MM-dd"
+                            displayFormat="dd MMM yyyy"
+                        />
+                    </VBox>
+                    <VBox class="sapUiSmallMarginEnd">
+                        <Label text="Select Shift" />
+                        <Select
+                            id="shiftSelect"
+                            width="180px"
+                            forceSelection="false"
+                            enabled="{appModel>/shiftEnabled}"
+                            selectedKey="{appModel>/selectedShift}"
+                        />
+                    </VBox>
+                    <Button
+                        text="Go"
+                        type="Emphasized"
+                        icon="sap-icon://print"
+                        press=".onGoPrintJobCard"
+                    />
+                </HBox>
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <!-- ══════════════════════════════════════════
+             DYNAMIC PAGE CONTENT
+        ══════════════════════════════════════════ -->
+        <f:content>
+            <VBox class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop">
+                <!-- ── Result Section ── -->
+                <VBox
+                    visible="{appModel>/resultVisible}"
+                    class="sapUiSmallMarginTop"
+                >
+                    <Text text="Job card found" class="jobCardFoundLabel" />
+                    <VBox class="jobCardResultCard sapUiSmallMarginBottom">
+                        <HBox alignItems="Center" wrap="Wrap">
+                            <Text
+                                text="{= 'Order: ' + ${appModel>/order} }"
+                                class="jobCardResultValue sapUiTinyMarginEnd"
+                            />
+                            <Text
+                                text="{= '  |  Date: ' + ${appModel>/appliedDate} }"
+                                class="jobCardResultValue sapUiTinyMarginEnd"
+                            />
+                            <Text
+                                text="{= '  |  Shift: ' + ${appModel>/appliedShift} }"
+                                class="jobCardResultValue"
+                            />
+                        </HBox>
+                        <Button
+                            text="Open Document"
+                            icon="sap-icon://pdf-attachment"
+                            type="Accept"
+                            press=".onOpenDocument"
+                            visible="false"
+                            class="sapUiTinyMarginTop"
+                        />
+                    </VBox>
+                    <core:HTML
+                        content="{ path: 'appModel>/pdfUrl', formatter: '.formatPdfIframe' }"
+                        class="sapUiSmallMarginTop"
+                    />
+                </VBox>
+
+                <!-- ── Error Section ── -->
+                <VBox
+                    visible="{appModel>/errorVisible}"
+                    class="sapUiSmallMarginTop"
+                >
+                    <Text text="Job card not found" class="jobCardErrorLabel" />
+                    <VBox class="jobCardErrorCard">
+                        <HBox alignItems="Center" wrap="Wrap" class="sapUiTinyMarginBottom">
+                            <Text
+                                text="{= 'Order: ' + ${appModel>/order} }"
+                                class="jobCardErrorValue sapUiTinyMarginEnd"
+                            />
+                            <Text
+                                text="{= '  |  Date: ' + ${appModel>/appliedDate} }"
+                                class="jobCardErrorValue sapUiTinyMarginEnd"
+                            />
+                            <Text
+                                text="{= '  |  Shift: ' + ${appModel>/appliedShift} }"
+                                class="jobCardErrorValue"
+                            />
+                        </HBox>
+                        <Text
+                            text="{appModel>/errorMessage}"
+                            class="jobCardErrorValue"
+                        />
+                    </VBox>
+                </VBox>
+
+                <!-- ── Empty state ── -->
+                <VBox
+                    visible="{= !${appModel>/resultVisible} &amp;&amp; !${appModel>/errorVisible} }"
+                    alignItems="Center"
+                    class="sapUiLargeMarginTop"
+                >
+                    <core:Icon
+                        src="sap-icon://print"
+                        size="3rem"
+                        color="var(--sapNeutralColor)"
+                        class="sapUiSmallMarginBottom"
+                    />
+                    <Title text="Print a Job Card" level="H4" />
+                    <Text
+                        text="Enter an Order ID, select a shift and click Go to generate the job card."
+                        class="sapUiTinyMarginTop"
+                    />
+                </VBox>
+            </VBox>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

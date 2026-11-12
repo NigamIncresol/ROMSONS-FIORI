@@ -1,0 +1,29 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <SelectDialog
+        title="{f4Model>/title}"
+        items="{f4Model>/results}"
+        confirm=".onF4Confirm"
+        search=".onF4Search"
+        liveChange=".onF4Search"
+        contentWidth="420px"
+        contentHeight="500px"
+        growing="false"
+        noDataText="No values found."
+    >
+        <items>
+            <CustomListItem type="Active">
+                <VBox class="pcOpListItemInner sapUiTinyMargin">
+                    <Text text="{f4Model>title}" />
+                    <Text
+                        text="{f4Model>description}"
+                        visible="{= !!${f4Model>description} }"
+                        class="pcOpListDesc"
+                    />
+                </VBox>
+            </CustomListItem>
+        </items>
+    </SelectDialog>
+</core:FragmentDefinition>

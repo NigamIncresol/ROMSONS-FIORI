@@ -1,0 +1,244 @@
+.shiftCard {
+    background-color: #ffffff;
+    padding: 1rem;
+    border-radius: 10px;
+}
+
+
+/* Chips */
+.chipContainer {
+    gap: 0.4rem;
+}
+
+.chip {
+    background-color: #3d5a80;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    color: white;
+}
+
+/* ─────────────────────────────────────────────
+   shiftstartinspection — View1.css
+   Independent column scrolling layout
+───────────────────────────────────────────── */
+
+/* Make the Page fill the full viewport height
+   and disable its own scroll */
+.sapMPage {
+    height: 100vh;
+}
+
+/* The Page's inner section must also stretch */
+.sapMPage>section {
+    height: calc(100% - 3rem);
+    /* 3rem = header bar height */
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* HBox that holds both columns — fills available height */
+.fullHeightHBox {
+    height: 100%;
+    align-items: stretch;
+}
+
+/* Each column VBox stretches to fill the HBox height */
+.columnVBox {
+    height: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+/* ScrollContainer inside each column fills its VBox */
+.columnScroll {
+    height: 100% !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box;
+}
+
+/* Ensure the inner div of ScrollContainer also stretches */
+.columnScroll>.sapMScrollContainerH {
+    height: 100%;
+}
+
+
+/* ─────────────────────────────────────────────
+   Existing component styles (keep as-is)
+───────────────────────────────────────────── */
+
+.boldTitle {
+    font-weight: bold;
+}
+
+
+
+.nameText {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--sapTextColor);
+}
+
+.subText {
+    font-size: 0.8rem;
+    color: var(--sapContent_LabelColor);
+    margin-top: 0.25rem;
+}
+
+.labelText {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--sapContent_LabelColor);
+    text-transform: uppercase;
+}
+
+.lotNumber {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--sapTextColor);
+    margin-top: 0.25rem;
+}
+
+.chipContainer {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.chip {
+    background-color: #000000;
+    color: var(--sapButton_Emphasized_TextColor, #0064d9);
+    border-radius: 1rem;
+    padding: 0.15rem 0.6rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+
+.infoBox {
+    background-color: var(--sapInfobar_Background, #f0f4ff);
+    border-left: 3px solid var(--sapBrandColor, #0064d9);
+    border-radius: 0.25rem;
+    padding: 0.4rem 0.6rem;
+}
+
+.infoHighlight {
+    font-size: 0.8rem;
+    color: var(--sapBrandColor, #0064d9);
+    font-weight: 600;
+}
+
+.statusRow {
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--sapList_BorderColor, #f0f0f0);
+}
+
+.statusRow:last-child {
+    border-bottom: none;
+}
+
+.circleDot {
+    font-size: 0.6rem;
+}
+
+.customHeaderStrip {
+    background: #f5f6f7;
+    border-radius: 10px;
+    padding: 12px 16px;
+}
+
+.headerCard {
+    background: #f7f8fa;
+    border-radius: 10px;
+    padding: 8px 12px;
+    /* reduced padding */
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.cardItem {
+    min-width: 120px;
+}
+
+/* LABEL (very small like Fiori header labels) */
+.labelText {
+    font-size: 0.6rem;
+    /* smaller */
+    color: #6a6d70;
+    letter-spacing: 0.4px;
+    margin-bottom: 2px;
+}
+
+/* VALUE (slightly bold but compact) */
+.valueText {
+    font-size: 0.75rem;
+    /* reduced */
+    font-weight: 600;
+    color: #1d2d3e;
+    line-height: 1.2;
+}
+
+/* Divider line */
+.divider {
+    width: 1px;
+    height: 28px;
+    /* smaller height */
+    background: #d9d9d9;
+    margin: 0 8px;
+    /* tighter spacing */
+}
+
+.questionCard {
+    background: #f7f8fa;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* Question text */
+.questionText {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #1d2d3e;
+}
+
+/* Radio buttons spacing */
+.radioGroup {
+    margin-bottom: 6px;
+}
+
+/* Remark input */
+.remarkInput {
+    width: 100%;
+}
+
+.cardStyleCompact {
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 0.6rem;
+    border-radius: 10px;
+
+    background: #ffffff;
+    /* clean white */
+    /* Soft shadow */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+
+    width: 95%;
+
+    /* Smooth animation */
+    transition: all 0.2s ease;
+}
+
+/* Hover Effect */
+.cardStyleCompact:hover {
+    transform: translateY(-3px);
+
+    /* stronger shadow on hover */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.cardTitle {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.2rem;
+}

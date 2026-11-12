@@ -1,0 +1,294 @@
+<mvc:View
+    controllerName="issuedetailsview.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
+>
+    <f:DynamicPage
+        id="dynamicPage"
+        fitContent="true"
+        toggleHeaderOnTitleClick="true"
+        busyIndicatorDelay="0"
+    >
+
+        <!-- ══════════════════════════════════════════
+             TITLE
+        ══════════════════════════════════════════ -->
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <HBox alignItems="Center">
+                        <Image
+                            id="logoImage"
+                            height="36px"
+                            class="sapUiSmallMarginEnd logoRounded"
+                        />
+                        <Title text="Issue Details View" />
+                    </HBox>
+                </f:heading>
+                <f:actions>
+                    <ObjectStatus
+                        icon="sap-icon://employee"
+                        title="EMP ID"
+                        text="{appModel>/employeeId}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <ObjectStatus
+                        icon="sap-icon://factory"
+                        title="PLANT"
+                        text="{appModel>/plant}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <Button
+                        icon="sap-icon://log"
+                        text="Logout"
+                        type="Negative"
+                        press="onLogout"
+                    />
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <!-- ══════════════════════════════════════════
+             HEADER (filters)
+        ══════════════════════════════════════════ -->
+        <f:header>
+            <f:DynamicPageHeader pinnable="true">
+                <HBox
+                    alignItems="End"
+                    justifyContent="End"
+                    width="100%"
+                >
+                    <VBox class="sapUiTinyMarginEnd">
+                        <Label text="MATERIAL DOC" class="sectionLabel" />
+                        <Input
+                            id="materialDocFilterInput"
+                            value="{appModel>/searchMaterialDoc}"
+                            placeholder="Enter material doc number"
+                            width="180px"
+                            showValueHelp="true"
+                            valueHelpRequest=".onMatDocValueHelp"
+                            submit=".onApplyIssueSearch"
+                        />
+                    </VBox>
+                    <Button
+                        icon="sap-icon://bar-code"
+                        type="Emphasized"
+                        class="sapUiTinyMarginEnd"
+                        press=".onScanIssueSlip"
+                    />
+                    <VBox class="sapUiTinyMarginEnd">
+                        <Label text="DOC YEAR" class="sectionLabel" />
+                        <Input
+                            id="materialDocYearFilterInput"
+                            value="{appModel>/searchMaterialDocYear}"
+                            placeholder="Enter doc year"
+                            width="120px"
+                            showValueHelp="true"
+                            valueHelpRequest=".onDocYearValueHelp"
+                            submit=".onApplyIssueSearch"
+                        />
+                    </VBox>
+                    <Button
+                        text="Apply"
+                        type="Emphasized"
+                        icon="sap-icon://filter"
+                        press=".onApplyIssueSearch"
+                    />
+                </HBox>
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <!-- ══════════════════════════════════════════
+             CONTENT
+        ══════════════════════════════════════════ -->
+        <f:content>
+            <VBox class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop sapUiSmallMarginBottom">
+
+                <!-- Banner: no material doc param / not found / load error -->
+                <MessageStrip
+                    text="{appModel>/bannerText}"
+                    type="{appModel>/bannerType}"
+                    showIcon="true"
+                    class="sapUiSmallMarginBottom"
+                    visible="{appModel>/showBanner}"
+                />
+
+                <!-- Issue details -->
+                <VBox visible="{= !!${issueModel>/issue} }">
+                    <Panel
+                        expandable="true"
+                        expanded="true"
+                        class="sapUiSmallMarginBottom storagePanel"
+                    >
+                        <headerToolbar>
+                            <Toolbar>
+                                <HBox width="100%" alignItems="Center" justifyContent="SpaceBetween">
+                                    <HBox alignItems="Center" wrap="NoWrap">
+                                        <ObjectStatus
+                                            title="Material Doc"
+                                            text="{path: 'issueModel>/issue/materialDoc', formatter: '.formatOrNA'}"
+                                            state="None"
+                                            class="sapUiTinyMarginEnd boldStatus"
+                                        />
+                                        <ObjectStatus
+                                            title="Doc Year"
+                                            text="{path: 'issueModel>/issue/materialDocYear', formatter: '.formatOrNA'}"
+                                            state="None"
+                                            class="sapUiTinyMarginEnd boldStatus"
+                                        />
+                                        <ObjectStatus
+                                            title="Reservation No"
+                                            text="{path: 'issueModel>/issue/reservationNumber', formatter: '.formatReservationNumber'}"
+                                            state="None"
+                                            class="sapUiTinyMarginEnd boldStatus"
+                                        />
+                                        <ObjectStatus
+                                            title="Production Order No"
+                                            text="{issueModel>/issue/order}"
+                                            state="None"
+                                            class="boldStatus"
+                                        />
+                                    </HBox>
+                                    <ObjectStatus
+                                        text="Issue Loc: {issueModel>/issue/issueSloc} → Receiving Loc: {issueModel>/issue/receiveSloc}"
+                                        state="Information"
+                                        inverted="true"
+                                        class="sapUiTinyMarginBegin boldStatus"
+                                    />
+                                </HBox>
+                            </Toolbar>
+                        </headerToolbar>
+                        <content>
+                            <Panel
+                                expandable="false"
+                                expanded="true"
+                                headerText="Created Log"
+                                class="sapUiTinyMarginBottom createdLogPanel"
+                            >
+                                <content>
+                                    <HBox alignItems="Center" wrap="NoWrap">
+                                        <ObjectStatus
+                                            title="Employee ID"
+                                            text="{path: 'issueModel>/issue/employeeId', formatter: '.formatOrNA'}"
+                                            state="None"
+                                            class="sapUiTinyMarginEnd"
+                                        />
+                                        <ObjectStatus
+                                            title="Created By"
+                                            text="{path: 'issueModel>/issue/createdBy', formatter: '.formatOrNA'}"
+                                            state="None"
+                                            class="sapUiTinyMarginEnd"
+                                        />
+                                        <ObjectStatus
+                                            title="Created On"
+                                            text="{path: 'issueModel>/issue/createdDate', formatter: '.formatCreatedDate'}"
+                                            state="None"
+                                            class="sapUiTinyMarginEnd"
+                                        />
+                                        <ObjectStatus
+                                            title="Created Time"
+                                            text="{path: 'issueModel>/issue/createdTime', formatter: '.formatCreatedTime'}"
+                                            state="None"
+                                        />
+                                    </HBox>
+                                </content>
+                            </Panel>
+                            <Table
+                                items="{issueModel>/issue/items}"
+                                alternateRowColors="true"
+                                sticky="ColumnHeaders"
+                                class="materialTable"
+                            >
+                                <columns>
+                                    <Column width="3rem"><Text text="Item" /></Column>
+                                    <Column width="10rem"><Text text="Material" /></Column>
+                                    <Column><Text text="Description" /></Column>
+                                    <Column hAlign="End"><Text text="Batch" /></Column>
+                                    <Column hAlign="End"><Text text="Target Qty" /></Column>
+                                    <Column hAlign="End"><Text text="Issued Qty" /></Column>
+                                    <Column hAlign="End"><Text text="Received Qty" /></Column>
+                                    <Column width="3rem"><Text text="UoM" /></Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <ObjectStatus text="{issueModel>materialDocItem}" state="None" />
+                                            <Text text="{issueModel>material}" />
+                                            <Text text="{issueModel>materialDesc}" />
+                                            <Text text="{path: 'issueModel>batch', formatter: '.formatOrNA'}" />
+                                            <ObjectNumber number="{path: 'issueModel>targetQty', formatter: '.formatQty'}" state="Information" />
+                                            <ObjectNumber number="{path: 'issueModel>issuedQty', formatter: '.formatQty'}" state="Success" />
+                                            <ObjectNumber number="{path: 'issueModel>receivedQty', formatter: '.formatQty'}" state="Warning" />
+                                            <Text text="{issueModel>unit}" />
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </content>
+                    </Panel>
+
+                    <!-- Material Receipt History -->
+                    <Panel
+                        expandable="true"
+                        expanded="true"
+                        class="sapUiSmallMarginBottom receiptHistoryPanel"
+                    >
+                        <headerToolbar>
+                            <Toolbar>
+                                <Title text="Material Receipt History" level="H6" />
+                            </Toolbar>
+                        </headerToolbar>
+                        <content>
+                            <Table
+                                items="{issueModel>/issue/receipts}"
+                                alternateRowColors="true"
+                                sticky="ColumnHeaders"
+                                class="materialTable"
+                            >
+                                <columns>
+                                    <Column width="8rem"><Text text="Material Doc" /></Column>
+                                    <Column width="6rem"><Text text="Doc Year" /></Column>
+                                    <Column><Text text="Issue Sloc" /></Column>
+                                    <Column><Text text="Receive Sloc" /></Column>
+                                    <Column><Text text="Employee ID" /></Column>
+                                    <Column><Text text="Created By" /></Column>
+                                    <Column><Text text="Created On" /></Column>
+                                    <Column><Text text="Created Time" /></Column>
+                                    <Column width="6rem" hAlign="Center"><Text text="Details" /></Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="{issueModel>materialDoc}" />
+                                            <Text text="{issueModel>materialDocYear}" />
+                                            <Text text="{path: 'issueModel>issueSloc', formatter: '.formatOrNA'}" />
+                                            <Text text="{path: 'issueModel>receiveSloc', formatter: '.formatOrNA'}" />
+                                            <Text text="{path: 'issueModel>employeeId', formatter: '.formatOrNA'}" />
+                                            <Text text="{path: 'issueModel>createdBy', formatter: '.formatOrNA'}" />
+                                            <Text text="{path: 'issueModel>createdDate', formatter: '.formatCreatedDate'}" />
+                                            <Text text="{path: 'issueModel>createdTime', formatter: '.formatCreatedTime'}" />
+                                            <Button
+                                                text="View Details"
+                                                type="Emphasized"
+                                                press=".onViewReceiptDetails"
+                                            />
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </content>
+                    </Panel>
+
+                </VBox>
+
+            </VBox>
+        </f:content>
+
+    </f:DynamicPage>
+</mvc:View>

@@ -1,0 +1,323 @@
+<mvc:View
+    controllerName="zlogpage.controller.View2"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+>
+    <f:DynamicPage
+        id="dynamicPage"
+        class="launchpadPage"
+        fitContent="true"
+        toggleHeaderOnTitleClick="false"
+    >
+        <!-- TITLE / HEADER BAR -->
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <HBox alignItems="Center">
+                        <Image
+                            id="logoImage"
+                            height="36px"
+                            class="sapUiSmallMarginEnd oaLogoRounded"
+                        />
+                        <Title text="Production Launchpad" />
+                    </HBox>
+                </f:heading>
+                <f:actions>
+                    <Button
+                        icon="sap-icon://employee"
+                        text="{appModel>/employeeId}"
+                        type="Ghost"
+                        tooltip="Employee Info"
+                        press="onEmployeeInfoPress"
+                        class="headerBadgeBtn sapUiSmallMarginEnd"
+                    >
+                        <layoutData>
+                            <OverflowToolbarLayoutData priority="Low" />
+                        </layoutData>
+                    </Button>
+                    <Button
+                        text="Logout"
+                        icon="sap-icon://log"
+                        type="Negative"
+                        press="onlogoutpress"
+                        class="launchpadLogoutBtn"
+                    >
+                        <layoutData>
+                            <OverflowToolbarLayoutData priority="Low" />
+                        </layoutData>
+                    </Button>
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <!-- CONTENT -->
+        <f:content>
+            <VBox class="launchpadBody">
+                <!-- ── Production Order ── -->
+                <Label
+                    text="Production Order"
+                    class="launchpadGroupTitle"
+                />
+                <HBox
+                    wrap="Wrap"
+                    class="launchpadTileGrid sapUiSmallMarginBottom"
+                >
+                    <GenericTile
+                        header="Production Order List"
+                        frameType="OneByOne"
+                        press="onOpenProductionOrders"
+                    >
+                        <TileContent>
+                            <ImageContent src="sap-icon://factory" />
+                        </TileContent>
+                    </GenericTile>
+                </HBox>
+
+                <!-- ── Operator ── -->
+                <Label
+                    text="Operator"
+                    class="launchpadGroupTitle"
+                />
+                <HBox
+                    wrap="Wrap"
+                    class="launchpadTileGrid sapUiSmallMarginBottom"
+                >
+                    <GenericTile
+                        header="Create Operator Assignment"
+                        frameType="OneByOne"
+                        press="onOpenOperatorAssignment"
+                    >
+                        <TileContent>
+                            <ImageContent src="sap-icon://group" />
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile
+                        header="Job Card List View"
+                        frameType="OneByOne"
+                        press="onOpenJobCardList"
+                    >
+                        <TileContent>
+                            <ImageContent src="sap-icon://list" />
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile
+                        header="Print Job Card"
+                        frameType="OneByOne"
+                        press="onOpenPrintJobCard"
+                    >
+                        <TileContent>
+                            <ImageContent src="sap-icon://print" />
+                        </TileContent>
+                    </GenericTile>
+                </HBox>
+
+                <!-- ── Material Reservation ── -->
+                <Label
+                    text="Material Reservation"
+                    class="launchpadGroupTitle"
+                />
+                <HBox
+                    wrap="Wrap"
+                    class="launchpadTileGrid sapUiSmallMarginBottom"
+                >
+                    <GenericTile
+                        header="Create Material Reservation"
+                        frameType="OneByOne"
+                        press="onOpenMaterialRequest"
+                    >
+                        <TileContent>
+                            <ImageContent src="sap-icon://cart-4" />
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile
+                        header="Reservation List View"
+                        frameType="OneByOne"
+                        press="onOpenReservationList"
+                    >
+                        <TileContent>
+                            <ImageContent src="sap-icon://list" />
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile
+                        header="Reservation Detail View"
+                        frameType="OneByOne"
+                        press="onOpenReservationDetails"
+                    >
+                        <TileContent>
+                            <ImageContent src="sap-icon://detail-view" />
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile
+                        header="Print Requisition Slip"
+                        frameType="OneByOne"
+                        press="onOpenDownloadRequisitionSlip"
+                    >
+                        <TileContent>
+                            <ImageContent src="sap-icon://print" />
+                        </TileContent>
+                    </GenericTile>
+                </HBox>
+
+                <!-- ── Material Issue ── -->
+                <Label
+                    text="Material Issue"
+                    class="launchpadGroupTitle"
+                />
+                <HBox
+                    wrap="Wrap"
+                    class="launchpadTileGrid sapUiSmallMarginBottom"
+                >
+                    <GenericTile
+                        header="Create Material Issue"
+                        frameType="OneByOne"
+                        press="onOpenCreateMaterialIssue"
+                    >
+                        <TileContent>
+                            <ImageContent src="sap-icon://shipping-status" />
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile
+                        header="Issue List View"
+                        frameType="OneByOne"
+                        press="onOpenIssueList"
+                    >
+                        <TileContent>
+                            <ImageContent src="sap-icon://list" />
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile
+                        header="Issue Detail View"
+                        frameType="OneByOne"
+                        press="onOpenIssueDetail"
+                    >
+                        <TileContent>
+                            <ImageContent src="sap-icon://detail-view" />
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile
+                        header="Print Issue Slip"
+                        frameType="OneByOne"
+                        press="onOpenPrintIssueSlip"
+                    >
+                        <TileContent>
+                            <ImageContent src="sap-icon://print" />
+                        </TileContent>
+                    </GenericTile>
+                </HBox>
+
+                <!-- ── Material Confirmation ── -->
+                <Label
+                    text="Material Confirmation"
+                    class="launchpadGroupTitle"
+                />
+                <HBox
+                    wrap="Wrap"
+                    class="launchpadTileGrid sapUiSmallMarginBottom"
+                >
+                    <GenericTile
+                        header="Receipt Confirmation"
+                        frameType="OneByOne"
+                        press="onOpenReceiptConfirmation"
+                    >
+                        <TileContent>
+                            <ImageContent src="sap-icon://accept" />
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile
+                        header="Confirmation List View"
+                        frameType="OneByOne"
+                        press="onOpenConfirmationList"
+                    >
+                        <TileContent>
+                            <ImageContent src="sap-icon://list" />
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile
+                        header="Print Receiving Slip"
+                        frameType="OneByOne"
+                        press="onOpenPrintReceivingSlip"
+                    >
+                        <TileContent>
+                            <ImageContent src="sap-icon://print" />
+                        </TileContent>
+                    </GenericTile>
+                </HBox>
+
+                <!-- ── Order Confirmation ── -->
+                <Label text="Order Confirmation" class="launchpadGroupTitle" />
+                <HBox wrap="Wrap" class="launchpadTileGrid sapUiSmallMarginBottom">
+                    <GenericTile
+                        header="Production Order Confirmation"
+                        frameType="OneByOne"
+                        press="onOpenProductionOrderConfirmation"
+                    >
+                        <TileContent>
+                            <ImageContent src="sap-icon://complete" />
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile
+                        header="Order Confirmation List / GRN Post"
+                        frameType="OneByOne"
+                        press="onOpenOrderConfirmationList"
+                    >
+                        <TileContent>
+                            <ImageContent src="sap-icon://list" />
+                        </TileContent>
+                    </GenericTile>
+                </HBox>
+
+                <!-- ── Material Transfer ── -->
+                <Label text="Material Transfer" class="launchpadGroupTitle" />
+                <HBox wrap="Wrap" class="launchpadTileGrid sapUiSmallMarginBottom">
+                    <GenericTile
+                        header="Stock Transfer"
+                        frameType="OneByOne"
+                        press="onOpenTransferMaterial"
+                    >
+                        <TileContent>
+                            <ImageContent src="sap-icon://move" />
+                        </TileContent>
+                    </GenericTile>
+                </HBox>
+
+                <!-- ── Reports ── -->
+                <Label text="Reports" class="launchpadGroupTitle" />
+                <HBox wrap="Wrap" class="launchpadTileGrid sapUiSmallMarginBottom">
+                    <GenericTile
+                        header="Stock Report"
+                        frameType="OneByOne"
+                        press="onOpenStockReport"
+                    >
+                        <TileContent>
+                            <ImageContent src="sap-icon://bar-chart" />
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile
+                        header="Operator Performance Report"
+                        frameType="OneByOne"
+                        press="onOpenOperatorPerformanceReport"
+                    >
+                        <TileContent>
+                            <ImageContent src="sap-icon://performance" />
+                        </TileContent>
+                    </GenericTile>
+                </HBox>
+
+            </VBox>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

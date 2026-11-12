@@ -1,0 +1,38 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <SelectDialog
+        title="Select Operator"
+        items="{operatorAssignmentModel>/results}"
+        confirm=".onOperatorValueHelpConfirm"
+        search=".onSearchValueHelpOperator"
+        liveChange=".onSearchValueHelpOperator"
+        contentWidth="360px"
+        contentHeight="500px"
+        growing="false"
+        noDataText="No operators found."
+    >
+        <items>
+            <CustomListItem type="Active" class="pcOpListItem">
+                <VBox class="pcOpListItemInner sapUiTinyMargin">
+                    <HBox alignItems="Center">
+                        <Text
+                            text="{operatorAssignmentModel>employeeId}"
+                            class="pcMatDesc sapUiTinyMarginEnd"
+                        />
+                        <Text
+                            text="{operatorAssignmentModel>employeeName}"
+                            visible="{= !!${operatorAssignmentModel>employeeName} }"
+                            class="pcOpListDesc"
+                        />
+                    </HBox>
+                    <Text
+                        text="{= 'Planned Hrs: ' + ${operatorAssignmentModel>plannedHrsFmt} + '  |  Target Qty: ' + ${operatorAssignmentModel>targetQty} + ' ' + ${operatorAssignmentModel>unit} + '  |  Confirmed Qty: ' + ${operatorAssignmentModel>confirmedQty} + ' ' + ${operatorAssignmentModel>unit} }"
+                        class="pcOpListDesc"
+                    />
+                </VBox>
+            </CustomListItem>
+        </items>
+    </SelectDialog>
+</core:FragmentDefinition>

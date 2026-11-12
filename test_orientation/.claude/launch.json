@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ui5-dev",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["fiori", "run", "--config", "ui5-local.yaml"],
+      "port": 8080
+    }
+  ]
+}

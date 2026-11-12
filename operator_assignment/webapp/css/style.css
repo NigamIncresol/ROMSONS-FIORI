@@ -1,0 +1,546 @@
+/* ═══════════════════════════════════════════════════════════════
+   Operator Assignment – View1.css
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── UTILITIES ────────────────────────────────────────────────── */
+.oaTextNormal .sapMObjStatusText {
+    font-weight: normal;
+}
+
+/* ── PAGE ─────────────────────────────────────────────────────── */
+.oaPage {
+    background-color: #f5f6f7;
+}
+
+/* ── TOP BAR (house / order details row) ─────────────────────── */
+.oaTopBar {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 10px 14px;
+}
+
+.oaLogoRounded {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.oaLogoRounded img {
+    border-radius: 8px;
+}
+
+.oaTopBarIcon {
+    font-size: 1.4rem;
+    color: #0854a0;
+}
+
+.oaTopBarTitle {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.oaTopBarSub {
+    font-size: 0.78rem;
+    color: #666;
+}
+
+.oaChipRow {
+    gap: 4px;
+}
+
+.oaChip {
+    font-size: 0.75rem;
+}
+
+/* ── SHIFT BAR ────────────────────────────────────────────────── */
+.oaShiftBar {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 8px 14px;
+    gap: 8px;
+}
+
+.oaShiftLabel {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #333;
+}
+
+.oaShiftStrip {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* ── PANELS ───────────────────────────────────────────────────── */
+.oaPanel {
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+
+
+.oaPanelContent {
+    padding: 6px 12px 8px;
+}
+
+.oaPanelIcon,
+.oaDeptIcon {
+    font-size: 1rem;
+    color: #0854a0;
+}
+
+/* ── SECTION LABELS ───────────────────────────────────────────── */
+.oaSectionLabel {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.oaMatDesc {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #1a1a1a;
+}
+
+.oaDeptPanelLabel {
+    font-size: 0.78rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.oaOpCount {
+    font-size: 0.8rem;
+    color: #555;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   KPI ROWS & CARDS – shared base
+   ═══════════════════════════════════════════════════════════════ */
+.kpiRow {
+    display: flex;
+    gap: 8px;
+}
+
+.kpiCard {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    border-radius: 6px;
+    min-width: 90px;
+    text-align: center;
+}
+
+.kpiLabel {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: inherit;
+    opacity: 0.85;
+    white-space: nowrap;
+}
+
+.oaKpiVal {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: inherit;
+    line-height: 1.2;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ORDER INFO KPI CARDS  – light colourful fills
+   ═══════════════════════════════════════════════════════════════ */
+.kpiRow--order {
+    gap: 10px;
+}
+
+.kpiCard--orderInfo {
+    background: #e3f2fd;
+    color: #1565c0;
+    border: 1px solid #bbdefb;
+}
+
+.kpiCard--orderSuccess {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.kpiCard--orderWarning {
+    background: #fff3e0;
+    color: #e65100;
+    border: 1px solid #ffe0b2;
+}
+
+.kpiCard--orderError {
+    background: #fce4ec;
+    color: #c62828;
+    border: 1px solid #f8bbd0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ASSIGNMENT SUMMARY KPI CARDS  – slightly richer than order
+   ═══════════════════════════════════════════════════════════════ */
+.kpiRow--summary {
+    gap: 10px;
+}
+
+.kpiCard--sumInfo {
+    background: #dbeafe;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+}
+
+.kpiCard--sumSuccess {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.kpiCard--sumWarning {
+    background: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #fed7aa;
+}
+
+.kpiCard--sumNeutral {
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DEPARTMENT KPI CARDS  – light, compact
+   ═══════════════════════════════════════════════════════════════ */
+.kpiRow--dept {
+    gap: 6px;
+}
+
+.kpiCard--sm {
+    padding: 6px 10px;
+    min-width: 75px;
+    border-radius: 4px;
+}
+
+.kpiLabel--sm {
+    font-size: 0.68rem;
+    font-weight: 500;
+    opacity: 0.8;
+}
+
+.oaKpiVal--sm {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.kpiCard--deptInfo {
+    background: #e3f2fd;
+    color: #0d47a1;
+    border: 1px solid #bbdefb;
+}
+
+.kpiCard--deptNeutral {
+    background: #f0f4f8;
+    color: #37474f;
+    border: 1px solid #cfd8dc;
+}
+
+/* ── KPI VALUE COLOUR OVERRIDES ───────────────────────────────── */
+.oaKpiOrange { color: #e65100 !important; }
+.oaKpiGreen  { color: #2e7d32 !important; }
+.oaKpiBlue   { color: #0d47a1 !important; }
+
+/* ── PANEL HEADER (Order Details / Mould Details) ────────────── */
+.oaPanelHeader {
+    background-color: #e3f2fd !important;
+    border-bottom: 1px solid #bbdefb !important;
+}
+
+.oaPanelHeader .sapMTitle {
+    font-size: 0.9rem !important;
+}
+
+.sapMPanel .sapMPanelWrappingDivTb:has(.oaPanelHeader) {
+    background-color: #e3f2fd !important;
+}
+
+.sapMPanel .sapMPanelWrappingDivTb:has(.oaOpPanelToolbar) {
+    background-color: #fffde7 !important;
+}
+
+/* ── ORDER DETAILS HEADER ─────────────────────────────────────── */
+.oaOrderDetailsHeader {
+    background-color: #eaf6ef !important;
+    border-bottom: 1px solid #a8d5bc !important;
+}
+
+/* ── OPERATION PANEL HEADER ───────────────────────────────────── */
+.oaOpPanelToolbar {
+    background-color: #fffde7 !important;
+    border-bottom: 1px solid #fff176 !important;
+}
+
+.oaOpPanelToolbar {
+    height: auto !important;
+    min-height: 3rem;
+    padding: 0.25rem 1rem;
+}
+
+.oaOpPanelToolbar .sapMObjStatus {
+    white-space: nowrap;
+}
+
+.oaOpPanelToolbar .sapMObjStatusText {
+    font-weight: 700 !important;
+    font-size: 0.8rem !important;
+}
+
+.oaOpPanelToolbar .sapMObjStatusTitle {
+    font-size: 0.75rem !important;
+}
+
+/* ── DETAILS BOXES (Production / Operator) ───────────────────── */
+.oaDetailsBox {
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    padding: 0px 8px 4px;
+}
+
+.oaDetailsBoxTitle .sapMTitle {
+    font-size: 0.72rem !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #555;
+}
+
+.oaDetailsBoxTitle {
+    background-color: #fffef5;
+    border-bottom: 1px solid #fff9c4;
+    padding: 2px 8px;
+    border-radius: 3px 3px 0 0;
+    margin: 0px -8px 4px -8px;
+}
+
+.oaAssignedOpsToolbar {
+    background-color: #fffef5 !important;
+    border-bottom: 1px solid #fff9c4 !important;
+}
+
+.oaDetailsBox--start {
+    margin-left: 6px;
+}
+
+/* ── OPERATOR TABLE ───────────────────────────────────────────── */
+.oaOperatorTable {
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+
+.oaReadonlyInput .sapMInputBaseInner {
+    background: #f5f5f5 !important;
+    color: #666 !important;
+}
+
+/* ── ADD OPERATOR ROW ─────────────────────────────────────────── */
+.oaAddRow {
+    border-top: 1px dashed #ccc;
+    padding-top: 10px;
+    gap: 8px;
+}
+
+.oaAddInput {
+    min-width: 200px;
+}
+
+/* ── SELECT OPERATOR DIALOG ───────────────────────────────────── */
+.oaOpListItem {
+    padding: 0 0 0 0.75rem !important;
+}
+
+.oaOpListItem .sapMLIBSelectM {
+    margin-left: 0.5rem;
+}
+
+.oaOpListItemInner {
+    padding: 4px 12px;
+    gap: 1px;
+}
+
+.oaOpListName {
+    font-size: 0.95rem !important;
+    font-weight: 600;
+    color: #000 !important;
+}
+
+.oaOpListId {
+    font-size: 0.85rem !important;
+    color: #000 !important;
+}
+
+.oaOpListDesig {
+    font-size: 0.82rem !important;
+    color: #000 !important;
+}
+
+.oaOpListHours {
+    font-size: 0.8rem !important;
+    color: #000 !important;
+}
+
+/* ── UNSAVED BADGE ────────────────────────────────────────────── */
+.oaUnsavedBadge .sapMObjStatusText,
+.oaUnsavedBadge .sapMObjStatusIcon {
+    font-size: 0.7rem !important;
+}
+.oaUnsavedBadge {
+    transform: scale(0.82);
+    transform-origin: right center;
+}
+
+.oaSmallBadge .sapMObjStatusText,
+.oaSmallBadge .sapMObjStatusIcon {
+    font-size: 0.7rem !important;
+}
+.oaSmallBadge {
+    transform: scale(0.82);
+    transform-origin: right center;
+}
+
+/* ── NO ORDER BANNER ─────────────────────────────────────────── */
+.oaNoOrderBanner {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.oaNoOrderText {
+    font-size: 0.75rem;
+    color: #888;
+    white-space: nowrap;
+    text-align: center;
+}
+
+/* ── REMOVE BUTTON ────────────────────────────────────────────── */
+.oaRemoveBtn {
+    color: #b71c1c !important;
+}
+
+.oaRemoveBtn:hover {
+    background: #ffebee !important;
+}
+
+/* ── SAVE BUTTON ROW ──────────────────────────────────────────── */
+.oaSaveBtn {
+    min-width: 160px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SAVE CONFIRM DIALOG
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Dialog container */
+.oaConfirmDialog {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Custom header bar */
+.oaDialogHeader {
+    background: #e3f0fb !important;
+    height: 52px;
+}
+
+.oaDialogHeader .sapMBarMiddle {
+    overflow: visible;
+}
+
+.oaDialogHeaderIcon {
+    font-size: 1.2rem;
+    color: #0854a0 !important;
+}
+
+.oaDialogHeaderTitle .sapMTitle {
+    color: #0854a0 !important;
+    font-size: 1rem;
+}
+
+/* Body padding & spacing */
+.oaDialogBody {
+    padding: 16px;
+    gap: 10px;
+    min-width: 0;
+}
+
+/* Shift meta pill */
+.oaDialogMetaRow {
+    background: #f0f4f8;
+    border: 1px solid #dce3ea;
+    border-radius: 6px;
+    padding: 8px 12px;
+}
+
+.oaDialogMetaIcon {
+    font-size: 0.9rem;
+    color: #0854a0;
+}
+
+.oaDialogMetaText {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #333;
+}
+
+/* MessageStrip spacing */
+.oaDialogStrip {
+    margin-top: 4px;
+}
+
+/* Table */
+.oaDialogTable {
+    margin-top: 6px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.oaDialogTableHeader {
+    background: #f5f6f7 !important;
+    border-bottom: 1px solid #e0e0e0;
+    min-height: 36px;
+}
+
+.oaDialogTableCount {
+    font-size: 0.78rem;
+    color: #666;
+}
+
+.oaDialogOpId {
+    font-size: 0.78rem;
+    color: #555;
+}
+
+/* Totals footer */
+.oaDialogTotalsRow {
+    background: #f0f4f8;
+    border: 1px solid #dce3ea;
+    border-radius: 6px;
+    padding: 8px 12px;
+    gap: 16px;
+}
+
+.oaTotalsText {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #333;
+}

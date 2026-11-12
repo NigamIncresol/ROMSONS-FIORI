@@ -1,0 +1,1567 @@
+<mvc:View
+    controllerName="shiftstartinspection.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Page
+        id="page"
+        enableScrolling="false"
+        showHeader="false"
+    >
+        <!-- <customHeader class="sapUiSmallMarginBegin">
+            <Bar>
+                <contentMiddle>
+                    <Title
+                        text="B-05 Shift Start Inspection"
+                        level="H1"
+                        titleStyle="H5"
+                        class="boldTitle"
+                    />
+                </contentMiddle>
+            </Bar>
+        </customHeader> -->
+
+        <content>
+            <HBox
+                width="100%"
+                class="fullHeightHBox"
+            >
+                <!-- Left VBox (25%) -->
+                <VBox
+                    width="25%"
+                    class="sapUiSmallMarginBegin sapUiSmallMarginTop columnVBox"
+                >
+                    <ScrollContainer
+                        class="columnScroll"
+                        vertical="true"
+                        horizontal="false"
+                        height="auto"
+                    >
+                        <VBox
+                            class="shiftCard sapUiSmallMarginBottom sapUiTinyMarginEnd"
+                        >
+                            <!-- Line 1 -->
+                            <Title
+                                text="SHIFT I/C - Ravi Kumar"
+                                class="nameText"
+                            />
+
+                            <!-- Line 2 -->
+                            <Text
+                                text="Shift A · 06:00 – 18:00 · 01-Mar-2026"
+                                class="subText"
+                            />
+
+                            <!-- Line 3 -->
+                            <HBox class="chipContainer sapUiSmallMarginTop">
+                                <Text
+                                    text="🏠 Blue House"
+                                    class="chip"
+                                />
+                                <Text
+                                    text="Section A"
+                                    class="chip"
+                                />
+                                <Text
+                                    text="Line 1"
+                                    class="chip"
+                                />
+                            </HBox>
+                        </VBox>
+
+                        <VBox class="shiftCard sapUiTinyMarginEnd">
+                            <!-- Title -->
+                            <Text
+                                text="SAP QM INSPECTION LOT"
+                                class="labelText"
+                            />
+
+                            <!-- Lot Number -->
+                            <Title
+                                text="0000010042"
+                                class="lotNumber"
+                            />
+
+                            <!-- Order -->
+                            <Text
+                                text="📦 Order: 000100001 · IV Cannula G-18"
+                                class="subText"
+                            />
+
+                            <!-- Status -->
+                            <Text
+                                text="📋 Lot Status: In Inspection (REL)"
+                                class="subText"
+                            />
+
+                            <!-- Inspection Point Box -->
+                            <VBox class="infoBox sapUiSmallMarginTop">
+                                <Text
+                                    text="Point #006 · Shift A · 01-Mar-2026"
+                                    class="infoHighlight"
+                                />
+                            </VBox>
+                        </VBox>
+
+                        <!-- Progress Card -->
+                        <VBox
+                            class="cardStyleCompact sapUiSmallMarginBottom sapUiTinyMarginEnd sapUiTinyMarginTop"
+                            width="98%"
+                        >
+                            <!-- Title -->
+                            <Text
+                                text="Inspection Progress"
+                                class="cardTitle"
+                            />
+
+                            <!-- Progress Bar -->
+                            <ProgressIndicator
+                                percentValue="{inspection>/overallProgress}"
+                                displayValue="{inspection>/overallProgress}%"
+                                showValue="true"
+                                state="{inspection>/overallState}"
+                                class="sapUiSmallMarginTop"
+                            />
+                        </VBox>
+                        <VBox
+                            alignItems="Center"
+                            class="sapUiSmallMarginTop"
+                        >
+                            <!-- Card 1 -->
+                            <VBox
+                                class="cardStyleCompact"
+                                width="96%"
+                            >
+                                <Text
+                                    text="Machine and Equipment"
+                                    class="cardTitle"
+                                />
+                                <HBox
+                                    justifyContent="SpaceBetween"
+                                    alignItems="Center"
+                                >
+                                    <Text
+                                        text="{= ${inspection>/sections/machineAndEquipment/answered} + '/' + ${inspection>/sections/machineAndEquipment/totalQuestions} }"
+                                    />
+                                    <ObjectStatus
+                                        icon="{path: 'inspection>/sections/machineAndEquipment/state', formatter: '.formatSectionIcon'}"
+                                        state="{inspection>/sections/machineAndEquipment/state}"
+                                    />
+                                </HBox>
+                            </VBox>
+
+                            <!-- Card 2 -->
+                            <VBox
+                                class="cardStyleCompact"
+                                width="96%"
+                            >
+                                <Text
+                                    text="Material Readiness"
+                                    class="cardTitle"
+                                />
+                                <HBox
+                                    justifyContent="SpaceBetween"
+                                    alignItems="Center"
+                                >
+                                    <Text
+                                        text="{= ${inspection>/sections/materialReadiness/answered} + '/' + ${inspection>/sections/materialReadiness/totalQuestions} }"
+                                    />
+                                    <ObjectStatus
+                                        icon="{path: 'inspection>/sections/materialReadiness/state', formatter: '.formatSectionIcon'}"
+                                        state="{inspection>/sections/materialReadiness/state}"
+                                    />
+                                </HBox>
+                            </VBox>
+
+                            <!-- Card 3 -->
+                            <VBox
+                                class="cardStyleCompact"
+                                width="96%"
+                            >
+                                <Text
+                                    text="Operator Readiness"
+                                    class="cardTitle"
+                                />
+                                <HBox
+                                    justifyContent="SpaceBetween"
+                                    alignItems="Center"
+                                >
+                                    <Text
+                                        text="{= ${inspection>/sections/operatorReadiness/answered} + '/' + ${inspection>/sections/operatorReadiness/totalQuestions} }"
+                                    />
+                                    <ObjectStatus
+                                        icon="{path: 'inspection>/sections/operatorReadiness/state', formatter: '.formatSectionIcon'}"
+                                        state="{inspection>/sections/operatorReadiness/state}"
+                                    />
+                                </HBox>
+                            </VBox>
+
+                            <!-- Card 4 -->
+                            <VBox
+                                class="cardStyleCompact"
+                                width="96%"
+                            >
+                                <Text
+                                    text="Previous Shift Handover"
+                                    class="cardTitle"
+                                />
+                                <HBox
+                                    justifyContent="SpaceBetween"
+                                    alignItems="Center"
+                                >
+                                    <Text
+                                        text="{= ${inspection>/sections/previousShiftHandover/answered} + '/' + ${inspection>/sections/previousShiftHandover/totalQuestions} }"
+                                    />
+
+                                    <ObjectStatus
+                                        icon="{path: 'inspection>/sections/previousShiftHandover/state', formatter: '.formatSectionIcon'}"
+                                        state="{inspection>/sections/previousShiftHandover/state}"
+                                    />
+                                </HBox>
+                            </VBox>
+
+                            <!-- Card 5 -->
+                            <VBox
+                                class="cardStyleCompact"
+                                width="96%"
+                            >
+                                <Text
+                                    text="Tooling and Dies"
+                                    class="cardTitle"
+                                />
+                                <HBox
+                                    justifyContent="SpaceBetween"
+                                    alignItems="Center"
+                                >
+                                    <Text
+                                        text="{= ${inspection>/sections/toolingAndDies/answered} + '/' + ${inspection>/sections/toolingAndDies/totalQuestions} }"
+                                    />
+                                    <ObjectStatus
+                                        icon="{path: 'inspection>/sections/toolingAndDies/state', formatter: '.formatSectionIcon'}"
+                                        state="{inspection>/sections/toolingAndDies/state}"
+                                    />
+                                </HBox>
+                            </VBox>
+
+                            <!-- Card 6 -->
+                            <VBox
+                                class="cardStyleCompact"
+                                width="96%"
+                            >
+                                <Text
+                                    text="Work Environment"
+                                    class="cardTitle"
+                                />
+                                <HBox
+                                    justifyContent="SpaceBetween"
+                                    alignItems="Center"
+                                >
+                                    <Text
+                                        text="{= ${inspection>/sections/workEnvironment/answered} + '/' + ${inspection>/sections/workEnvironment/totalQuestions} }"
+                                    />
+                                    <ObjectStatus
+                                        icon="{path: 'inspection>/sections/workEnvironment/state', formatter: '.formatSectionIcon'}"
+                                        state="{inspection>/sections/workEnvironment/state}"
+                                    />
+                                </HBox>
+                            </VBox>
+                        </VBox>
+                        <HBox height="100px" />
+                    </ScrollContainer>
+                </VBox>
+
+                <!-- Right VBox (75%) -->
+                <VBox
+                    width="75%"
+                    class="sapUiSmallMargin columnVBox"
+                >
+                    <ScrollContainer
+                        class="columnScroll"
+                        vertical="true"
+                        horizontal="false"
+                    >
+                        <MessageStrip
+                            text="Checklist loaded dynamically from ZINSP_CHAR_ASSIGN based on Line and Machine context"
+                            type="Success"
+                            showIcon="false"
+                            class="sapUiTinyMarginBottom"
+                        />
+                        <Panel
+                            headerText="🔧 Line and Machine Context"
+                            width="100%"
+                        >
+                            <content>
+                                <HBox
+                                    justifyContent="SpaceBetween"
+                                    alignItems="Center"
+                                    wrap="Wrap"
+                                    width="100%"
+                                >
+                                    <!-- Section -->
+                                    <VBox width="23%">
+                                        <Label text="Section" />
+                                        <ComboBox
+                                            width="100%"
+                                            placeholder="Select Section"
+                                        >
+                                            <items>
+                                                <core:Item
+                                                    key="S1"
+                                                    text="Section 1"
+                                                />
+                                                <core:Item
+                                                    key="S2"
+                                                    text="Section 2"
+                                                />
+                                            </items>
+                                        </ComboBox>
+                                    </VBox>
+
+                                    <!-- Line -->
+                                    <VBox width="23%">
+                                        <Label text="Line" />
+                                        <ComboBox
+                                            width="100%"
+                                            placeholder="Select Line"
+                                        >
+                                            <items>
+                                                <core:Item
+                                                    key="L1"
+                                                    text="Line 1"
+                                                />
+                                                <core:Item
+                                                    key="L2"
+                                                    text="Line 2"
+                                                />
+                                            </items>
+                                        </ComboBox>
+                                    </VBox>
+
+                                    <!-- Machine -->
+                                    <VBox width="23%">
+                                        <Label text="Machine" />
+                                        <ComboBox
+                                            width="100%"
+                                            placeholder="Select Machine"
+                                        >
+                                            <items>
+                                                <core:Item
+                                                    key="M1"
+                                                    text="Machine 1"
+                                                />
+                                                <core:Item
+                                                    key="M2"
+                                                    text="Machine 2"
+                                                />
+                                            </items>
+                                        </ComboBox>
+                                    </VBox>
+
+                                    <!-- Product / Material Group -->
+                                    <VBox width="23%">
+                                        <Label text="Product / Mat Group" />
+                                        <ComboBox
+                                            width="100%"
+                                            placeholder="Select Product"
+                                        >
+                                            <items>
+                                                <core:Item
+                                                    key="P1"
+                                                    text="Product 1"
+                                                />
+                                                <core:Item
+                                                    key="P2"
+                                                    text="Product 2"
+                                                />
+                                            </items>
+                                        </ComboBox>
+                                    </VBox>
+                                </HBox>
+                            </content>
+                        </Panel>
+                        <!-- summary section -->
+                        <HBox
+                            width="100%"
+                            class="headerCard sapUiTinyMargin sapUiSmallMarginBottom"
+                            justifyContent="SpaceAround"
+                            alignItems="Center"
+                        >
+                            <!-- Production Order -->
+                            <VBox class="cardItem">
+                                <Text
+                                    text="PRODUCTION ORDER"
+                                    class="labelText"
+                                />
+                                <Link
+                                    text="000100001"
+                                    class="valueText"
+                                />
+                            </VBox>
+
+                            <VBox class="divider" />
+
+                            <!-- Inspection Lot -->
+                            <VBox class="cardItem">
+                                <Text
+                                    text="INSPECTION LOT"
+                                    class="labelText"
+                                />
+                                <Link
+                                    text="0000010042"
+                                    class="valueText"
+                                />
+                            </VBox>
+
+                            <VBox class="divider" />
+
+                            <!-- Inspection Point -->
+                            <VBox class="cardItem">
+                                <Text
+                                    text="INSPECTION POINT"
+                                    class="labelText"
+                                />
+                                <Text
+                                    text="#006"
+                                    class="valueText"
+                                />
+                            </VBox>
+
+                            <VBox class="divider" />
+
+                            <!-- Line / Machine -->
+                            <VBox class="cardItem">
+                                <Text
+                                    text="LINE / MACHINE"
+                                    class="labelText"
+                                />
+                                <Text
+                                    text="Line 1 · MCH-L1-MOULD+UV+BLST"
+                                    class="valueText"
+                                />
+                            </VBox>
+
+                            <VBox class="divider" />
+
+                            <!-- Shift / Date -->
+                            <VBox class="cardItem">
+                                <Text
+                                    text="SHIFT / DATE"
+                                    class="labelText"
+                                />
+                                <Text
+                                    text="Shift A · 01-Mar-2026"
+                                    class="valueText"
+                                />
+                            </VBox>
+
+                            <VBox class="divider" />
+
+                            <!-- Order Day -->
+                            <VBox class="cardItem">
+                                <Text
+                                    text="ORDER DAY"
+                                    class="labelText"
+                                />
+                                <Text
+                                    text="Day 3/3"
+                                    class="valueText"
+                                />
+                            </VBox>
+                        </HBox>
+
+                        <!-- Machine and equipment QnA -->
+                        <Panel
+                            headerText="⚙️Machine and Equipment"
+                            width="100%"
+                            expandable="true"
+                        >
+                            <content>
+                                <!-- Question Card -->
+                                <HBox
+                                    class="questionCard"
+                                    width="100%"
+                                >
+                                    <VBox width="100%">
+                                        <!-- Line 1: Question -->
+                                        <HBox
+                                            justifyContent="SpaceBetween"
+                                            alignItems="Center"
+                                            width="100%"
+                                        >
+                                            <!-- Left side: Question + Mandatory + MIC -->
+                                            <HBox
+                                                alignItems="Center"
+                                                wrap="Wrap"
+                                            >
+                                                <Text
+                                                    text="Moulding Machine Condition"
+                                                    class="questionText"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="MANDATORY"
+                                                    state="Error"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="MIC: 1000042"
+                                                    state="Indication06"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+                                            </HBox>
+
+                                            <!-- Right side -->
+                                            <!-- Dynamic Status -->
+                                            <ObjectStatus
+                                                text="PENDING"
+                                                state="None"
+                                                inverted="true"
+                                            />
+                                        </HBox>
+
+                                        <ObjectStatus
+                                            state="Indication03"
+                                            text="Visual and functional check — guards, sensors, pneumatics, drive."
+                                        />
+
+                                        <!-- Line 2: Radio Buttons -->
+                                        <RadioButtonGroup
+                                            columns="3"
+                                            select="onStatusChange"
+                                            class="radioGroup sapUiSmallMarginTop"
+                                            selectedIndex="-1"
+                                        >
+                                            <buttons>
+                                                <RadioButton text="OK" />
+                                                <RadioButton
+                                                    text="Minor Issue"
+                                                />
+                                                <RadioButton text="Not OK" />
+                                            </buttons>
+                                        </RadioButtonGroup>
+
+                                        <!-- Line 3: Remark -->
+                                        <Input
+                                            placeholder="Enter remark"
+                                            class="remarkInput"
+                                        />
+                                    </VBox>
+                                </HBox>
+
+                                <!-- Another Question Card -->
+                                <HBox
+                                    class="questionCard"
+                                    width="100%"
+                                >
+                                    <VBox width="100%">
+                                        <!-- Line 1: Question + Status -->
+                                        <HBox
+                                            justifyContent="SpaceBetween"
+                                            alignItems="Center"
+                                            width="100%"
+                                        >
+                                            <!-- Left side -->
+                                            <HBox
+                                                alignItems="Center"
+                                                wrap="Wrap"
+                                            >
+                                                <Text
+                                                    text="UV Curing Unit Condition"
+                                                    class="questionText"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="MANDATORY"
+                                                    state="Error"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin sapUiTinyFont"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="MIC: 1000043"
+                                                    state="Indication06"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin sapUiTinyFont"
+                                                />
+                                            </HBox>
+
+                                            <!-- Right side -->
+                                            <ObjectStatus
+                                                text="PENDING"
+                                                state="None"
+                                                inverted="true"
+                                            />
+                                        </HBox>
+                                        <ObjectStatus
+                                            state="Indication03"
+                                            text="UV lamp intensity, conveyor speed, and safety interlocks."
+                                        />
+
+                                        <!-- Line 2: Radio Buttons -->
+                                        <RadioButtonGroup
+                                            columns="3"
+                                            class="radioGroup sapUiSmallMarginTop"
+                                            select="onStatusChange"
+                                            selectedIndex="-1"
+                                        >
+                                            <buttons>
+                                                <RadioButton text="OK" />
+                                                <RadioButton
+                                                    text="Minor Issue"
+                                                />
+                                                <RadioButton text="Not OK" />
+                                            </buttons>
+                                        </RadioButtonGroup>
+
+                                        <!-- Line 3: Remark -->
+                                        <Input
+                                            placeholder="Enter remark"
+                                            class="remarkInput"
+                                        />
+                                    </VBox>
+                                </HBox>
+                            </content>
+                        </Panel>
+
+                        <!-- Material readiness panel -->
+                        <Panel
+                            headerText="📦 Material Readiness"
+                            width="100%"
+                            class="sapUiSmallMarginTop"
+                            expandable="true"
+                        >
+                            <content>
+                                <!-- Card 1 -->
+                                <HBox
+                                    class="questionCard"
+                                    width="100%"
+                                >
+                                    <VBox width="100%">
+                                        <!-- Header Row -->
+                                        <HBox
+                                            justifyContent="SpaceBetween"
+                                            alignItems="Center"
+                                        >
+                                            <!-- Left -->
+                                            <HBox
+                                                alignItems="Center"
+                                                wrap="Wrap"
+                                            >
+                                                <!-- <ObjectIdentifier
+                                                    title="CR-001"
+                                                    class="sapUiTinyMarginEnd"
+                                                /> -->
+
+                                                <Text
+                                                    text="Materials Received at Line"
+                                                    class="questionText"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="MANDATORY"
+                                                    state="Error"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="No SAP MIC"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+                                            </HBox>
+
+                                            <!-- Right -->
+                                            <ObjectStatus
+                                                text="PENDING"
+                                                state="None"
+                                                inverted="true"
+                                            />
+                                        </HBox>
+
+                                        <!-- Description -->
+                                        <ObjectStatus
+                                            text="B04R receipt confirmations complete; materials at SL05."
+                                            state="Indication03"
+                                            class="sapUiTinyMarginTop sapUiTinyFont"
+                                        />
+
+                                        <!-- Radio Buttons -->
+                                        <RadioButtonGroup
+                                            columns="3"
+                                            class="radioGroup sapUiSmallMarginTop"
+                                            selectedIndex="-1"
+                                            select="onStatusChange"
+                                        >
+                                            <buttons>
+                                                <RadioButton text="OK" />
+                                                <RadioButton text="Partial" />
+                                                <RadioButton
+                                                    text="Critical Missing"
+                                                />
+                                            </buttons>
+                                        </RadioButtonGroup>
+
+                                        <!-- Remark -->
+                                        <Input
+                                            placeholder="Enter remark"
+                                            class="remarkInput sapUiSmallMarginTop"
+                                        />
+                                    </VBox>
+                                </HBox>
+
+                                <!-- Card 2 -->
+                                <HBox
+                                    class="questionCard sapUiSmallMarginTop"
+                                    width="100%"
+                                >
+                                    <VBox width="100%">
+                                        <!-- Header Row -->
+                                        <HBox
+                                            justifyContent="SpaceBetween"
+                                            alignItems="Center"
+                                        >
+                                            <!-- Left -->
+                                            <HBox
+                                                alignItems="Center"
+                                                wrap="Wrap"
+                                            >
+                                                <!-- <ObjectIdentifier
+                                                    title="CR-002"
+                                                    class="sapUiTinyMarginEnd"
+                                                /> -->
+
+                                                <Text
+                                                    text="Material Visual Condition"
+                                                    class="questionText"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="OPTIONAL"
+                                                    inverted="true"
+                                                    state="Warning"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+
+                                                <ObjectStatus
+                                                    inverted="true"
+                                                    text="No SAP MIC"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+                                            </HBox>
+
+                                            <!-- Right -->
+                                            <ObjectStatus
+                                                text="PENDING"
+                                                state="None"
+                                                inverted="true"
+                                            />
+                                        </HBox>
+
+                                        <!-- Description -->
+                                        <ObjectStatus
+                                            text="Random visual check of incoming batches."
+                                            state="Indication03"
+                                            class="sapUiTinyMarginTop sapUiTinyFont"
+                                        />
+
+                                        <!-- Radio Buttons -->
+                                        <RadioButtonGroup
+                                            columns="3"
+                                            class="radioGroup sapUiSmallMarginTop"
+                                            select="onStatusChange"
+                                            selectedIndex="-1"
+                                        >
+                                            <buttons>
+                                                <RadioButton text="OK" />
+                                                <RadioButton text="Minor" />
+                                                <RadioButton
+                                                    text="Issue Found"
+                                                />
+                                            </buttons>
+                                        </RadioButtonGroup>
+
+                                        <!-- Remark -->
+                                        <Input
+                                            placeholder="Enter remark"
+                                            class="remarkInput sapUiSmallMarginTop"
+                                        />
+                                    </VBox>
+                                </HBox>
+                            </content>
+                        </Panel>
+
+                        <Panel
+                            headerText="👷 Operator Readiness"
+                            width="100%"
+                            class="sapUiSmallMarginTop"
+                            expandable="true"
+                        >
+                            <content>
+                                <!-- Card 1: Operators Present -->
+                                <HBox
+                                    class="questionCard"
+                                    width="100%"
+                                >
+                                    <VBox width="100%">
+                                        <!-- Header -->
+                                        <HBox
+                                            justifyContent="SpaceBetween"
+                                            alignItems="Center"
+                                        >
+                                            <!-- Left -->
+                                            <HBox
+                                                alignItems="Center"
+                                                wrap="Wrap"
+                                            >
+                                                <!-- <ObjectIdentifier
+                                                    title="CO-001"
+                                                    class="sapUiTinyMarginEnd"
+                                                /> -->
+
+                                                <Text
+                                                    text="Operators Present on Line"
+                                                    class="questionText"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="MANDATORY"
+                                                    state="Error"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="No SAP MIC"
+                                                    class="sapUiTinyMarginBegin"
+                                                    inverted="true"
+                                                />
+                                            </HBox>
+
+                                            <!-- Right -->
+                                            <ObjectStatus
+                                                text="PENDING"
+                                                state="None"
+                                                inverted="true"
+                                            />
+                                        </HBox>
+
+                                        <!-- Description -->
+                                        <ObjectStatus
+                                            text="Minimum required operators per line configuration."
+                                            state="Indication03"
+                                            class="sapUiTinyMarginTop "
+                                        />
+
+                                        <!-- Operator Count Row -->
+                                        <HBox
+                                            alignItems="Center"
+                                            class="sapUiSmallMarginTop"
+                                        >
+                                            <Input
+                                                type="Number"
+                                                width="80px"
+                                                change="onOperatorChange"
+                                            />
+
+                                            <Text
+                                                text="Operators"
+                                                class="sapUiTinyMarginBegin sapUiTinyMarginEnd"
+                                            />
+
+                                            <ObjectStatus
+                                                text="Spec: 8 - 14 Operators | Critical: less than 6 or greater than 16"
+                                                class="sapUiTinyMarginEnd"
+                                                state="Indication07"
+                                                inverted="true"
+                                            />
+
+                                            <ObjectStatus
+                                                text="Remark"
+                                                state="Indication05"
+                                                inverted="true"
+                                            />
+                                        </HBox>
+
+                                        <!-- Remark -->
+                                        <Input
+                                            placeholder="Enter remark"
+                                            class="remarkInput sapUiSmallMarginTop"
+                                        />
+                                    </VBox>
+                                </HBox>
+
+                                <!-- Card 2: PPE Compliance -->
+                                <HBox
+                                    class="questionCard sapUiSmallMarginTop"
+                                    width="100%"
+                                >
+                                    <VBox width="100%">
+                                        <!-- Header -->
+                                        <HBox
+                                            justifyContent="SpaceBetween"
+                                            alignItems="Center"
+                                        >
+                                            <!-- Left -->
+                                            <HBox
+                                                alignItems="Center"
+                                                wrap="Wrap"
+                                            >
+                                                <!-- <ObjectIdentifier
+                                                    title="CO-002"
+                                                    class="sapUiTinyMarginEnd"
+                                                /> -->
+
+                                                <Text
+                                                    text="PPE Compliance"
+                                                    class="questionText"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="MANDATORY"
+                                                    state="Error"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="No SAP MIC"
+                                                    class="sapUiTinyMarginBegin"
+                                                    inverted="true"
+                                                />
+                                            </HBox>
+
+                                            <!-- Right -->
+                                            <ObjectStatus
+                                                text="PENDING"
+                                                state="None"
+                                                inverted="true"
+                                            />
+                                        </HBox>
+
+                                        <!-- Description -->
+                                        <ObjectStatus
+                                            text="Gloves, masks, hair nets, ESD wrist straps."
+                                            state="Indication03"
+                                            class="sapUiTinyMarginTop sapUiTinyFont"
+                                        />
+
+                                        <!-- Radio Buttons -->
+                                        <RadioButtonGroup
+                                            columns="3"
+                                            class="radioGroup sapUiSmallMarginTop"
+                                            selectedIndex="-1"
+                                            select="onStatusChange"
+                                        >
+                                            <buttons>
+                                                <RadioButton text="Compliant" />
+                                                <RadioButton text="Partial" />
+                                                <RadioButton
+                                                    text="Non-Compliant"
+                                                />
+                                            </buttons>
+                                        </RadioButtonGroup>
+
+                                        <!-- Remark -->
+                                        <Input
+                                            placeholder="Enter remark"
+                                            class="remarkInput sapUiSmallMarginTop"
+                                        />
+                                    </VBox>
+                                </HBox>
+                            </content>
+                        </Panel>
+                        <!-- Previous shift handover -->
+                        <Panel
+                            headerText="🤝Previous Shift Handover"
+                            expandable="true"
+                            class="sapUiSmallMarginTop"
+                        >
+                            <content>
+                                <HBox
+                                    class="questionCard"
+                                    width="100%"
+                                >
+                                    <VBox width="100%">
+                                        <!-- Header -->
+                                        <HBox
+                                            justifyContent="SpaceBetween"
+                                            alignItems="Center"
+                                        >
+                                            <HBox
+                                                alignItems="Center"
+                                                wrap="Wrap"
+                                            >
+                                                <!-- <ObjectIdentifier
+                            title="CH-001"
+                            class="sapUiTinyMarginEnd"
+                        /> -->
+
+                                                <Text
+                                                    text="Previous Shift Open Issues"
+                                                    class="questionText"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="MANDATORY"
+                                                    state="Error"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="No SAP MIC"
+                                                    class="sapUiTinyMarginBegin"
+                                                    inverted="true"
+                                                />
+                                            </HBox>
+
+                                            <!-- Dynamic Status -->
+                                            <ObjectStatus
+                                                text="PENDING"
+                                                state="None"
+                                                inverted="true"
+                                            />
+                                        </HBox>
+
+                                        <!-- Description -->
+                                        <ObjectStatus
+                                            text="Unresolved issues, machine faults, or quality holds carried over."
+                                            state="Indication03"
+                                            class="sapUiTinyMarginTop sapUiTinyFont"
+                                        />
+
+                                        <!-- Radio Buttons -->
+                                        <RadioButtonGroup
+                                            columns="3"
+                                            select="onStatusChange"
+                                            class="sapUiSmallMarginTop"
+                                            selectedIndex="-1"
+                                        >
+                                            <buttons>
+                                                <RadioButton text="No Issues" />
+                                                <RadioButton text="Minor" />
+                                                <RadioButton
+                                                    text="Critical Item"
+                                                />
+                                            </buttons>
+                                        </RadioButtonGroup>
+
+                                        <!-- Remark -->
+                                        <Input
+                                            placeholder="Enter remark"
+                                            class="remarkInput sapUiSmallMarginTop"
+                                        />
+                                    </VBox>
+                                </HBox>
+                            </content>
+                        </Panel>
+                        <!-- Tooling and dies -->
+                        <Panel
+                            headerText="🛠 Tooling and Dies"
+                            width="100%"
+                            class="sapUiSmallMarginTop"
+                            expandable="true"
+                        >
+                            <content>
+                                <!-- Card 1 -->
+                                <HBox
+                                    class="questionCard"
+                                    width="100%"
+                                >
+                                    <VBox width="100%">
+                                        <!-- Header -->
+                                        <HBox
+                                            justifyContent="SpaceBetween"
+                                            alignItems="Center"
+                                        >
+                                            <!-- Left -->
+                                            <HBox
+                                                alignItems="Center"
+                                                wrap="Wrap"
+                                            >
+                                                <!-- <ObjectIdentifier
+                                                    title="CT-001"
+                                                    class="sapUiTinyMarginEnd"
+                                                /> -->
+
+                                                <Text
+                                                    text="Die / Mould Condition"
+                                                    class="questionText"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="MANDATORY"
+                                                    state="Error"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="MIC: 1000050"
+                                                    state="Indication06"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+                                            </HBox>
+
+                                            <!-- Right -->
+                                            <ObjectStatus
+                                                text="PENDING"
+                                                state="None"
+                                                inverted="true"
+                                            />
+                                        </HBox>
+
+                                        <!-- Description -->
+                                        <ObjectStatus
+                                            text="Inspect mould cavity for wear, flash, or damage."
+                                            state="Indication03"
+                                            class="sapUiTinyMarginTop sapUiTinyFont"
+                                        />
+
+                                        <!-- Radio Buttons -->
+                                        <RadioButtonGroup
+                                            columns="4"
+                                            class="radioGroup sapUiSmallMarginTop"
+                                            select="onStatusChange"
+                                            selectedIndex="-1"
+                                        >
+                                            <buttons>
+                                                <RadioButton text="Good" />
+                                                <RadioButton text="Replaced" />
+                                                <RadioButton text="Worn" />
+                                                <RadioButton text="Damaged" />
+                                            </buttons>
+                                        </RadioButtonGroup>
+
+                                        <!-- Remark -->
+                                        <Input
+                                            placeholder="Enter remark"
+                                            class="remarkInput sapUiSmallMarginTop"
+                                        />
+                                    </VBox>
+                                </HBox>
+
+                                <!-- Card 2 -->
+                                <HBox
+                                    class="questionCard sapUiSmallMarginTop"
+                                    width="100%"
+                                >
+                                    <VBox width="100%">
+                                        <!-- Header -->
+                                        <HBox
+                                            justifyContent="SpaceBetween"
+                                            alignItems="Center"
+                                        >
+                                            <!-- Left -->
+                                            <HBox
+                                                alignItems="Center"
+                                                wrap="Wrap"
+                                            >
+                                                <!-- <ObjectIdentifier title="CT-002" class="sapUiTinyMarginEnd"/> -->
+
+                                                <Text
+                                                    text="Needle Insertion Tooling"
+                                                    class="questionText"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="MANDATORY"
+                                                    state="Error"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="MIC: 1000051"
+                                                    state="Indication06"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+                                            </HBox>
+
+                                            <!-- Right -->
+                                            <ObjectStatus
+                                                text="PENDING"
+                                                state="None"
+                                                inverted="true"
+                                            />
+                                        </HBox>
+
+                                        <!-- Description -->
+                                        <ObjectStatus
+                                            text="Needle assembly jigs — clean, positioned, undamaged."
+                                            state="Indication03"
+                                            class="sapUiTinyMarginTop sapUiTinyFont"
+                                        />
+
+                                        <!-- Radio Buttons -->
+                                        <RadioButtonGroup
+                                            columns="3"
+                                            class="radioGroup sapUiSmallMarginTop"
+                                            select="onStatusChange"
+                                            selectedIndex="-1"
+                                        >
+                                            <buttons>
+                                                <RadioButton text="OK" />
+                                                <RadioButton
+                                                    text="Needs Check"
+                                                />
+                                                <RadioButton text="Not OK" />
+                                            </buttons>
+                                        </RadioButtonGroup>
+
+                                        <!-- Remark -->
+                                        <Input
+                                            placeholder="Enter remark"
+                                            class="remarkInput sapUiSmallMarginTop"
+                                        />
+                                    </VBox>
+                                </HBox>
+                            </content>
+                        </Panel>
+                        <!-- work environment -->
+                        <Panel
+                            headerText="🧪 Work Environment"
+                            width="100%"
+                            class="sapUiSmallMarginTop"
+                            expandable="true"
+                        >
+                            <content>
+                                <!-- Card 1: Temperature -->
+                                <HBox
+                                    class="questionCard"
+                                    width="100%"
+                                >
+                                    <VBox width="100%">
+                                        <!-- Header -->
+                                        <HBox
+                                            justifyContent="SpaceBetween"
+                                            alignItems="Center"
+                                        >
+                                            <HBox
+                                                alignItems="Center"
+                                                wrap="Wrap"
+                                            >
+                                                <!-- <ObjectIdentifier title="CE-001" class="sapUiTinyMarginEnd"/> -->
+
+                                                <Text
+                                                    text="Ambient Temperature"
+                                                    class="questionText"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="MANDATORY"
+                                                    state="Error"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+                                                <ObjectStatus
+                                                    text="MIC: 1000060"
+                                                    state="Indication06"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+                                            </HBox>
+
+                                            <ObjectStatus
+                                                text="PENDING"
+                                                state="None"
+                                                inverted="true"
+                                            />
+                                        </HBox>
+
+                                        <!-- Description -->
+                                        <ObjectStatus
+                                            text="Must be within controlled range for IV device manufacturing."
+                                            state="Indication03"
+                                            class="sapUiTinyMarginTop sapUiTinyFont"
+                                        />
+
+                                        <!-- Input Row -->
+                                        <HBox
+                                            class="sapUiSmallMarginTop"
+                                            alignItems="Center"
+                                        >
+                                            <Input
+                                                type="Number"
+                                                width="100px"
+                                                change="onTemperatureChange"
+                                            />
+                                            <Text
+                                                text="°C"
+                                                class="sapUiTinyMarginBegin sapUiTinyMarginEnd"
+                                            />
+
+                                            <ObjectStatus
+                                                state="Indication07"
+                                                inverted="true"
+                                                text="Spec: 18 to 25 °C | Critical: less than 16 or greater than 27"
+                                                class="sapUiTinyMarginEnd"
+                                            />
+
+                                            <ObjectStatus
+                                                text="Remark"
+                                                state="Indication05"
+                                                inverted="true"
+                                            />
+                                        </HBox>
+
+                                        <!-- Remark -->
+                                        <Input
+                                            placeholder="Enter remark"
+                                            class="sapUiSmallMarginTop"
+                                        />
+                                    </VBox>
+                                </HBox>
+
+                                <!-- Card 2: Humidity -->
+                                <HBox
+                                    class="questionCard sapUiSmallMarginTop"
+                                    width="100%"
+                                >
+                                    <VBox width="100%">
+                                        <HBox
+                                            justifyContent="SpaceBetween"
+                                            alignItems="Center"
+                                        >
+                                            <HBox
+                                                alignItems="Center"
+                                                wrap="Wrap"
+                                            >
+                                                <!-- <ObjectIdentifier title="CE-002" class="sapUiTinyMarginEnd"/> -->
+
+                                                <Text
+                                                    text="Relative Humidity"
+                                                    class="questionText"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="MANDATORY"
+                                                    state="Error"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+                                                <ObjectStatus
+                                                    text="MIC: 1000061"
+                                                    state="Indication06"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+                                            </HBox>
+
+                                            <ObjectStatus
+                                                text="PENDING"
+                                                state="None"
+                                                inverted="true"
+                                            />
+                                        </HBox>
+
+                                        <ObjectStatus
+                                            text="Humidity within spec to prevent contamination."
+                                            state="Indication03"
+                                            class="sapUiTinyMarginTop sapUiTinyFont"
+                                        />
+
+                                        <HBox
+                                            class="sapUiSmallMarginTop"
+                                            alignItems="Center"
+                                        >
+                                            <Input
+                                                type="Number"
+                                                width="100px"
+                                                change="onHumidityChange"
+                                            />
+                                            <Text
+                                                text="%RH"
+                                                class="sapUiTinyMarginBegin sapUiTinyMarginEnd"
+                                            />
+
+                                            <ObjectStatus
+                                                state="Indication07"
+                                                inverted="true"
+                                                text="Spec: 45 to 65 %RH | Critical: less than 40 or greater than 70"
+                                                class="sapUiTinyMarginEnd"
+                                            />
+
+                                            <ObjectStatus
+                                                text="Remark"
+                                                state="Indication05"
+                                                inverted="true"
+                                            />
+                                        </HBox>
+
+                                        <Input
+                                            placeholder="Enter remark"
+                                            class="sapUiSmallMarginTop"
+                                        />
+                                    </VBox>
+                                </HBox>
+
+                                <!-- Card 3: Clean Room -->
+                                <HBox
+                                    class="questionCard sapUiSmallMarginTop"
+                                    width="100%"
+                                >
+                                    <VBox width="100%">
+                                        <HBox
+                                            justifyContent="SpaceBetween"
+                                            alignItems="Center"
+                                        >
+                                            <HBox
+                                                alignItems="Center"
+                                                wrap="Wrap"
+                                            >
+                                                <!-- <ObjectIdentifier title="CE-003" class="sapUiTinyMarginEnd"/> -->
+
+                                                <Text
+                                                    text="Clean Room / Work Area Status"
+                                                    class="questionText"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="MANDATORY"
+                                                    state="Error"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+                                                <ObjectStatus
+                                                    text="MIC: 1000062"
+                                                    state="Indication06"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+                                            </HBox>
+
+                                            <ObjectStatus
+                                                text="PENDING"
+                                                state="None"
+                                                inverted="true"
+                                            />
+                                        </HBox>
+
+                                        <ObjectStatus
+                                            text="General cleanliness of production area and benches."
+                                            state="Indication03"
+                                            class="sapUiTinyMarginTop sapUiTinyFont"
+                                        />
+
+                                        <!-- Radio Buttons -->
+                                        <RadioButtonGroup
+                                            columns="3"
+                                            class="sapUiSmallMarginTop"
+                                            select="onStatusChange"
+                                            selectedIndex="-1"
+                                        >
+                                            <buttons>
+                                                <RadioButton text="Clean" />
+                                                <RadioButton text="Partial" />
+                                                <RadioButton
+                                                    text="Unacceptable"
+                                                />
+                                            </buttons>
+                                        </RadioButtonGroup>
+
+                                        <Input
+                                            placeholder="Enter remark"
+                                            class="sapUiSmallMarginTop"
+                                        />
+                                    </VBox>
+                                </HBox>
+
+                                <!-- Card 4: Pest Risk -->
+                                <HBox
+                                    class="questionCard sapUiSmallMarginTop"
+                                    width="100%"
+                                >
+                                    <VBox width="100%">
+                                        <HBox
+                                            justifyContent="SpaceBetween"
+                                            alignItems="Center"
+                                        >
+                                            <HBox
+                                                alignItems="Center"
+                                                wrap="Wrap"
+                                            >
+                                                <!-- <ObjectIdentifier title="CE-004" class="sapUiTinyMarginEnd"/> -->
+
+                                                <Text
+                                                    text="Pest / Foreign Body Risk"
+                                                    class="questionText"
+                                                />
+
+                                                <ObjectStatus
+                                                    text="MANDATORY"
+                                                    state="Error"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+                                                <ObjectStatus
+                                                    text="MIC: 1000063"
+                                                    state="Indication06"
+                                                    inverted="true"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+                                            </HBox>
+
+                                            <ObjectStatus
+                                                text="PENDING"
+                                                state="None"
+                                                inverted="true"
+                                            />
+                                        </HBox>
+
+                                        <ObjectStatus
+                                            text="Check for pest activity, foreign objects, contamination."
+                                            state="Indication03"
+                                            class="sapUiTinyMarginTop sapUiTinyFont"
+                                        />
+
+                                        <!-- Radio Buttons -->
+                                        <RadioButtonGroup
+                                            columns="3"
+                                            class="sapUiSmallMarginTop"
+                                            select="onStatusChange"
+                                            selectedIndex="-1"
+                                        >
+                                            <buttons>
+                                                <RadioButton
+                                                    text="None Found"
+                                                />
+                                                <RadioButton text="Minor" />
+                                                <RadioButton
+                                                    text="Risk Found"
+                                                />
+                                            </buttons>
+                                        </RadioButtonGroup>
+
+                                        <Input
+                                            placeholder="Enter remark"
+                                            class="sapUiSmallMarginTop"
+                                        />
+                                    </VBox>
+                                </HBox>
+                            </content>
+                        </Panel>
+                        <HBox
+                            justifyContent="End"
+                            class="sapUiSmallMarginTop sapUiSmallMarginEnd"
+                        >
+                            <Button
+                                text="Submit Inspection"
+                                type="Success"
+                            />
+                        </HBox>
+
+                        <HBox height="100px" />
+                    </ScrollContainer>
+                </VBox>
+            </HBox>
+        </content>
+    </Page>
+</mvc:View>

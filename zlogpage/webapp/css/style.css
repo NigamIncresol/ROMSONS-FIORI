@@ -1,0 +1,472 @@
+/* ── Animated Page background - teal gradient matching logo ── */
+@keyframes bgShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ── Background slideshow ── */
+@keyframes rmsSlide {
+    0%   { opacity: 1; }
+    28%  { opacity: 1; }
+    38%  { opacity: 0; }
+    95%  { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+body,
+[id^="container-zlogpage"] {
+    background: transparent !important;
+}
+
+[id^="container-zlogpage"] {
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+.loginBgSlide {
+    position: fixed;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    animation: rmsSlide 15s ease-in-out infinite;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.loginPageBackground,
+.loginPageBackground .sapMPageBg,
+.loginPageBackground.sapMPage,
+#page,
+#page .sapMPageBg {
+    min-height: 100vh;
+    width: 100%;
+    background: transparent !important;
+    animation: none !important;
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+    overflow-y: auto !important;
+    padding: 24px 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* ── Login Card ── */
+.loginCardBox {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 16px;
+    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.30), 0 2px 12px rgba(0, 0, 0, 0.18);
+    border: none;
+    padding: 28px 24px 22px 24px;
+    width: 360px;
+    max-width: 95vw;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    margin-right: 48px;
+}
+
+/* Rounded logo */
+.loginCardBox .sapMImg {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* Reduce logo size slightly to save vertical space */
+.loginCardBox .sapMImg img {
+    max-height: 80px;
+    width: auto !important;
+}
+
+/* Bold labels inside login card */
+.loginCardBox .sapMLabel {
+    font-weight: 600;
+    font-size: 0.75rem !important;
+}
+
+/* Placeholder text size */
+.loginCardBox .sapMInputBase .sapMInputBaseInner::placeholder {
+    font-size: 0.8rem !important;
+}
+
+/* Tighten vertical spacing inside the form */
+.loginCardBox .sapUiSmallMarginTop {
+    margin-top: 0.4rem !important;
+}
+
+.loginCardBox .sapUiMediumMarginTop {
+    margin-top: 0.6rem !important;
+}
+
+/* Reduce gap between label and input */
+.loginCardBox .sapUiRespGridMedia-Std-Phone .sapUiFormElementCell,
+.loginCardBox .sapUiFormElement {
+    padding-bottom: 4px !important;
+}
+
+/* Form container — slightly less transparent than the outer card (0.55) */
+.loginCardBox .sapUiSimpleForm,
+.loginCardBox .sapUiSimpleFormWithPadding,
+.loginCardBox .sapUiRespGrid,
+.loginCardBox .sapUiRespGridCell,
+.loginCardBox .sapUiFormResGrid,
+.loginCardBox .sapUiFormResGridCont {
+    background: rgba(255, 255, 255, 0.70) !important;
+    border-radius: 10px !important;
+}
+
+/* Rounded inputs with glass effect */
+.loginCardBox .sapMInputBase,
+.FloginCard .sapMInputBase {
+    border-radius: 8px !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+}
+
+.loginCardBox .sapMInputBase .sapMInputBaseInner {
+    background: transparent !important;
+    color: #1a1a1a !important;
+}
+
+.loginCardBox .sapMInputBase .sapMInputBaseInner::placeholder {
+    color: rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Links — teal brand color */
+.loginCardBox .sapMLnk,
+.FloginCard .sapMLnk {
+    color: #0d6b5e !important;
+}
+
+/* Buttons — teal brand color */
+.loginCardBox .sapMBtnEmphasized,
+.FloginCard .sapMBtnEmphasized {
+    background-color: #0d6b5e !important;
+    border-color: #0d6b5e !important;
+    border-radius: 8px !important;
+}
+
+.loginCardBox .sapMBtnEmphasized:hover,
+.FloginCard .sapMBtnEmphasized:hover {
+    background-color: #0a5549 !important;
+    border-color: #0a5549 !important;
+}
+
+/* ── Forgot Password page ── */
+.forgotPasswordPage,
+.forgotPasswordPage .sapMPageBg,
+.forgotPasswordPage.sapMPage {
+    min-height: 100vh;
+    width: 100%;
+    background: transparent !important;
+    animation: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow-y: auto !important;
+    padding: 24px 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* ── Reset Password page ── */
+.resetPasswordPage,
+.resetPasswordPage .sapMPageBg,
+.resetPasswordPage.sapMPage {
+    min-height: 100vh;
+    width: 100%;
+    background: transparent !important;
+    animation: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow-y: auto !important;
+    padding: 24px 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Full-page centering container */
+.loginContainer {
+    height: 100%;
+    width: 100%;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-direction: column !important;
+}
+
+/* Forgot Password card */
+.FloginCard {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.30), 0 2px 12px rgba(0, 0, 0, 0.18);
+    border: none;
+    padding: 28px 24px 22px 24px;
+    width: 360px;
+    max-width: 95vw;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+/* Bold labels inside forgot password card */
+.FloginCard .sapMLabel {
+    font-weight: 600;
+    font-size: 0.75rem !important;
+}
+
+/* ── Smaller Input Fields (Forgot Password) ── */
+.FloginCard .sapMInput,
+.FloginCard .sapMInputBase {
+    height: 30px !important;
+    min-height: 30px !important;
+    font-size: 0.8rem !important;
+}
+
+.FloginCard .sapMInputBase .sapMInputBaseInner,
+.FloginCard .sapMInput .sapMInputBaseInner {
+    height: 30px !important;
+    line-height: 30px !important;
+    font-size: 0.8rem !important;
+    padding: 0 8px !important;
+}
+
+.FloginCard .sapMInputBase .sapMInputBaseInner::placeholder {
+    font-size: 0.8rem !important;
+}
+
+.passwordInputBox {
+    position: relative;
+    width: 100%;
+}
+
+.passwordInputBox .sapMInputBase {
+    width: 100% !important;
+}
+
+.passwordInputBox .sapMInputBase .sapMInputBaseInner {
+    padding-right: 32px !important;
+}
+
+/* Make the input flex item fill all available width */
+.passwordInputBox > .sapMFlexItem:first-child {
+    flex: 1 1 auto !important;
+}
+
+/* Collapse the HBox flex-item wrapper around the icon so Input gets full width */
+.passwordInputBox > .sapMFlexItem:last-child {
+    flex: 0 0 0 !important;
+    width: 0 !important;
+    overflow: visible !important;
+    min-width: 0 !important;
+}
+
+.passwordToggleIcon {
+    position: absolute !important;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888 !important;
+    font-size: 1rem !important;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.passwordToggleIcon:hover {
+    color: #0d6b5e !important;
+}
+/* ═══════════════════════════════════════
+   LAUNCHPAD PAGE — Header only
+═══════════════════════════════════════ */
+
+/* ── Header ── */
+.launchpadPage .sapFDynamicPageTitle {
+    background: #eaf6ef !important;
+    border-bottom: 1px solid #e4e6ea !important;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07) !important;
+    padding: 8px 16px !important;
+    min-height: unset !important;
+}
+
+.launchpadPage .sapFDynamicPageTitleMain,
+.launchpadPage .sapFDynamicPageTitleRow {
+    padding: 0 !important;
+    min-height: unset !important;
+    flex-wrap: nowrap !important;
+}
+
+/* Prevent horizontal overflow on all screen sizes */
+.launchpadPage .sapFDynamicPage,
+.launchpadPage .sapFDynamicPageContentWrapper,
+.launchpadPage .sapFDynamicPageContent {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+}
+
+/* Mobile: shrink header items */
+@media (max-width: 480px) {
+    .launchpadPage .sapFDynamicPageTitle {
+        padding: 6px 10px !important;
+    }
+    .launchpadPage .oaLogoRounded.sapMImg img {
+        max-height: 28px !important;
+    }
+    .launchpadPage .sapFDynamicPageTitleH {
+        font-size: 0.85rem !important;
+    }
+
+}
+
+/* Remove DynamicPage default top space */
+.launchpadPage .sapFDynamicPageContentWrapper {
+    padding-top: 0 !important;
+}
+
+.launchpadPage .sapFDynamicPageContent {
+    padding-top: 0 !important;
+}
+
+/* ── Tile layout ── */
+.launchpadBody {
+    padding: 24px !important;
+    align-self: flex-start !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.launchpadTileGrid.sapMHBox {
+    display: grid !important;
+    grid-template-columns: repeat(6, 1fr) !important;
+    gap: 12px !important;
+    flex-wrap: unset !important;
+    align-items: unset !important;
+}
+
+.launchpadTileGrid .sapMGT {
+    width: 100% !important;
+    max-width: unset !important;
+    min-width: unset !important;
+}
+
+@media (max-width: 1024px) {
+    .launchpadTileGrid.sapMHBox {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .launchpadTileGrid.sapMHBox {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+.oaLogoRounded.sapMImg,
+.oaLogoRounded.sapMImg img {
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    display: block !important;
+}
+
+.launchpadLogoutBtn.sapMBtn {
+    border-radius: 8px !important;
+    font-size: 0.8rem !important;
+}
+
+/* EMP ID badge — pill style, clickable */
+.headerBadgeBtn.sapMBtn .sapMBtnInner {
+    background: rgb(232, 232, 232) !important;
+    color: rgb(0, 0, 0) !important;
+    border-color: rgb(192, 192, 192) !important;
+    opacity: 1 !important;
+}
+
+.headerBadgeBtn.sapMBtn .sapUiIcon {
+    color: rgb(0, 0, 0) !important;
+}
+
+.headerBadgeBtn.sapMBtn:hover .sapMBtnInner {
+    background: rgb(210, 210, 210) !important;
+}
+
+
+/* ── Mobile responsiveness for login/forgot/reset pages ── */
+@media (max-width: 600px) {
+    /* Prevent horizontal overflow on the page shell */
+    body,
+    html,
+    .sapMPage,
+    .sapMPageBg,
+    .sapMPageScroll,
+    [id^="container-zlogpage"] {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+    }
+
+    /* Center card on small screens, remove desktop right-margin */
+    .loginPageBackground,
+    .loginPageBackground .sapMPageBg,
+    .loginPageBackground.sapMPage {
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    /* Shrink and center the card */
+    .loginCardBox {
+        margin-right: 0 !important;
+        width: 92vw !important;
+        max-width: 92vw !important;
+        padding: 20px 16px 16px 16px !important;
+    }
+
+    /* Forgot password email row: stack input + button */
+    .FloginCard .emailRow.sapMHBox,
+    .loginCardBox .emailRow.sapMHBox {
+        flex-wrap: wrap !important;
+        gap: 6px !important;
+    }
+}
+
+/* Fix hardcoded email input width in ForgotPassword */
+.loginCardBox .sapMInputBase[id*="emailInput"],
+.FloginCard .sapMInputBase[id*="emailInput"] {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+/* ── Tile group section title ── */
+.launchpadGroupTitle.sapMLabel {
+    display: block !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+    color: #1a1f2e !important;
+    margin-top: 8px !important;
+    margin-bottom: 10px !important;
+    padding-bottom: 8px !important;
+}
+
+/* ── Password hint single line ── */
+.pwdHintMsg.sapMText {
+    font-size: 0.7rem !important;
+    color: #aaa !important;
+    margin-top: 4px !important;
+    margin-bottom: 2px !important;
+    line-height: 1.4 !important;
+}
+
+.pwdHintMsg.sapMText.pass {
+    color: #0d6b5e !important;
+}
+
+/* placeholder to avoid broken reference */
+.launchpadTileGrid .sapMGTHdrTxt {
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+}

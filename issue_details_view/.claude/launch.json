@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "issue-details-view",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start-noflp"],
+      "port": 8080
+    }
+  ]
+}

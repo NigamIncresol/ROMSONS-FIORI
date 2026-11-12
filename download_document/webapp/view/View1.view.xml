@@ -1,0 +1,279 @@
+<mvc:View
+    controllerName="downloaddocument.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+>
+    <f:DynamicPage
+        id="dynamicPage"
+        class="pjcPage"
+        fitContent="true"
+        toggleHeaderOnTitleClick="true"
+        busyIndicatorDelay="0"
+    >
+        <!-- ══════════════════════════════════════════
+             DYNAMIC PAGE TITLE
+        ══════════════════════════════════════════ -->
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <HBox alignItems="Center">
+                        <Image
+                            id="logoImage"
+                            height="36px"
+                            class="sapUiSmallMarginEnd pjcLogoRounded"
+                        />
+                        <Title text="{appModel>/docTitle}" />
+                    </HBox>
+                </f:heading>
+                <f:actions>
+                    <Button
+                        icon="sap-icon://employee"
+                        text="{appModel>/employeeId}"
+                        type="Ghost"
+                        enabled="false"
+                        class="sapUiSmallMarginEnd headerBadgeBtn"
+                    >
+                        <layoutData>
+                            <OverflowToolbarLayoutData priority="Low" />
+                        </layoutData>
+                    </Button>
+                    <Button
+                        icon="sap-icon://factory"
+                        text="{appModel>/plant}"
+                        type="Ghost"
+                        enabled="false"
+                        class="sapUiSmallMarginEnd headerBadgeBtn"
+                    >
+                        <layoutData>
+                            <OverflowToolbarLayoutData priority="Low" />
+                        </layoutData>
+                    </Button>
+                    <Button
+                        icon="sap-icon://log"
+                        text="Logout"
+                        type="Negative"
+                        press="onLogout"
+                    >
+                        <layoutData>
+                            <OverflowToolbarLayoutData priority="Low" />
+                        </layoutData>
+                    </Button>
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <!-- ══════════════════════════════════════════
+             DYNAMIC PAGE HEADER  –  Order / Shift Selection
+        ══════════════════════════════════════════ -->
+        <f:header>
+            <f:DynamicPageHeader pinnable="true">
+                <HBox
+                    alignItems="End"
+                    wrap="Wrap"
+                    justifyContent="End"
+                    class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop sapUiSmallMarginBottom"
+                >
+                    <!-- ── Job Card fields ── -->
+                    <VBox class="sapUiSmallMarginEnd" visible="{appModel>/showOrderShiftDate}">
+                        <Label text="QR Code" />
+                        <Input
+                            id="qrInput"
+                            width="220px"
+                            value="{appModel>/qrInput}"
+                            placeholder="Scan QR code"
+                            submit=".onQrInputSubmit"
+                        />
+                    </VBox>
+                    <VBox class="sapUiSmallMarginEnd" visible="{appModel>/showOrderShiftDate}">
+                        <Label text="Order ID" />
+                        <Input
+                            id="orderInput"
+                            width="180px"
+                            value="{appModel>/orderInput}"
+                            placeholder="Enter order ID"
+                            showValueHelp="true"
+                            valueHelpRequest=".onOrderValueHelp"
+                            submit=".onGoPrintJobCard"
+                        />
+                    </VBox>
+                    <VBox class="sapUiSmallMarginEnd" visible="{appModel>/showOrderShiftDate}">
+                        <Label text="Shift Date" />
+                        <Input
+                            id="dateInput"
+                            width="160px"
+                            value="{appModel>/selectedDate}"
+                            placeholder="yyyy-MM-dd"
+                            showValueHelp="true"
+                            valueHelpRequest=".onShiftDateValueHelp"
+                        />
+                    </VBox>
+                    <VBox class="sapUiSmallMarginEnd" visible="{appModel>/showOrderShiftDate}">
+                        <Label text="Shift" />
+                        <Input
+                            id="shiftInput"
+                            width="140px"
+                            value="{appModel>/selectedShift}"
+                            placeholder="Select shift"
+                            showValueHelp="true"
+                            valueHelpRequest=".onShiftValueHelp"
+                            submit=".onGoPrintJobCard"
+                        />
+                    </VBox>
+
+                    <VBox class="sapUiSmallMarginEnd" visible="{appModel>/showOrderShiftDate}">
+                        <Label text=" " />
+                        <Button
+                            icon="sap-icon://qr-code"
+                            type="Emphasized"
+                            tooltip="Scan job card QR"
+                            press=".onScanQr"
+                        />
+                    </VBox>
+
+                    <!-- ── Reservation Slip field ── -->
+                    <VBox class="sapUiSmallMarginEnd" visible="{appModel>/showReservationField}">
+                        <Label text="Reservation Number" />
+                        <Input
+                            id="reservationNumberInput"
+                            width="200px"
+                            value="{appModel>/reservationNumberInput}"
+                            placeholder="Enter reservation number"
+                            showValueHelp="true"
+                            valueHelpRequest=".onReservationValueHelp"
+                            submit=".onGoPrintJobCard"
+                        />
+                    </VBox>
+
+                    <VBox class="sapUiSmallMarginEnd" visible="{appModel>/showReservationField}">
+                        <Label text=" " />
+                        <Button
+                            icon="sap-icon://qr-code"
+                            type="Emphasized"
+                            tooltip="Scan reservation QR"
+                            press=".onScanQr"
+                        />
+                    </VBox>
+
+                    <!-- ── Material Issue / Receipt Slip fields ── -->
+                    <VBox class="sapUiSmallMarginEnd" visible="{appModel>/showMaterialDocFields}">
+                        <Label text="Material Document" />
+                        <Input
+                            id="materialDocInput"
+                            width="180px"
+                            value="{appModel>/materialDocInput}"
+                            placeholder="Enter material document"
+                            showValueHelp="{appModel>/materialF4}"
+                            valueHelpRequest=".onMaterialDocValueHelp"
+                            submit=".onGoPrintJobCard"
+                        />
+                    </VBox>
+                    <VBox class="sapUiSmallMarginEnd" visible="{appModel>/showMaterialDocFields}">
+                        <Label text="Material Doc Year" />
+                        <Input
+                            id="materialDocYearInput"
+                            width="140px"
+                            value="{appModel>/materialDocYearInput}"
+                            placeholder="e.g. 2026"
+                            showValueHelp="{appModel>/materialF4}"
+                            valueHelpRequest=".onMaterialDocYearValueHelp"
+                            submit=".onGoPrintJobCard"
+                        />
+                    </VBox>
+
+                    <VBox class="sapUiSmallMarginEnd" visible="{appModel>/showMaterialDocFields}">
+                        <Label text=" " />
+                        <Button
+                            icon="sap-icon://qr-code"
+                            type="Emphasized"
+                            tooltip="Scan material document QR"
+                            press=".onScanQr"
+                        />
+                    </VBox>
+
+                    <Button
+                        text="{appModel>/goText}"
+                        type="Emphasized"
+                        icon="sap-icon://search"
+                        press=".onGoPrintJobCard"
+                    />
+                </HBox>
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <!-- ══════════════════════════════════════════
+             DYNAMIC PAGE CONTENT
+        ══════════════════════════════════════════ -->
+        <f:content>
+            <VBox class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop">
+                <!-- ── Result Section ── -->
+                <VBox
+                    visible="{appModel>/resultVisible}"
+                    class="sapUiSmallMarginTop"
+                >
+                    <Text text="{appModel>/foundLabel}" class="jobCardFoundLabel" />
+                    <VBox class="jobCardResultCard sapUiSmallMarginBottom">
+                        <HBox alignItems="Center" wrap="Wrap">
+                            <Text
+                                text="{appModel>/appliedSummary}"
+                                class="jobCardResultValue"
+                            />
+                        </HBox>
+                        <Button
+                            text="Open Document"
+                            icon="sap-icon://pdf-attachment"
+                            type="Accept"
+                            press=".onOpenDocument"
+                            visible="false"
+                            class="sapUiTinyMarginTop"
+                        />
+                    </VBox>
+                    <core:HTML
+                        content="{ path: 'appModel>/pdfUrl', formatter: '.formatPdfIframe' }"
+                        class="sapUiSmallMarginTop"
+                    />
+                </VBox>
+
+                <!-- ── Error Section ── -->
+                <VBox
+                    visible="{appModel>/errorVisible}"
+                    class="sapUiSmallMarginTop"
+                >
+                    <Text text="{appModel>/notFoundLabel}" class="jobCardErrorLabel" />
+                    <VBox class="jobCardErrorCard">
+                        <HBox alignItems="Center" wrap="Wrap" class="sapUiTinyMarginBottom">
+                            <Text
+                                text="{appModel>/appliedSummary}"
+                                class="jobCardErrorValue"
+                            />
+                        </HBox>
+                        <Text
+                            text="{appModel>/errorMessage}"
+                            class="jobCardErrorValue"
+                        />
+                    </VBox>
+                </VBox>
+
+                <!-- ── Empty state ── -->
+                <VBox
+                    visible="{= !${appModel>/resultVisible} &amp;&amp; !${appModel>/errorVisible} }"
+                    alignItems="Center"
+                    class="sapUiLargeMarginTop"
+                >
+                    <core:Icon
+                        src="{appModel>/docIcon}"
+                        size="3rem"
+                        color="var(--sapNeutralColor)"
+                        class="sapUiSmallMarginBottom"
+                    />
+                    <Title text="{appModel>/emptyTitle}" level="H4" />
+                    <Text
+                        text="{appModel>/emptyText}"
+                        class="sapUiTinyMarginTop"
+                    />
+                </VBox>
+            </VBox>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

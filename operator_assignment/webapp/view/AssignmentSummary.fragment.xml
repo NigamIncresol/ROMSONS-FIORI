@@ -1,0 +1,158 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:tnt="sap.tnt"
+>
+    <Dialog
+        id="saveConfirmDialog"
+        contentWidth="540px"
+        contentMinWidth="320px"
+        draggable="true"
+        class="oaConfirmDialog"
+    >
+        <customHeader>
+            <Bar class="oaDialogHeader">
+                <contentLeft>
+                    <core:Icon
+                        src="sap-icon://save"
+                        class="oaDialogHeaderIcon"
+                    />
+                </contentLeft>
+                <contentMiddle>
+                    <Title
+                        text="Confirm Assignment Save"
+                        level="H4"
+                        class="oaDialogHeaderTitle"
+                    />
+                </contentMiddle>
+            </Bar>
+        </customHeader>
+
+        <content>
+            <VBox class="oaDialogBody">
+
+                <!-- Shift meta row -->
+                <HBox
+                    alignItems="Center"
+                    justifyContent="SpaceBetween"
+                    wrap="Wrap"
+                    class="oaDialogMetaRow"
+                >
+                    <HBox alignItems="Center">
+                        <core:Icon
+                            src="sap-icon://time-entry-request"
+                            class="oaDialogMetaIcon sapUiTinyMarginEnd"
+                        />
+                        <Text
+                            text="Shift A  ·  06:00 – 18:00"
+                            class="oaDialogMetaText"
+                        />
+                    </HBox>
+                    <tnt:InfoLabel
+                        text="{viewModel>/summary/shiftLabel}"
+                        colorScheme="6"
+                    />
+                </HBox>
+
+                <!-- Info strip -->
+                <MessageStrip
+                    text="Review the operators below before confirming. This will save the shift assignment record."
+                    type="Information"
+                    showIcon="true"
+                    class="oaDialogStrip"
+                />
+
+                <!-- Operator summary table -->
+                <Table
+                    items="{viewModel>/operators}"
+                    noDataText="No operators assigned."
+                    alternateRowColors="true"
+                    showSeparators="Inner"
+                    class="oaDialogTable"
+                >
+                    <headerToolbar>
+                        <Toolbar class="oaDialogTableHeader">
+                            <core:Icon
+                                src="sap-icon://group"
+                                class="sapUiTinyMarginEnd"
+                            />
+                            <Title
+                                text="Operator List"
+                                level="H6"
+                            />
+                            <ToolbarSpacer />
+                            <Text
+                                text="{= ${viewModel>/summary/opsAssigned} + ' operators'}"
+                                class="oaDialogTableCount"
+                            />
+                        </Toolbar>
+                    </headerToolbar>
+                    <columns>
+                        <Column width="18%">
+                            <Text text="ID" />
+                        </Column>
+                        <Column width="36%">
+                            <Text text="Operator" />
+                        </Column>
+                        <Column
+                            width="20%"
+                            hAlign="Center"
+                        >
+                            <Text text="Hours" />
+                        </Column>
+                        <Column
+                            width="26%"
+                            hAlign="Center"
+                        >
+                            <Text text="Target Qty" />
+                        </Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Text
+                                    text="{viewModel>id}"
+                                    class="oaDialogOpId"
+                                />
+                                <ObjectStatus
+                                    text="{viewModel>name}"
+                                    icon="sap-icon://employee"
+                                    state="Information"
+                                />
+                                <Text
+                                    text="{viewModel>hours}"
+                                    textAlign="Center"
+                                />
+                                <ObjectNumber
+                                    number="{viewModel>targetQty}"
+                                    state="Information"
+                                />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+
+            </VBox>
+        </content>
+
+        <beginButton>
+            <Button
+                text="Cancel"
+                type="Transparent"
+                icon="sap-icon://decline"
+                press=".onCloseSummary"
+            />
+        </beginButton>
+
+        <endButton>
+            <Button
+                text="Confirm Save"
+                type="Emphasized"
+                icon="sap-icon://save"
+                press=".onConfirmSave"
+            />
+        </endButton>
+
+    </Dialog>
+
+</core:FragmentDefinition>

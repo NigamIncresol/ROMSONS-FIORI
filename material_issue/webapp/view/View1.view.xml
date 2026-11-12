@@ -1,0 +1,354 @@
+<mvc:View
+    controllerName="materialissue.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
+>
+    <f:DynamicPage
+        id="dynamicPage"
+        fitContent="true"
+        toggleHeaderOnTitleClick="true"
+        busyIndicatorDelay="0"
+    >
+
+        <!-- ══════════════════════════════════════════
+             TITLE
+        ══════════════════════════════════════════ -->
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <HBox alignItems="Center">
+                        <Image
+                            id="logoImage"
+                            height="36px"
+                            class="sapUiSmallMarginEnd logoRounded"
+                        />
+                        <Title text="Issue Material" />
+                    </HBox>
+                </f:heading>
+                <f:actions>
+                    <ObjectStatus
+                        icon="sap-icon://employee"
+                        title="EMP ID"
+                        text="{appModel>/employeeId}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <ObjectStatus
+                        icon="sap-icon://factory"
+                        title="PLANT"
+                        text="{appModel>/plant}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <Button
+                        icon="sap-icon://log"
+                        text="Logout"
+                        type="Negative"
+                        press="onLogout"
+                    />
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <!-- ══════════════════════════════════════════
+             HEADER (filters)
+        ══════════════════════════════════════════ -->
+        <f:header>
+            <f:DynamicPageHeader pinnable="true">
+                <HBox
+                    alignItems="End"
+                    justifyContent="End"
+                    width="100%"
+                >
+                    <VBox class="sapUiSmallMarginEnd">
+                        <Label text="RESERVATION NO" class="sectionLabel" />
+                        <Input
+                            id="reservationFilterInput"
+                            value="{appModel>/reservationNoInput}"
+                            placeholder="Enter reservation number"
+                            width="180px"
+                            showValueHelp="true"
+                            valueHelpRequest=".onReservationValueHelp"
+                            submit=".onApplyReservationSearch"
+                        />
+                    </VBox>
+                    <Button
+                        type="Emphasized"
+                        icon="sap-icon://bar-code"
+                        tooltip="Scan Reservation QR / Barcode"
+                        press=".onScanReservation"
+                        class="sapUiTinyMarginEnd"
+                    />
+                    <Button
+                        text="Apply"
+                        type="Emphasized"
+                        icon="sap-icon://filter"
+                        press=".onApplyReservationSearch"
+                    />
+                </HBox>
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <!-- ══════════════════════════════════════════
+             CONTENT
+        ══════════════════════════════════════════ -->
+        <f:content>
+            <VBox class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop sapUiSmallMarginBottom">
+
+
+                <!-- Empty state: no reservations at all -->
+                <VBox
+                    visible="{= ${materialsModel>/reservations/length} === 0 &amp;&amp; !${materialsModel>/searchQuery} }"
+                    alignItems="Center"
+                    class="sapUiLargeMarginTop sapUiLargeMarginBottom"
+                >
+                    <core:Icon
+                        src="sap-icon://shipping-status"
+                        size="3rem"
+                        color="var(--sapNeutralColor)"
+                        class="sapUiSmallMarginBottom"
+                    />
+                    <Title text="No Reservation Number Provided" level="H4" />
+                    <Text
+                        text="Enter a reservation number above and click Apply to search."
+                        class="sapUiSmallMarginTop"
+                    />
+                </VBox>
+
+                <!-- Empty state: search yielded no matches -->
+                <VBox
+                    visible="{= ${materialsModel>/reservations/length} === 0 &amp;&amp; !!${materialsModel>/searchQuery} }"
+                    alignItems="Center"
+                    class="sapUiLargeMarginTop sapUiLargeMarginBottom"
+                >
+                    <core:Icon
+                        src="sap-icon://search"
+                        size="3rem"
+                        color="var(--sapNeutralColor)"
+                        class="sapUiSmallMarginBottom"
+                    />
+                    <Title text="No Matching Reservations" level="H4" />
+                    <Text
+                        text="{= 'No reservation matches \'' + ${materialsModel>/searchQuery} + '\'.' }"
+                        class="sapUiSmallMarginTop"
+                    />
+                </VBox>
+
+                <!-- One panel per reservation -->
+                <VBox
+                    visible="{= ${materialsModel>/reservations/length} > 0 }"
+                    items="{materialsModel>/reservations}"
+                >
+                    <items>
+                        <VBox>
+                            <Panel
+                                expandable="true"
+                                expanded="true"
+                                class="sapUiSmallMarginBottom storagePanel"
+                            >
+                                <headerToolbar>
+                                    <Toolbar>
+                                        <HBox width="100%" alignItems="Center" justifyContent="SpaceBetween">
+                                            <Title text="{path: 'materialsModel>reservationNumber', formatter: '.formatReservationNumber'}" level="H6" />
+                                            <ObjectStatus
+                                                icon="sap-icon://shipping-status"
+                                                text="Issue Loc: {materialsModel>issueStorgaeLoc} → Receiving Loc: {materialsModel>receivingStorgaeLoc}"
+                                                state="Information"
+                                                inverted="true"
+                                            />
+                                        </HBox>
+                                    </Toolbar>
+                                </headerToolbar>
+                                <content>
+                                    <Table
+                                        items="{materialsModel>items}"
+                                        alternateRowColors="true"
+                                        sticky="ColumnHeaders"
+                                        mode="MultiSelect"
+                                        selectionChange=".onItemSelectionChange"
+                                        class="materialTable itemsTable"
+                                    >
+                                        <columns>
+                                            <Column width="3rem"><Text text="Item" /></Column>
+                                            <Column width="10rem"><Text text="Material" /></Column>
+                                            <Column><Text text="Description" /></Column>
+                                            <Column hAlign="End"><Text text="Stock (Shop Floor)" /></Column>
+                                            <Column hAlign="End"><Text text="Stock (Source)" /></Column>
+                                            <Column hAlign="End"><Text text="Stock (Plant)" /></Column>
+                                            <Column hAlign="End"><Text text="Required Qty" /></Column>
+                                            <Column hAlign="End"><Text text="Issued Qty" /></Column>
+                                            <Column hAlign="End"><Text text="Pending Qty" /></Column>
+                                            <Column hAlign="End" width="10rem"><Text text="Target Qty" /></Column>
+                                            <Column width="3rem"><Text text="UoM" /></Column>
+                                            <Column width="7rem"><Text text="Batches" /></Column>
+                                        </columns>
+                                        <items>
+                                            <ColumnListItem>
+                                                <cells>
+                                                    <ObjectStatus text="{materialsModel>reservationItemNo}" state="None" />
+                                                    <Text text="{materialsModel>material}" />
+                                                    <Text text="{materialsModel>materialDesc}" />
+                                                    <ObjectNumber number="{path: 'materialsModel>stockSf', formatter: '.formatQty'}" state="None" />
+                                                    <ObjectNumber number="{path: 'materialsModel>stockSrc', formatter: '.formatQty'}" state="None" />
+                                                    <ObjectNumber number="{path: 'materialsModel>stockPlant', formatter: '.formatQty'}" state="None" />
+                                                    <ObjectNumber number="{path: 'materialsModel>requirementQty', formatter: '.formatQty'}" state="Information" />
+                                                    <ObjectNumber number="{path: 'materialsModel>withdrawalQty', formatter: '.formatQty'}" state="Success" />
+                                                    <ObjectNumber number="{path: 'materialsModel>pendingQty', formatter: '.formatQty'}" state="Warning" />
+                                                    <Input
+                                                        value="{path: 'materialsModel>targetQty', formatter: '.formatQty'}"
+                                                        type="Text"
+                                                        width="8rem"
+                                                        enabled="false"
+                                                    />
+                                                    <Text text="{materialsModel>units}" />
+                                                    <Button
+                                                        text="Batch Info"
+                                                        type="Transparent"
+                                                        enabled="{= parseFloat(${materialsModel>pendingQty}) > 0 }"
+                                                        press=".onShowItemBatches"
+                                                    />
+                                                </cells>
+                                            </ColumnListItem>
+                                        </items>
+                                    </Table>
+                                    <HBox justifyContent="End" class="tableSubmitBar">
+                                        <Button
+                                            text="Submit Issue"
+                                            type="Success"
+                                            enabled="{= ${materialsModel>allBatches/length} > 0 &amp;&amp; ${materialsModel>canSubmit} }"
+                                            press=".onSubmitIssue"
+                                        />
+                                    </HBox>
+                                </content>
+                            </Panel>
+
+                            <Panel
+                                expandable="true"
+                                expanded="true"
+                                class="sapUiSmallMarginBottom batchPanel"
+                            >
+                                <headerToolbar>
+                                    <Toolbar>
+                                        <HBox width="100%" alignItems="Center" justifyContent="SpaceBetween">
+                                            <Title text="Batches" level="H6" />
+                                            <HBox alignItems="Center">
+                                                <ObjectStatus
+                                                    icon="sap-icon://batch-payments"
+                                                    text="{= ${materialsModel>allBatches/length} } Batch(es)"
+                                                    state="Information"
+                                                    inverted="true"
+                                                    class="sapUiSmallMarginEnd"
+                                                />
+                                                <Label
+                                                    text="Scan Required"
+                                                    class="sapUiTinyMarginEnd"
+                                                />
+                                                <Switch
+                                                    state="{appModel>/scanRequired}"
+                                                    customTextOn="Yes"
+                                                    customTextOff="No"
+                                                    change=".onScanRequiredChange"
+                                                    class="sapUiSmallMarginEnd"
+                                                />
+                                                <Button
+                                                    text="Scan Bag"
+                                                    type="Emphasized"
+                                                    icon="sap-icon://bar-code"
+                                                    enabled="{= ${appModel>/scanRequired} &amp;&amp; ${materialsModel>allBatches/length} > 0 }"
+                                                    press=".onScanBatch"
+                                                />
+                                            </HBox>
+                                        </HBox>
+                                    </Toolbar>
+                                </headerToolbar>
+                                <content>
+                                    <!-- Prompt shown until the user clicks "Batch Info" on an item -->
+                                    <VBox
+                                        visible="{= ${materialsModel>allBatches/length} === 0 }"
+                                        alignItems="Center"
+                                        class="sapUiMediumMarginTop sapUiMediumMarginBottom"
+                                    >
+                                        <core:Icon
+                                            src="sap-icon://batch-payments"
+                                            size="2rem"
+                                            color="var(--sapNeutralColor)"
+                                            class="sapUiSmallMarginBottom"
+                                        />
+                                        <Text text="Click 'Batch Info' on an item above to view its batches here." />
+                                    </VBox>
+
+                                    <VBox visible="{= ${materialsModel>allBatches/length} > 0 }">
+                                        <SearchField
+                                            placeholder="Search by Item No / Material / Description"
+                                            width="25rem"
+                                            liveChange=".onBatchSearch"
+                                            class="sapUiSmallMarginBottom"
+                                        />
+                                        <Table
+                                            items="{materialsModel>allBatches}"
+                                            alternateRowColors="true"
+                                            sticky="ColumnHeaders"
+                                            class="materialTable"
+                                        >
+                                            <columns>
+                                                <Column width="3rem"><Text text="Item" /></Column>
+                                                <Column width="10rem"><Text text="Material" /></Column>
+                                                <Column><Text text="Description" /></Column>
+                                                <Column width="8rem"><Text text="Batch" /></Column>
+                                                <Column hAlign="End"><Text text="Available Qty" /></Column>
+                                                <Column hAlign="End" width="8rem"><Text text="Split Qty" /></Column>
+                                                <Column width="3rem"><Text text="UoM" /></Column>
+                                                <Column width="11rem"><Text text="Bags" /></Column>
+                                            </columns>
+                                            <items>
+                                                <ColumnListItem>
+                                                    <cells>
+                                                        <ObjectStatus text="{materialsModel>reservationItemNo}" state="None" />
+                                                        <Text text="{materialsModel>material}" />
+                                                        <Text text="{materialsModel>materialDesc}" />
+                                                        <Text text="{materialsModel>batchNo}" />
+                                                        <ObjectNumber number="{path: 'materialsModel>availableQty', formatter: '.formatQty'}" state="Success" />
+                                                        <Input
+                                                            value="{materialsModel>splitQty}"
+                                                            type="Number"
+                                                            width="6rem"
+                                                            enabled="{= parseFloat(${materialsModel>availableQty}) > 0 &amp;&amp; !${appModel>/scanRequired} }"
+                                                            liveChange=".onSplitQtyChange"
+                                                        />
+                                                        <Text text="{materialsModel>unit}" />
+                                                        <Button
+                                                            icon="sap-icon://product"
+                                                            text="{= ${materialsModel>bags}.length }"
+                                                            tooltip="View scanned bags"
+                                                            type="Transparent"
+                                                            enabled="{= ${materialsModel>bags}.length > 0 }"
+                                                            press=".onShowBags"
+                                                        />
+                                                    </cells>
+                                                </ColumnListItem>
+                                            </items>
+                                        </Table>
+                                        <HBox justifyContent="End" class="tableSubmitBar">
+                                            <Button
+                                                text="Save as Draft"
+                                                type="Emphasized"
+                                                enabled="{= ${materialsModel>allBatches/length} > 0 }"
+                                                press=".onSaveBatchDraft"
+                                            />
+                                        </HBox>
+                                    </VBox>
+                                </content>
+                            </Panel>
+                        </VBox>
+                    </items>
+                </VBox>
+
+            </VBox>
+        </f:content>
+
+    </f:DynamicPage>
+</mvc:View>

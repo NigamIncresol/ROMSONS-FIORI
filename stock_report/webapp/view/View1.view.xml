@@ -1,0 +1,92 @@
+<mvc:View
+    controllerName="stockreport.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
+>
+    <f:DynamicPage
+        id="dynamicPage"
+        fitContent="false"
+        toggleHeaderOnTitleClick="true"
+        busyIndicatorDelay="0"
+    >
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <HBox alignItems="Center">
+                        <Image
+                            id="logoImage"
+                            height="36px"
+                            class="sapUiSmallMarginEnd logoRounded"
+                        />
+                        <Title text="Stock Report" />
+                    </HBox>
+                </f:heading>
+                <f:actions>
+                    <ObjectStatus
+                        icon="sap-icon://employee"
+                        title="EMP ID"
+                        text="{appModel>/employeeId}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <ObjectStatus
+                        icon="sap-icon://factory"
+                        title="PLANT"
+                        text="{appModel>/plant}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <Button
+                        icon="sap-icon://log"
+                        text="Logout"
+                        type="Negative"
+                        press="onLogout"
+                    />
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <f:content>
+            <VBox
+                visible="{stockModel>/hasResults}"
+                class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop sapUiSmallMarginBottom"
+            >
+                <MessageStrip
+                    text="{stockModel>/appliedCriteria}"
+                    type="Information"
+                    showIcon="true"
+                    class="sapUiSmallMarginBottom"
+                />
+                <HBox justifyContent="End" class="sapUiTinyMarginBottom">
+                    <Button
+                        text="Export to Excel"
+                        icon="sap-icon://excel-attachment"
+                        type="Emphasized"
+                        press=".onExportExcel"
+                    />
+                </HBox>
+                <ScrollContainer horizontal="true" vertical="false" width="100%">
+                    <Table
+                        id="stockTable"
+                        alternateRowColors="true"
+                        sticky="ColumnHeaders"
+                        noDataText="No stock found for the selected criteria."
+                        class="materialTable"
+                    />
+                </ScrollContainer>
+                <HBox justifyContent="Center" class="sapUiSmallMarginTop">
+                    <Button
+                        text="Load More"
+                        icon="sap-icon://navigation-down-arrow"
+                        visible="{stockModel>/hasMore}"
+                        press=".onLoadMore"
+                    />
+                </HBox>
+            </VBox>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

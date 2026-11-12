@@ -1,0 +1,542 @@
+<mvc:View
+    controllerName="reservationlist.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
+>
+    <f:DynamicPage
+        id="dynamicPage"
+        fitContent="true"
+        toggleHeaderOnTitleClick="true"
+        busyIndicatorDelay="0"
+    >
+        <!-- ══════════════════════════════════════════
+             TITLE
+        ══════════════════════════════════════════ -->
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <HBox alignItems="Center">
+                        <Image
+                            id="logoImage"
+                            height="36px"
+                            class="sapUiSmallMarginEnd logoRounded"
+                        />
+                        <Title text="Reservation List View" />
+                    </HBox>
+                </f:heading>
+                <f:actions>
+                    <ObjectStatus
+                        icon="sap-icon://employee"
+                        title="EMP ID"
+                        text="{appModel>/employeeId}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <ObjectStatus
+                        icon="sap-icon://factory"
+                        title="PLANT"
+                        text="{appModel>/plant}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <Button
+                        icon="sap-icon://log"
+                        text="Logout"
+                        type="Negative"
+                        press="onLogout"
+                    />
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <!-- ══════════════════════════════════════════
+             HEADER  –  Title / Search / Filters
+        ══════════════════════════════════════════ -->
+        <f:header>
+            <f:DynamicPageHeader pinnable="true">
+                <VBox class="sapUiSmallMarginBegin sapUiSmallMarginEnd">
+                    <HBox
+                        alignItems="Center"
+                        justifyContent="SpaceBetween"
+                    >
+                        <HBox alignItems="Center">
+                            <SearchField
+                                id="reservationSearchField"
+                                placeholder="Search Reservation / Order / Loc"
+                                width="25rem"
+                                liveChange="onSearchReservation"
+                                class="sapUiTinyMarginEnd"
+                            />
+                        </HBox>
+                    </HBox>
+
+                    <HBox
+                        width="100%"
+                        alignItems="End"
+                        wrap="Wrap"
+                        class="sapUiTinyMarginTop"
+                    >
+                        <VBox class="sapUiTinyMarginBottom">
+                            <layoutData>
+                                <FlexItemData
+                                    growFactor="1"
+                                    minWidth="8rem"
+                                />
+                            </layoutData>
+                            <Label text="Reservation No" />
+                            <HBox alignItems="Center" width="100%">
+                                <Input
+                                    width="100%"
+                                    value="{appModel>/filterReservationNo}"
+                                    showValueHelp="true"
+                                    valueHelpRequest=".onValueHelpReservationNo"
+                                >
+                                    <layoutData>
+                                        <FlexItemData growFactor="1" />
+                                    </layoutData>
+                                </Input>
+                                <Button
+                                    icon="sap-icon://bar-code"
+                                    tooltip="Scan Requisition Slip"
+                                    type="Emphasized"
+                                    press=".onOpenScanner"
+                                    class="sapUiTinyMarginBegin"
+                                />
+                            </HBox>
+                        </VBox>
+                        <VBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                            <layoutData>
+                                <FlexItemData
+                                    growFactor="1"
+                                    minWidth="8rem"
+                                />
+                            </layoutData>
+                            <Label text="Order" />
+                            <Input
+                                width="100%"
+                                value="{appModel>/filterOrder}"
+                                showValueHelp="true"
+                                valueHelpRequest=".onValueHelpOrder"
+                            />
+                        </VBox>
+                        <VBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                            <layoutData>
+                                <FlexItemData
+                                    growFactor="1"
+                                    minWidth="8rem"
+                                />
+                            </layoutData>
+                            <Label text="Created Date" />
+                            <DatePicker
+                                width="100%"
+                                valueFormat="yyyy-MM-dd"
+                                displayFormat="medium"
+                                placeholder="e.g. Dec 31, 2026"
+                                value="{appModel>/filterCreatedDate}"
+                            />
+                        </VBox>
+                        <VBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                            <layoutData>
+                                <FlexItemData
+                                    growFactor="1"
+                                    minWidth="8rem"
+                                />
+                            </layoutData>
+                            <Label text="Issue Loc" />
+                            <Input
+                                width="100%"
+                                value="{appModel>/filterIssueLoc}"
+                                showValueHelp="true"
+                                valueHelpRequest=".onValueHelpIssueLoc"
+                            />
+                        </VBox>
+                        <VBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                            <layoutData>
+                                <FlexItemData
+                                    growFactor="1"
+                                    minWidth="8rem"
+                                />
+                            </layoutData>
+                            <Label text="Receiving Loc" />
+                            <Input
+                                width="100%"
+                                value="{appModel>/filterReceivingLoc}"
+                                showValueHelp="true"
+                                valueHelpRequest=".onValueHelpReceivingLoc"
+                            />
+                        </VBox>
+                        <VBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                            <layoutData>
+                                <FlexItemData growFactor="1" minWidth="8rem" />
+                            </layoutData>
+                            <Label text="Department" />
+                            <Input
+                                width="100%"
+                                value="{appModel>/filterDepartment}"
+                                showValueHelp="true"
+                                valueHelpRequest=".onValueHelpDepartment"
+                            />
+                        </VBox>
+                        <VBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                            <layoutData>
+                                <FlexItemData growFactor="1" minWidth="8rem" />
+                            </layoutData>
+                            <Label text="House" />
+                            <Input
+                                width="100%"
+                                value="{appModel>/filterHouse}"
+                                showValueHelp="true"
+                                valueHelpRequest=".onValueHelpHouse"
+                            />
+                        </VBox>
+                        <VBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                            <layoutData>
+                                <FlexItemData growFactor="1" minWidth="8rem" />
+                            </layoutData>
+                            <Label text="Material" />
+                            <Input
+                                width="100%"
+                                value="{appModel>/filterMaterial}"
+                                showValueHelp="true"
+                                valueHelpRequest=".onValueHelpMaterial"
+                            />
+                        </VBox>
+                        <VBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                            <layoutData>
+                                <FlexItemData growFactor="1" minWidth="8rem" />
+                            </layoutData>
+                            <Label text="Status" />
+                            <Input
+                                width="100%"
+                                value="{appModel>/filterStatus}"
+                                showValueHelp="true"
+                                valueHelpRequest=".onValueHelpStatus"
+                            />
+                        </VBox>
+                    </HBox>
+                    <HBox
+                        width="100%"
+                        alignItems="Center"
+                        justifyContent="End"
+                    >
+                        <Button
+                            text="Apply Filters"
+                            type="Emphasized"
+                            class="sapUiSmallMarginEnd"
+                            press=".onApplyFilters"
+                        />
+                        <Link
+                            text="Clear Filters"
+                            press=".onClearFilters"
+                        />
+                    </HBox>
+                </VBox>
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <!-- ══════════════════════════════════════════
+             CONTENT
+        ══════════════════════════════════════════ -->
+        <f:content>
+            <VBox
+                class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop sapUiSmallMarginBottom"
+            >
+                <!-- Active filters message strip -->
+                <MessageStrip
+                    text="{materialsModel>/activeFiltersText}"
+                    type="Information"
+                    showIcon="true"
+                    showCloseButton="true"
+                    close=".onClearFilters"
+                    visible="{materialsModel>/hasActiveFilters}"
+                    class="sapUiSmallMarginBottom"
+                />
+
+                <!-- Empty state: no reservations at all -->
+                <VBox
+                    visible="{= ${materialsModel>/reservations/length} === 0 &amp;&amp; !${materialsModel>/searchQuery} }"
+                    alignItems="Center"
+                    class="sapUiLargeMarginTop sapUiLargeMarginBottom"
+                >
+                    <core:Icon
+                        src="sap-icon://shipping-status"
+                        size="3rem"
+                        color="var(--sapNeutralColor)"
+                        class="sapUiSmallMarginBottom"
+                    />
+                    <Title
+                        text="No Reservations Found"
+                        level="H4"
+                    />
+                    <Text
+                        text="No material reservations are pending for this employee/plant."
+                        class="sapUiSmallMarginTop"
+                    />
+                </VBox>
+
+                <!-- Empty state: search yielded no matches -->
+                <VBox
+                    visible="{= ${materialsModel>/reservations/length} === 0 &amp;&amp; !!${materialsModel>/searchQuery} }"
+                    alignItems="Center"
+                    class="sapUiLargeMarginTop sapUiLargeMarginBottom"
+                >
+                    <core:Icon
+                        src="sap-icon://search"
+                        size="3rem"
+                        color="var(--sapNeutralColor)"
+                        class="sapUiSmallMarginBottom"
+                    />
+                    <Title
+                        text="No Matching Reservations"
+                        level="H4"
+                    />
+                    <Text
+                        text="{= 'No reservation matches \'' + ${materialsModel>/searchQuery} + '\'.' }"
+                        class="sapUiSmallMarginTop"
+                    />
+                </VBox>
+
+                <!-- One panel per reservation -->
+                <VBox
+                    visible="{= ${materialsModel>/reservations/length} > 0 }"
+                    items="{materialsModel>/reservations}"
+                >
+                    <items>
+                        <Panel
+                            expandable="true"
+                            expanded="false"
+                            class="sapUiSmallMarginBottom storagePanel"
+                        >
+                            <headerToolbar>
+                                <Toolbar>
+                                    <HBox
+                                        width="100%"
+                                        alignItems="Center"
+                                        justifyContent="SpaceBetween"
+                                    >
+                                        <HBox
+                                            alignItems="Center"
+                                            wrap="Wrap"
+                                        >
+                                            <ObjectStatus
+                                                title="Res No"
+                                                text="{path: 'materialsModel>reservationNumber', formatter: '.formatReservationNumber'}"
+                                                state="Success"
+                                                class="boldStatus"
+                                            />
+                                            <Text
+                                                text="|"
+                                                class="sapUiTinyMarginBeginEnd"
+                                            />
+                                            <ObjectStatus
+                                                title="Order"
+                                                text="{materialsModel>order}"
+                                                state="Warning"
+                                                class="boldStatus"
+                                            />
+                                            <Text
+                                                text="|"
+                                                class="sapUiTinyMarginBeginEnd"
+                                            />
+                                            <ObjectStatus
+                                                title="Created"
+                                                text="{parts: ['materialsModel>createdDate', 'materialsModel>createdTime'], formatter: '.formatCreatedDateTime'}"
+                                                state="Information"
+                                            />
+                                            <Text
+                                                text="|"
+                                                class="sapUiTinyMarginBeginEnd"
+                                            />
+                                            <ObjectStatus
+                                                title="House"
+                                                text="{parts: ['materialsModel>houseId', 'materialsModel>houseDesc'], formatter: '.formatHouse'}"
+                                                state="None"
+                                                class="boldStatus"
+                                            />
+                                            <Text
+                                                text="|"
+                                                class="sapUiTinyMarginBeginEnd"
+                                            />
+                                            <ObjectStatus
+                                                title="Dept"
+                                                text="{path: 'materialsModel>department', formatter: '.formatOrNA'}"
+                                                state="None"
+                                                class="boldStatus"
+                                            />
+                                        </HBox>
+                                        <HBox alignItems="Center">
+                                            <ObjectStatus
+                                                icon="sap-icon://shipping-status"
+                                                text="{materialsModel>issueStorgaeLoc} → {materialsModel>receivingStorgaeLoc}"
+                                                tooltip="Issue Loc → Receiving Loc"
+                                                state="Information"
+                                                inverted="true"
+                                                class="sapUiTinyMarginBegin"
+                                            />
+                                            <ObjectStatus
+                                                text="{path: 'materialsModel>resStatus', formatter: '.formatStatusText'}"
+                                                state="{path: 'materialsModel>resStatus', formatter: '.formatStatusState'}"
+                                                inverted="true"
+                                                class="boldStatus sapUiTinyMarginBegin"
+                                            />
+                                        </HBox>
+                                    </HBox>
+                                </Toolbar>
+                            </headerToolbar>
+                            <content>
+                                <Panel
+                                    expandable="false"
+                                    expanded="true"
+                                    headerText="Created Log"
+                                    class="sapUiTinyMarginBottom createdLogPanel"
+                                >
+                                    <content>
+                                        <HBox
+                                            alignItems="Center"
+                                            wrap="NoWrap"
+                                        >
+                                            <ObjectStatus
+                                                title="Employee ID"
+                                                text="{path: 'materialsModel>employeeId', formatter: '.formatOrNA'}"
+                                                state="None"
+                                                class="sapUiTinyMarginEnd"
+                                            />
+                                            <ObjectStatus
+                                                title="Created By"
+                                                text="{path: 'materialsModel>createdBy', formatter: '.formatOrNA'}"
+                                                state="None"
+                                                class="sapUiTinyMarginEnd"
+                                            />
+                                            <ObjectStatus
+                                                title="Created On"
+                                                text="{path: 'materialsModel>createdDate', formatter: '.formatCreatedDate'}"
+                                                state="None"
+                                                class="sapUiTinyMarginEnd"
+                                            />
+                                            <ObjectStatus
+                                                title="Created Time"
+                                                text="{path: 'materialsModel>createdTime', formatter: '.formatCreatedTime'}"
+                                                state="None"
+                                            />
+                                        </HBox>
+                                    </content>
+                                </Panel>
+                                <Table
+                                    items="{materialsModel>items}"
+                                    alternateRowColors="true"
+                                    sticky="ColumnHeaders"
+                                    class="materialTable"
+                                >
+                                    <columns>
+                                        <Column width="3rem">
+                                            <Text text="Item" />
+                                        </Column>
+                                        <Column width="10rem">
+                                            <Text text="Material" />
+                                        </Column>
+                                        <Column>
+                                            <Text text="Description" />
+                                        </Column>
+                                        <Column hAlign="End">
+                                            <Text text="Stock (Shop Floor)" />
+                                        </Column>
+                                        <Column hAlign="End">
+                                            <Text text="Stock (Source)" />
+                                        </Column>
+                                        <Column hAlign="End">
+                                            <Text text="Stock (Plant)" />
+                                        </Column>
+                                        <Column hAlign="End">
+                                            <Text text="Required Qty" />
+                                        </Column>
+                                        <Column hAlign="End">
+                                            <Text text="Issued Qty" />
+                                        </Column>
+                                        <Column hAlign="End">
+                                            <Text text="Pending Qty" />
+                                        </Column>
+                                        <Column width="3rem">
+                                            <Text text="UoM" />
+                                        </Column>
+                                    </columns>
+                                    <items>
+                                        <ColumnListItem>
+                                            <cells>
+                                                <ObjectStatus
+                                                    text="{materialsModel>reservationItemNo}"
+                                                    state="None"
+                                                />
+                                                <Text
+                                                    text="{materialsModel>material}"
+                                                />
+                                                <Text
+                                                    text="{materialsModel>materialDesc}"
+                                                />
+                                                <ObjectNumber
+                                                    number="{path: 'materialsModel>stockSf', formatter: '.formatQty'}"
+                                                    state="None"
+                                                />
+                                                <ObjectNumber
+                                                    number="{path: 'materialsModel>stockSrc', formatter: '.formatQty'}"
+                                                    state="None"
+                                                />
+                                                <ObjectNumber
+                                                    number="{path: 'materialsModel>stockPlant', formatter: '.formatQty'}"
+                                                    state="None"
+                                                />
+                                                <ObjectNumber
+                                                    number="{path: 'materialsModel>requirementQty', formatter: '.formatQty'}"
+                                                    state="Information"
+                                                />
+                                                <ObjectNumber
+                                                    number="{path: 'materialsModel>withdrawalQty', formatter: '.formatQty'}"
+                                                    state="Success"
+                                                />
+                                                <ObjectNumber
+                                                    number="{path: 'materialsModel>pendingQty', formatter: '.formatQty'}"
+                                                    state="Warning"
+                                                />
+                                                <Text
+                                                    text="{materialsModel>units}"
+                                                />
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
+                                <HBox
+                                    justifyContent="End"
+                                    class="sapUiTinyMarginTop"
+                                >
+                                    <Button
+                                        icon="sap-icon://print"
+                                        text="Print Reservation Slip"
+                                        type="Success"
+                                        class="sapUiTinyMarginEnd"
+                                        press=".onPrintReservationSlip"
+                                    />
+                                    <Button
+                                        icon="sap-icon://detail-view"
+                                        text="Show Reservation Details"
+                                        type="Success"
+                                        class="sapUiTinyMarginEnd"
+                                        press=".onShowReservationDetails"
+                                    />
+                                    <Button
+                                        icon="sap-icon://shipping-status"
+                                        text="Create Material Issue"
+                                        type="Success"
+                                        press=".onIssueMaterial"
+                                    />
+                                </HBox>
+                            </content>
+                        </Panel>
+                    </items>
+                </VBox>
+            </VBox>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

@@ -1,0 +1,682 @@
+<mvc:View
+    controllerName="materialreceiptconfirm.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
+>
+    <f:DynamicPage
+        id="page"
+        fitContent="true"
+        toggleHeaderOnTitleClick="true"
+        busyIndicatorDelay="0"
+    >
+
+        <!-- ══════════════════════════════════════════
+             TITLE
+        ══════════════════════════════════════════ -->
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <HBox alignItems="Center">
+                        <Image
+                            id="logoImage"
+                            height="36px"
+                            class="sapUiSmallMarginEnd logoRounded"
+                        />
+                        <Title text="Receipt Confirmation" />
+                    </HBox>
+                </f:heading>
+                <f:actions>
+                    <ObjectStatus
+                        icon="sap-icon://document"
+                        title="ORDER"
+                        text="{appModel>/orderId}"
+                        state="Indication20"
+                        inverted="true"
+                        visible="{= ${appModel>/navType} !== 'matDoc' }"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <ObjectStatus
+                        icon="sap-icon://document"
+                        title="ISSUE MAT. DOC"
+                        text="{appModel>/materialDocId}"
+                        state="Indication20"
+                        inverted="true"
+                        visible="{= ${appModel>/navType} === 'matDoc' }"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <ObjectStatus
+                        icon="sap-icon://calendar"
+                        title="DOC YEAR"
+                        text="{appModel>/materialDocYearId}"
+                        state="Indication20"
+                        inverted="true"
+                        visible="{= ${appModel>/navType} === 'matDoc' }"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <ObjectStatus
+                        icon="sap-icon://employee"
+                        title="EMP ID"
+                        text="{appModel>/employeeId}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <ObjectStatus
+                        icon="sap-icon://factory"
+                        title="PLANT"
+                        text="{appModel>/plant}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <Button
+                        icon="sap-icon://log"
+                        text="Logout"
+                        type="Negative"
+                        press="onLogout"
+                    />
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <!-- ══════════════════════════════════════════
+             HEADER (order / material doc search)
+        ══════════════════════════════════════════ -->
+        <f:header>
+            <f:DynamicPageHeader pinnable="true">
+                <!-- Order-driven search (navType=order or absent) -->
+                <HBox
+                    visible="{= ${appModel>/navType} !== 'matDoc' }"
+                    alignItems="End"
+                    justifyContent="End"
+                    width="100%"
+                >
+                    <VBox class="sapUiSmallMarginEnd">
+                        <Label text="ORDER NO" class="sectionLabel" />
+                        <Input
+                            id="orderFilterInput"
+                            value="{appModel>/orderIdInput}"
+                            placeholder="Enter order number"
+                            width="180px"
+                            submit=".onApplyOrderSearch"
+                        />
+                    </VBox>
+                    <Button
+                        text="Apply"
+                        type="Emphasized"
+                        icon="sap-icon://filter"
+                        press=".onApplyOrderSearch"
+                    />
+                </HBox>
+
+                <!-- Material Doc + Year search (navType=matDoc) -->
+                <HBox
+                    visible="{= ${appModel>/navType} === 'matDoc' }"
+                    alignItems="End"
+                    justifyContent="End"
+                    width="100%"
+                >
+                    <VBox class="sapUiSmallMarginEnd">
+                        <Label text="ISSUE MAT. DOC" class="sectionLabel" />
+                        <Input
+                            id="materialDocFilterInput"
+                            value="{appModel>/materialDocInput}"
+                            placeholder="Enter material doc"
+                            width="180px"
+                            showValueHelp="true"
+                            valueHelpRequest=".onMatDocValueHelp"
+                            submit=".onApplyMatDocSearch"
+                        />
+                    </VBox>
+                    <Button
+                        type="Emphasized"
+                        icon="sap-icon://bar-code"
+                        tooltip="Scan Order QR / Barcode"
+                        press=".onScanMatDocOrder"
+                        class="sapUiTinyMarginEnd"
+                    />
+                    <VBox class="sapUiSmallMarginEnd">
+                        <Label text="DOC YEAR" class="sectionLabel" />
+                        <Input
+                            id="materialDocYearFilterInput"
+                            value="{appModel>/materialDocYearInput}"
+                            placeholder="Enter doc year"
+                            width="120px"
+                            showValueHelp="true"
+                            valueHelpRequest=".onMatDocYearValueHelp"
+                            submit=".onApplyMatDocSearch"
+                        />
+                    </VBox>
+                    <Button
+                        text="Apply"
+                        type="Emphasized"
+                        icon="sap-icon://filter"
+                        press=".onApplyMatDocSearch"
+                    />
+                </HBox>
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <!-- ══════════════════════════════════════════
+             CONTENT
+        ══════════════════════════════════════════ -->
+        <f:content>
+            <VBox class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop sapUiSmallMarginBottom">
+
+                <!-- ══════════════════════════════════════════
+                     MATERIAL DOC MODE (navType=matDoc)
+                ══════════════════════════════════════════ -->
+                <VBox visible="{= ${appModel>/navType} === 'matDoc' }">
+
+                    <!-- Empty state: no material doc searched yet -->
+                    <VBox
+                        visible="{= !${appModel>/materialDocId} }"
+                        alignItems="Center"
+                        class="sapUiLargeMarginTop sapUiLargeMarginBottom"
+                    >
+                        <core:Icon
+                            src="sap-icon://document"
+                            size="3rem"
+                            color="var(--sapNeutralColor)"
+                            class="sapUiSmallMarginBottom"
+                        />
+                        <Title text="No Material Doc Provided" level="H4" />
+                        <Text
+                            text="Enter a material doc and year above and click Apply to search."
+                            class="sapUiSmallMarginTop"
+                        />
+                    </VBox>
+
+                    <VBox visible="{= !!${appModel>/materialDocId} }">
+
+                        <!-- ── ISSUE ITEMS PANEL ── -->
+                        <Panel
+                            id="issueDetailsPanel"
+                            expandable="true"
+                            expanded="false"
+                            class="sapUiSmallMarginBottom orderDetailsPanel"
+                        >
+                            <headerToolbar>
+                                <Toolbar>
+                                    <HBox width="100%" alignItems="Center" justifyContent="SpaceBetween">
+                                        <Title text="Issue Details" level="H5" />
+                                        <ObjectStatus
+                                            icon="sap-icon://shipping-status"
+                                            text="Order: {matDocModel>/header/order} | Reservation: {path: 'matDocModel>/header/reservationNumber', formatter: '.formatReservationNumber'} | Issue Loc: {matDocModel>/header/issueSloc} → Receiving Loc: {matDocModel>/header/receiveSloc}"
+                                            state="Information"
+                                            inverted="true"
+                                        />
+                                    </HBox>
+                                </Toolbar>
+                            </headerToolbar>
+                            <content>
+                                <!-- Header fields: Row 1 -->
+                                <HBox renderType="Bare" class="detailRow">
+                                    <VBox class="detailCell">
+                                        <core:HTML content="&lt;div class='detailLabel'&gt;Order&lt;/div&gt;" />
+                                        <ObjectStatus text="{matDocModel>/header/order}" state="Information" inverted="true" />
+                                    </VBox>
+                                    <VBox class="detailCell">
+                                        <core:HTML content="&lt;div class='detailLabel'&gt;Reservation No&lt;/div&gt;" />
+                                        <Text text="{ path: 'matDocModel>/header/reservationNumber', formatter: '.formatReservationNumber' }" class="detailValue" />
+                                    </VBox>
+                                    <VBox class="detailCell">
+                                        <core:HTML content="&lt;div class='detailLabel'&gt;Material Doc&lt;/div&gt;" />
+                                        <ObjectStatus text="{matDocModel>/header/materialDoc}" state="Information" inverted="true" />
+                                    </VBox>
+                                    <VBox class="detailCell">
+                                        <core:HTML content="&lt;div class='detailLabel'&gt;Doc Year&lt;/div&gt;" />
+                                        <core:HTML content="&lt;div class='detailValue'&gt;{matDocModel>/header/materialDocYear}&lt;/div&gt;" />
+                                    </VBox>
+                                    <VBox class="detailCell">
+                                        <core:HTML content="&lt;div class='detailLabel'&gt;Issue / Receive Storage Loc&lt;/div&gt;" />
+                                        <Text text="{= ${matDocModel>/header/issueSloc} + ' → ' + ${matDocModel>/header/receiveSloc} }" class="detailValue" />
+                                    </VBox>
+                                </HBox>
+
+                                <!-- Header fields: Row 2 -->
+                                <HBox renderType="Bare" class="detailRow">
+                                    <VBox class="detailCell">
+                                        <core:HTML content="&lt;div class='detailLabel'&gt;Plant&lt;/div&gt;" />
+                                        <ObjectStatus text="{matDocModel>/header/plant}" state="Information" inverted="true" />
+                                    </VBox>
+                                    <VBox class="detailCell">
+                                        <core:HTML content="&lt;div class='detailLabel'&gt;Employee ID&lt;/div&gt;" />
+                                        <core:HTML content="&lt;div class='detailValue'&gt;{matDocModel>/header/employeeId}&lt;/div&gt;" />
+                                    </VBox>
+                                    <VBox class="detailCell">
+                                        <core:HTML content="&lt;div class='detailLabel'&gt;Created By&lt;/div&gt;" />
+                                        <core:HTML content="&lt;div class='detailValue'&gt;{matDocModel>/header/createdBy}&lt;/div&gt;" />
+                                    </VBox>
+                                    <VBox class="detailCell">
+                                        <core:HTML content="&lt;div class='detailLabel'&gt;Created Date&lt;/div&gt;" />
+                                        <Text text="{ path: 'matDocModel>/header/createdDate', formatter: '.formatODataDate' }" class="detailValue" />
+                                    </VBox>
+                                    <VBox class="detailCell">
+                                        <core:HTML content="&lt;div class='detailLabel'&gt;Created Time&lt;/div&gt;" />
+                                        <Text text="{ path: 'matDocModel>/header/createdTime', formatter: '.formatODataTime' }" class="detailValue" />
+                                    </VBox>
+                                </HBox>
+
+                                <HBox
+                                    alignItems="Center"
+                                    justifyContent="SpaceBetween"
+                                    class="sapUiSmallMarginTop sapUiTinyMarginBottom"
+                                >
+                                    <Title text="Issue Items" level="H6" />
+                                    <HBox alignItems="Center">
+                                        <Label
+                                            text="Scan Required"
+                                            class="sapUiTinyMarginEnd"
+                                        />
+                                        <Switch
+                                            state="{appModel>/scanRequired}"
+                                            customTextOn="Yes"
+                                            customTextOff="No"
+                                            change=".onScanRequiredChange"
+                                            class="sapUiSmallMarginEnd"
+                                        />
+                                        <Button
+                                            text="Scan Bag"
+                                            type="Emphasized"
+                                            icon="sap-icon://bar-code"
+                                            enabled="{= ${appModel>/scanRequired} &amp;&amp; ${matDocModel>/issueItems/length} > 0 }"
+                                            press=".onScanBag"
+                                        />
+                                    </HBox>
+                                </HBox>
+
+                                <!-- Empty state -->
+                                <VBox
+                                    visible="{= ${matDocModel>/issueItems/length} === 0 }"
+                                    alignItems="Center"
+                                    class="sapUiMediumMarginTop sapUiMediumMarginBottom"
+                                >
+                                    <Text text="No issue items found for this material doc / year." />
+                                </VBox>
+
+                                <Table
+                                    visible="{= ${matDocModel>/issueItems/length} > 0 }"
+                                    items="{matDocModel>/issueItems}"
+                                    alternateRowColors="true"
+                                    sticky="ColumnHeaders"
+                                    mode="MultiSelect"
+                                    selectionChange=".onMatDocItemSelectionChange"
+                                    updateFinished=".onItemsUpdateFinished"
+                                    class="materialTable"
+                                >
+                                    <columns>
+                                        <Column width="6rem"><Text text="Item" /></Column>
+                                        <Column width="6rem"><Text text="Material" /></Column>
+                                        <Column width="6rem"><Text text="Material Description" /></Column>
+                                        <Column width="6rem"><Text text="Batch" /></Column>
+                                        <Column hAlign="End" width="6rem"><Text text="Issued Qty" /></Column>
+                                        <Column hAlign="End" width="6rem"><Text text="Received Qty" /></Column>
+                                        <Column hAlign="End" width="6rem"><Text text="Target Qty" /></Column>
+                                        <Column width="6rem"><Text text="UoM" /></Column>
+                                        <Column width="7rem"><Text text="Bags" /></Column>
+                                    </columns>
+                                    <items>
+                                        <ColumnListItem>
+                                            <cells>
+                                                <ObjectStatus text="{matDocModel>materialDocItem}" state="None" />
+                                                <Text text="{matDocModel>material}" />
+                                                <Text text="{matDocModel>materialDesc}" />
+                                                <Text text="{matDocModel>batch}" />
+                                                <ObjectNumber number="{path: 'matDocModel>issuedQty', formatter: '.formatQty'}" state="Success" />
+                                                <ObjectNumber number="{path: 'matDocModel>receivedQty', formatter: '.formatQty'}" state="Information" />
+                                                <Input
+                                                    value="{matDocModel>targetQty}"
+                                                    type="Number"
+                                                    width="8rem"
+                                                    enabled="{= !${appModel>/scanRequired} &amp;&amp; parseFloat(${matDocModel>issuedQty}) !== parseFloat(${matDocModel>receivedQty}) }"
+                                                />
+                                                <Text text="{matDocModel>unit}" />
+                                                <Button
+                                                    icon="sap-icon://product"
+                                                    text="{= ${matDocModel>bags}.length }"
+                                                    tooltip="View scanned bags"
+                                                    type="Transparent"
+                                                    enabled="{= ${matDocModel>bags}.length > 0 }"
+                                                    press=".onShowBags"
+                                                />
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
+                                <HBox justifyContent="End" class="tableSubmitBar">
+                                    <Button
+                                        text="Confirm Receipt"
+                                        type="Success"
+                                        press=".onCreateIssue"
+                                        enabled="{= ${matDocModel>/issueItems/length} > 0 &amp;&amp; ${matDocModel>/hasSelection} }"
+                                    />
+                                </HBox>
+                            </content>
+                        </Panel>
+
+                        <!-- ── RECEIPT HISTORY PANEL ── -->
+                        <Panel
+                            expandable="true"
+                            expanded="false"
+                            class="sapUiSmallMarginBottom storagePanel"
+                        >
+                            <headerToolbar>
+                                <Toolbar>
+                                    <Title text="Receipt History" level="H5" />
+                                </Toolbar>
+                            </headerToolbar>
+                            <content>
+                                <!-- Empty state -->
+                                <VBox
+                                    visible="{= ${matDocModel>/receipts/length} === 0 }"
+                                    alignItems="Center"
+                                    class="sapUiMediumMarginTop sapUiMediumMarginBottom"
+                                >
+                                    <Text text="No receipts recorded yet for this material doc / year." />
+                                </VBox>
+
+                                <Table
+                                    visible="{= ${matDocModel>/receipts/length} > 0 }"
+                                    items="{matDocModel>/receipts}"
+                                    alternateRowColors="true"
+                                    sticky="ColumnHeaders"
+                                    class="materialTable"
+                                >
+                                    <columns>
+                                        <Column width="7rem"><Text text="Receipt Doc" /></Column>
+                                        <Column width="6rem"><Text text="Doc Year" /></Column>
+                                        <Column width="6rem"><Text text="Receive Loc" /></Column>
+                                        <Column width="6rem"><Text text="Plant" /></Column>
+                                        <Column width="7rem"><Text text="Created By" /></Column>
+                                        <Column width="7rem"><Text text="Created Date" /></Column>
+                                        <Column width="6rem"><Text text="Created Time" /></Column>
+                                        <Column width="8rem"><Text text="View Details" /></Column>
+                                    </columns>
+                                    <items>
+                                        <ColumnListItem>
+                                            <cells>
+                                                <ObjectStatus text="{matDocModel>materialDoc}" state="None" />
+                                                <Text text="{matDocModel>materialDocYear}" />
+                                                <Text text="{matDocModel>receiveSloc}" />
+                                                <Text text="{matDocModel>plant}" />
+                                                <Text text="{matDocModel>createdBy}" />
+                                                <Text text="{ path: 'matDocModel>createdDate', formatter: '.formatODataDate' }" />
+                                                <Text text="{ path: 'matDocModel>createdTime', formatter: '.formatODataTime' }" />
+                                                <Button
+                                                    text="View Details"
+                                                    type="Emphasized"
+                                                    press=".onViewReceiptDetails"
+                                                />
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
+                            </content>
+                        </Panel>
+
+                    </VBox>
+                </VBox>
+
+                <!-- ══════════════════════════════════════════
+                     ORDER MODE (navType=order or absent)
+                ══════════════════════════════════════════ -->
+                <VBox visible="{= ${appModel>/navType} !== 'matDoc' }">
+
+                <!-- Empty state: no order searched yet -->
+                <VBox
+                    visible="{= !${appModel>/orderId} }"
+                    alignItems="Center"
+                    class="sapUiLargeMarginTop sapUiLargeMarginBottom"
+                >
+                    <core:Icon
+                        src="sap-icon://sales-order"
+                        size="3rem"
+                        color="var(--sapNeutralColor)"
+                        class="sapUiSmallMarginBottom"
+                    />
+                    <Title text="No Order Number Provided" level="H4" />
+                    <Text
+                        text="Enter an order number above and click Apply to search."
+                        class="sapUiSmallMarginTop"
+                    />
+                </VBox>
+
+                <!-- ══════════════════════════════════════════
+                     ORDER DETAILS
+                ══════════════════════════════════════════ -->
+                <Panel
+                    expandable="true"
+                    expanded="false"
+                    visible="{= !!${appModel>/orderId} }"
+                    class="sapUiSmallMarginBottom orderDetailsPanel"
+                >
+                    <headerToolbar>
+                        <Toolbar>
+                            <Title text="Order Details" level="H5" />
+                        </Toolbar>
+                    </headerToolbar>
+                    <content>
+                        <!-- Row 1: Order ID | Order Type | Order Status | Start Date | End Date -->
+                        <HBox renderType="Bare" class="detailRow">
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Order ID&lt;/div&gt;" />
+                                <ObjectStatus text="{issueModel>/orderDetails/order}" state="Information" inverted="true" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Order Type&lt;/div&gt;" />
+                                <core:HTML content="&lt;div class='detailValue'&gt;{issueModel>/orderDetails/orderType}&lt;/div&gt;" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Order Status&lt;/div&gt;" />
+                                <ObjectStatus text="{issueModel>/orderDetails/orderStatus}" state="None" inverted="true" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Start Date&lt;/div&gt;" />
+                                <Text text="{ path: 'issueModel>/orderDetails/startDate', formatter: '.formatODataDate' }" class="detailValue" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;End Date&lt;/div&gt;" />
+                                <Text text="{ path: 'issueModel>/orderDetails/finishDate', formatter: '.formatODataDate' }" class="detailValue" />
+                            </VBox>
+                        </HBox>
+
+                        <!-- Row 2: Order Qty | Confirmed | Remaining | Unit -->
+                        <HBox renderType="Bare" class="detailRow">
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Order Qty&lt;/div&gt;" />
+                                <ObjectNumber number="{path: 'issueModel>/orderDetails/quantity', formatter: '.formatQty'}" unit="{issueModel>/orderDetails/unit}" state="Information" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Confirmed&lt;/div&gt;" />
+                                <ObjectNumber number="{path: 'issueModel>/orderDetails/completedQty', formatter: '.formatQty'}" unit="{issueModel>/orderDetails/unit}" state="Success" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Remaining&lt;/div&gt;" />
+                                <ObjectNumber number="{path: 'issueModel>/orderDetails/pendingQty', formatter: '.formatQty'}" unit="{issueModel>/orderDetails/unit}" state="Warning" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Unit&lt;/div&gt;" />
+                                <ObjectStatus text="{issueModel>/orderDetails/unit}" state="Information" inverted="true" />
+                            </VBox>
+                        </HBox>
+
+                        <!-- Row 3: Description | Material Code | Batch | Status -->
+                        <HBox renderType="Bare" class="detailRow">
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Description&lt;/div&gt;" />
+                                <core:HTML content="&lt;div class='detailValue'&gt;{issueModel>/orderDetails/materialDesc}&lt;/div&gt;" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Material Code&lt;/div&gt;" />
+                                <ObjectStatus text="{issueModel>/orderDetails/material}" state="Information" inverted="true" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Batch&lt;/div&gt;" />
+                                <core:HTML content="&lt;div class='detailValue'&gt;{issueModel>/orderDetails/batch}&lt;/div&gt;" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Status&lt;/div&gt;" />
+                                <ObjectStatus
+                                    text="{issueModel>/orderDetails/statusBadge}"
+                                    inverted="true"
+                                    state="{ path: 'issueModel>/orderDetails/colorCode', formatter: '.formatStatusState' }"
+                                />
+                            </VBox>
+                        </HBox>
+                    </content>
+                </Panel>
+
+                <!-- ── MOULD ORDER PANEL (visible only when IsMouldOrder = X) ── -->
+                <Panel
+                    expandable="true"
+                    expanded="false"
+                    visible="{= !!${appModel>/orderId} &amp;&amp; ${issueModel>/orderDetails/IsMouldOrder} === 'X' }"
+                    class="sapUiSmallMarginBottom orderDetailsPanel"
+                >
+                    <headerToolbar>
+                        <Toolbar>
+                            <Title text="Mould Order Details" level="H5" />
+                        </Toolbar>
+                    </headerToolbar>
+                    <content>
+                        <!-- Row: Mould ID | Mould Description | Mould Cavity | Min Cycle Time | Max Cycle Time -->
+                        <HBox renderType="Bare" class="detailRow">
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Mould ID&lt;/div&gt;" />
+                                <ObjectStatus text="{issueModel>/orderDetails/MouldId}" state="Information" inverted="true" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Mould Description&lt;/div&gt;" />
+                                <core:HTML content="&lt;div class='detailValue'&gt;{issueModel>/orderDetails/MouldDesc}&lt;/div&gt;" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Mould Cavity&lt;/div&gt;" />
+                                <ObjectStatus text="{issueModel>/orderDetails/MouldCavity}" state="None" inverted="true" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Min Cycle Time (s)&lt;/div&gt;" />
+                                <ObjectStatus text="{issueModel>/orderDetails/MinCycleTime}" state="Success" inverted="true" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Max Cycle Time (s)&lt;/div&gt;" />
+                                <ObjectStatus text="{issueModel>/orderDetails/MaxCycleTime}" state="Warning" inverted="true" />
+                            </VBox>
+                        </HBox>
+                    </content>
+                </Panel>
+
+                <!-- ══════════════════════════════════════════
+                     MATERIAL ISSUES
+                ══════════════════════════════════════════ -->
+                <Title
+                    text="Materials Received"
+                    level="H5"
+                    visible="{= !!${appModel>/orderId} }"
+                    class="sapUiSmallMarginBottom sapUiTinyMarginTop"
+                />
+
+                <VBox
+                    visible="{= !!${appModel>/orderId} &amp;&amp; ${issueModel>/issues/length} === 0 }"
+                    alignItems="Center"
+                    class="sapUiLargeMarginTop sapUiLargeMarginBottom"
+                >
+                    <core:Icon
+                        src="sap-icon://shipping-status"
+                        size="3rem"
+                        color="var(--sapNeutralColor)"
+                        class="sapUiSmallMarginBottom"
+                    />
+                    <Title text="No Materials Received" level="H4" />
+                    <Text
+                        text="No material receipt documents are pending confirmation for this order."
+                        class="sapUiSmallMarginTop"
+                    />
+                </VBox>
+
+                <VBox
+                    visible="{= ${issueModel>/issues/length} > 0 }"
+                    items="{issueModel>/issues}"
+                >
+                    <items>
+                        <Panel
+                            expandable="true"
+                            expanded="false"
+                            class="sapUiSmallMarginBottom storagePanel"
+                        >
+                            <headerToolbar>
+                                <Toolbar>
+                                    <HBox width="100%" alignItems="Center" justifyContent="SpaceBetween">
+                                        <Title text="{= 'Material Doc: ' + ${issueModel>materialDoc} + ' / ' + ${issueModel>materialDocYear} }" level="H6" />
+                                        <ObjectStatus
+                                            icon="sap-icon://shipping-status"
+                                            text="Issue Loc: {issueModel>issueSloc} → Receiving Loc: {issueModel>receiveSloc}"
+                                            state="Information"
+                                            inverted="true"
+                                        />
+                                    </HBox>
+                                </Toolbar>
+                            </headerToolbar>
+                            <content>
+                                <Table
+                                    items="{issueModel>items}"
+                                    alternateRowColors="true"
+                                    sticky="ColumnHeaders"
+                                    mode="MultiSelect"
+                                    selectionChange=".onItemSelectionChange"
+                                    updateFinished=".onItemsUpdateFinished"
+                                    class="materialTable"
+                                >
+                                    <columns>
+                                        <Column width="6rem"><Text text="Item" /></Column>
+                                        <Column width="6rem"><Text text="Material" /></Column>
+                                        <Column width="6rem"><Text text="Material Description" /></Column>
+                                        <Column width="6rem"><Text text="Batch" /></Column>
+                                        <Column hAlign="End" width="6rem"><Text text="Issued Qty" /></Column>
+                                        <Column hAlign="End" width="6rem"><Text text="Received Qty" /></Column>
+                                        <Column hAlign="End" width="6rem"><Text text="Target Qty" /></Column>
+                                        <Column width="6rem"><Text text="UoM" /></Column>
+                                    </columns>
+                                    <items>
+                                        <ColumnListItem>
+                                            <cells>
+                                                <ObjectStatus text="{issueModel>materialDocItem}" state="None" />
+                                                <Text text="{issueModel>material}" />
+                                                <Text text="{issueModel>materialDesc}" />
+                                                <Text text="{issueModel>batch}" />
+                                                <ObjectNumber number="{path: 'issueModel>issuedQty', formatter: '.formatQty'}" state="Success" />
+                                                <ObjectNumber number="{path: 'issueModel>receivedQty', formatter: '.formatQty'}" state="Information" />
+                                                <Input
+                                                    value="{issueModel>targetQty}"
+                                                    type="Number"
+                                                    width="8rem"
+                                                    enabled="{= parseFloat(${issueModel>issuedQty}) !== parseFloat(${issueModel>receivedQty}) }"
+                                                    liveChange=".onTargetQtyChange"
+                                                />
+                                                <Text text="{issueModel>unit}" />
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
+                                <HBox justifyContent="End" class="tableSubmitBar">
+                                    <Button
+                                        text="Confirm Receipt"
+                                        type="Success"
+                                        press=".onConfirmReceipt"
+                                        enabled="{= ${issueModel>items/length} > 0 &amp;&amp; ${issueModel>hasSelection} }"
+                                    />
+                                </HBox>
+                            </content>
+                        </Panel>
+                    </items>
+                </VBox>
+
+                </VBox>
+
+            </VBox>
+        </f:content>
+
+    </f:DynamicPage>
+</mvc:View>

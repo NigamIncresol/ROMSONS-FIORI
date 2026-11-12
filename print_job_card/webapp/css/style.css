@@ -1,0 +1,84 @@
+/* Enter your custom styles here */
+
+.pjcLogoRounded,
+.pjcLogoRounded img {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* ─── Header badge buttons (EMP ID / Plant) ──────────────── */
+.headerBadgeBtn.sapMBtn .sapMBtnInner {
+    background-color: #e8e8e8 !important;
+    border: 1px solid #c0c0c0 !important;
+    border-radius: 0.25rem !important;
+    color: #000000 !important;
+    font-size: 0.75rem !important;
+    font-weight: 500 !important;
+    height: 1.75rem !important;
+    min-height: 1.75rem !important;
+    padding: 0 0.5rem !important;
+    opacity: 1 !important;
+    cursor: default !important;
+}
+
+.headerBadgeBtn.sapMBtn .sapMBtnIcon,
+.headerBadgeBtn.sapMBtn .sapMBtnText {
+    color: #000000 !important;
+    font-size: 0.75rem !important;
+}
+
+.pjcPage .sapFDynamicPageTitle,
+.pjcPage .sapFDynamicPageHeader {
+    background-color: #eaf6ef !important;
+}
+
+/* ─── Print Job Card – Result Card ───────────────────────────── */
+.jobCardFoundLabel.sapMText {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #14532d;
+    margin-bottom: 0.5rem;
+}
+
+.jobCardResultCard {
+    border: 1px solid #4caf50;
+    border-radius: 0.5rem;
+    background-color: #e3f5e6;
+    padding: 0.75rem 1rem;
+    gap: 0.4rem;
+}
+
+.jobCardResultValue.sapMText {
+    font-size: 0.8125rem;
+    color: #1b5e20;
+    font-weight: 600;
+}
+
+.jobCardErrorLabel.sapMText {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #b00020;
+    margin-bottom: 0.5rem;
+}
+
+.jobCardErrorCard {
+    border: 1px solid #f5c2c7;
+    border-radius: 0.5rem;
+    background-color: #fff5f5;
+    padding: 0.75rem 1rem;
+}
+
+.jobCardErrorValue.sapMText {
+    font-size: 0.8125rem;
+    color: #6c1a1a;
+    font-weight: 500;
+}
+
+.jobCardPdfViewer {
+    width: 100%;
+    height: 75vh;
+    min-height: 500px;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+}
+

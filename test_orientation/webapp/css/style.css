@@ -1,0 +1,38 @@
+/* Enter your custom styles here */
+
+.rotateMessageCard {
+    max-width: 22rem;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    background-color: var(--sapTile_Background, #fff);
+    border-radius: 0.75rem;
+    box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.08);
+}
+
+.rotateMessageIcon {
+    display: flex;
+    color: var(--sapContent_NonInteractiveIconColor, #0a6ed1);
+}
+
+.rotateMessageIcon svg {
+    overflow: visible;
+}
+
+.rotateMessageIcon .rotateMessagePhone {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: rotateMessageTurn 2.2s ease-in-out infinite;
+}
+
+.rotateMessageText {
+    color: var(--sapContent_LabelColor, #6a6d70);
+}
+
+@keyframes rotateMessageTurn {
+    0%, 30% {
+        transform: rotate(0deg);
+    }
+    70%, 100% {
+        transform: rotate(90deg);
+    }
+}

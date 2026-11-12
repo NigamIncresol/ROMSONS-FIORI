@@ -1,0 +1,383 @@
+<mvc:View
+    controllerName="productionorderconfirmlist.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+>
+    <f:DynamicPage
+        id="dynamicPage"
+        class="pcPage"
+        fitContent="true"
+        toggleHeaderOnTitleClick="true"
+    >
+        <!-- ══════════════════════════════════════════
+             DYNAMIC PAGE TITLE
+        ══════════════════════════════════════════ -->
+        <f:title>
+            <f:DynamicPageTitle class="pcHeader">
+                <f:heading>
+                    <HBox alignItems="Center">
+                        <Image
+                            id="appLogo"
+                            height="36px"
+                            class="sapUiSmallMarginEnd pcLogoRounded"
+                        />
+                        <Title text="Order Confirmation List" />
+                    </HBox>
+                </f:heading>
+                <f:actions>
+                    <ObjectStatus
+                        icon="sap-icon://employee"
+                        title="EMP ID"
+                        text="{appModel>/employeeId}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <ObjectStatus
+                        icon="sap-icon://factory"
+                        title="PLANT"
+                        text="{appModel>/plant}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <Button
+                        icon="sap-icon://log"
+                        text="Logout"
+                        type="Negative"
+                        press="onLogout"
+                    />
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <!-- ══════════════════════════════════════════
+             DYNAMIC PAGE HEADER  –  Filters
+        ══════════════════════════════════════════ -->
+        <f:header>
+            <f:DynamicPageHeader pinnable="true" class="pcHeader">
+                <HBox
+                    alignItems="End"
+                    wrap="Wrap"
+                    justifyContent="Start"
+                    width="100%"
+                    class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop sapUiSmallMarginBottom pcChipRow"
+                >
+                    <VBox class="pcFilterField">
+                        <Label text="ORDER ID" class="pcSectionLabel" />
+                        <HBox alignItems="Center" width="100%">
+                            <Input
+                                id="orderFilterInput"
+                                value="{viewModel>/filterOrder}"
+                                placeholder="Enter order ID"
+                                showValueHelp="true"
+                                valueHelpRequest=".onOrderValueHelp"
+                                submit=".onApplyFilter"
+                                change=".onOrderIdChange"
+                            >
+                                <layoutData>
+                                    <FlexItemData growFactor="1" />
+                                </layoutData>
+                            </Input>
+                            <Button
+                                icon="sap-icon://bar-code"
+                                type="Emphasized"
+                                tooltip="Scan Order ID"
+                                press=".onScanOrderId"
+                                class="sapUiTinyMarginBegin"
+                            />
+                        </HBox>
+                    </VBox>
+                    <VBox class="pcFilterField">
+                        <Label text="DATE" class="pcSectionLabel" />
+                        <Input
+                            id="dateFilterInput"
+                            value="{viewModel>/filterDate}"
+                            placeholder="Select date"
+                            width="100%"
+                            showValueHelp="true"
+                            valueHelpOnly="true"
+                            valueHelpRequest=".onDateValueHelp"
+                        />
+                    </VBox>
+                    <VBox class="pcFilterField">
+                        <Label text="SHIFT" class="pcSectionLabel" />
+                        <Input
+                            id="shiftInput"
+                            value="{viewModel>/filterShift}"
+                            placeholder="Enter shift ID"
+                            width="100%"
+                            showValueHelp="true"
+                            valueHelpRequest=".onShiftValueHelp"
+                            change=".onShiftChange"
+                        />
+                    </VBox>
+                    <VBox class="pcFilterField pcFilterField--action">
+                        <Label text=" " class="pcSectionLabel" />
+                        <HBox width="100%">
+                            <Button
+                                text="Apply"
+                                type="Emphasized"
+                                icon="sap-icon://filter"
+                                press=".onApplyFilter"
+                            >
+                                <layoutData>
+                                    <FlexItemData growFactor="1" />
+                                </layoutData>
+                            </Button>
+                            <Button
+                                text="Clear Filter"
+                                type="Transparent"
+                                press=".onClearFilter"
+                                class="sapUiTinyMarginBegin"
+                            >
+                                <layoutData>
+                                    <FlexItemData growFactor="1" />
+                                </layoutData>
+                            </Button>
+                        </HBox>
+                    </VBox>
+                </HBox>
+
+                <!-- ── Unapplied Filter Warning ─────────────── -->
+                <MessageStrip
+                    text="You've changed the filters - click Apply to load the updated results."
+                    type="Warning"
+                    showIcon="true"
+                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop"
+                    visible="{viewModel>/filtersDirty}"
+                />
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <!-- ══════════════════════════════════════════
+             DYNAMIC PAGE CONTENT
+        ══════════════════════════════════════════ -->
+        <f:content>
+            <VBox
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop sapUiTinyMarginBottom"
+            >
+                <!-- ── No Data Banner ──────────────────────── -->
+                <VBox
+                    visible="{= !${viewModel>/listLoaded} }"
+                    alignItems="Center"
+                    class="pcNoOrderBanner sapUiLargeMarginTop"
+                >
+                    <core:Icon src="sap-icon://search" size="3rem" color="#aaaaaa" class="sapUiSmallMarginBottom" />
+                    <Title text="No Order Confirmations Loaded" level="H4" class="sapUiTinyMarginBottom" />
+                    <Text text="Enter/scan an Order ID (optional), pick a Date and Shift, then click Apply." class="pcNoOrderText" />
+                </VBox>
+
+                <!-- ── OPERATION SEQUENCE (above the confirm list table) ── -->
+                <Panel
+                    visible="{opSeqModel>/visible}"
+                    class="pcPanel sapUiTinyMarginBottom"
+                >
+                    <headerToolbar>
+                        <Toolbar class="pcPanelHeader">
+                            <Title
+                                text="{= 'Operation Sequence — Order ' + ${opSeqModel>/order} }"
+                                level="H5"
+                            />
+                        </Toolbar>
+                    </headerToolbar>
+                    <content>
+                        <HBox
+                            items="{opSeqModel>/steps}"
+                            alignItems="Start"
+                            justifyContent="SpaceBetween"
+                            wrap="Wrap"
+                            class="pcOpSeqRow"
+                        >
+                            <items>
+                                <HBox alignItems="Center" class="pcOpSeqLink">
+                                    <VBox alignItems="Center" class="pcOpSeqItem">
+                                        <core:Icon
+                                            src="{opSeqModel>avatarIcon}"
+                                            color="{opSeqModel>tickColor}"
+                                            backgroundColor="{opSeqModel>tickBg}"
+                                            class="pcOpSeqTick"
+                                        />
+                                        <Text text="{opSeqModel>operation}" class="pcOpSeqNum" />
+                                        <Text text="{opSeqModel>operationDesc}" class="pcOpSeqDesc" />
+                                        <ObjectStatus
+                                            text="{opSeqModel>chipText}"
+                                            state="{opSeqModel>chipState}"
+                                            inverted="true"
+                                            class="sapUiTinyMarginTop"
+                                        />
+                                    </VBox>
+                                    <core:Icon
+                                        src="sap-icon://arrow-right"
+                                        color="#cfd8d3"
+                                        visible="{= !${opSeqModel>isLast} }"
+                                        class="pcOpSeqArrow"
+                                    />
+                                </HBox>
+                            </items>
+                        </HBox>
+                    </content>
+                </Panel>
+
+                <!-- ── Operation sequence note ── -->
+                <MessageStrip
+                    text="{opSeqModel>/infoText}"
+                    type="Information"
+                    showIcon="true"
+                    visible="{opSeqModel>/visible}"
+                    class="sapUiSmallMarginBottom"
+                />
+
+                <!-- ── ORDER CONFIRM LIST ──────────────────────── -->
+                <!-- One row per JobCardConfHdr (confirmation) entry, with
+                     a "View Confirmation" column opening the operator
+                     details popup. -->
+                <Table
+                    id="orderConfirmListTable"
+                    items="{orderListModel>/results}"
+                    visible="{viewModel>/listLoaded}"
+                    noDataText="No confirmation found"
+                    class="pcPanel pcOperatorTable"
+                    alternateRowColors="true"
+                    mode="MultiSelect"
+                    selectionChange=".onOrderListSelectionChange"
+                >
+                    <headerToolbar>
+                        <Toolbar class="pcPanelHeader">
+                            <Title text="Order Confirmation List" level="H5" />
+                            <Label text="Operation Status" design="Standard" class="sapUiLargeMarginBegin sapUiTinyMarginEnd" />
+                            <Select
+                                id="operationStatusFilter"
+                                selectedKey="Final"
+                                change=".onOperationStatusFilterChange"
+                                width="10rem"
+                            >
+                                <core:Item key="All" text="All" />
+                                <core:Item key="Final" text="Final" />
+                                <core:Item key="Intermediate" text="Intermediate" />
+                            </Select>
+                            <ToolbarSpacer />
+                            <ObjectStatus
+                                icon="sap-icon://document"
+                                title="Job Card No"
+                                text="{orderListModel>/results/0/jobCard}"
+                                state="Indication20"
+                                inverted="true"
+                                class="sapUiSmallMarginEnd"
+                            />
+                            <ObjectStatus
+                                icon="sap-icon://home"
+                                title="House ID"
+                                text="{orderListModel>/results/0/houseId}"
+                                state="Indication20"
+                                inverted="true"
+                                class="sapUiSmallMarginEnd"
+                            />
+                            <ObjectStatus
+                                title="House Desc"
+                                text="{orderListModel>/results/0/houseDesc}"
+                                state="Indication20"
+                                inverted="true"
+                            />
+                        </Toolbar>
+                    </headerToolbar>
+                    <columns>
+                        <Column width="6rem"><Text text="Conf. No" /></Column>
+                        <Column hAlign="Center" width="6rem"><Text text="Counter" /></Column>
+                        <Column hAlign="Center" width="5rem"><Text text="Operation" /></Column>
+                        <Column hAlign="Center" width="8rem"><Text text="Operation Status" /></Column>
+                        <Column hAlign="Center"><Text text="Posting Date" /></Column>
+                        <Column hAlign="Center"><Text text="Exec Start" /></Column>
+                        <Column hAlign="Center"><Text text="Exec End" /></Column>
+                        <Column><Text text="Conf. By" /></Column>
+                        <Column><Text text="GRN By" /></Column>
+                        <Column width="6rem"><Text text="Mat. Doc No" /></Column>
+                        <Column hAlign="Center" width="4.5rem"><Text text="Mat Doc Yr" /></Column>
+                        <Column hAlign="Center"><Text text="View Details" /></Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem class="pcCompactRow" selected="{orderListModel>selected}">
+                            <cells>
+                                <Text text="{orderListModel>confirmationNo}" wrapping="true" />
+                                <Text text="{orderListModel>counter}" wrapping="true" />
+                                <Text text="{path: 'orderListModel>operation', formatter: '.formatOrNA'}" wrapping="true" />
+                                <ObjectStatus
+                                    text="{= ${orderListModel>isFinalOps} ? 'Final' : 'Intermediate' }"
+                                    state="{= ${orderListModel>isFinalOps} ? 'Success' : 'Warning' }"
+                                    inverted="false"
+                                />
+                                <Text text="{path: 'orderListModel>postingDate', formatter: '.formatODataDate'}" wrapping="true" />
+                                <Text text="{parts: [{path: 'orderListModel>execStartDt'}, {path: 'orderListModel>execStartTm'}], formatter: '.formatDateTime'}" wrapping="true" />
+                                <Text text="{parts: [{path: 'orderListModel>execEndDt'}, {path: 'orderListModel>execEndTm'}], formatter: '.formatDateTime'}" wrapping="true" />
+                                <Text text="{path: 'orderListModel>confirmationDoneBy', formatter: '.formatOrNA'}" wrapping="true" />
+                                <Text text="{path: 'orderListModel>grnDoneBy', formatter: '.formatOrNA'}" wrapping="true" />
+                                <Text text="{path: 'orderListModel>materialDocNo', formatter: '.formatOrNA'}" wrapping="true" />
+                                <Text text="{path: 'orderListModel>materialDocYear', formatter: '.formatOrNA'}" wrapping="true" />
+                                <Button
+                                    icon="sap-icon://display-more"
+                                    text="View"
+                                    type="Transparent"
+                                    tooltip="View Confirmation Details"
+                                    press=".onViewConfirmationPress"
+                                />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+
+                <!-- ── "Submit for GRN" button (only once data has loaded) ── -->
+                <HBox
+                    justifyContent="End"
+                    class="sapUiSmallMarginTop"
+                    visible="{= ${viewModel>/listLoaded} &amp;&amp; !!${orderListModel>/results} &amp;&amp; ${orderListModel>/results}.length > 0 }"
+                >
+                    <Button
+                        id="grnFabButton"
+                        text="Submit for GRN"
+                        icon="sap-icon://complete"
+                        type="Success"
+                        press=".onSubmitForGrnPress"
+                    />
+                </HBox>
+            </VBox>
+        </f:content>
+
+        <!-- ── "View Confirmation" popup: the selected row's npToItem
+             data. Lives in "dependents" (not the visible content tree)
+             since it's a popup, not layout. ── -->
+        <f:dependents>
+            <Dialog
+                id="confirmationItemsDialog"
+                title="Confirmation Items"
+                contentWidth="900px"
+            >
+                <content>
+                    <Table
+                        id="confirmationItemsTable"
+                        noDataText="No operator confirmation lines for this job card."
+                        class="pcOperatorTable"
+                        alternateRowColors="true"
+                    >
+                        <columns>
+                            <Column><Text text="Confirmation No" /></Column>
+                            <Column hAlign="Center"><Text text="Operation" /></Column>
+                            <Column><Text text="Employee ID" /></Column>
+                            <Column hAlign="Center"><Text text="Yield Qty" /></Column>
+                            <Column hAlign="Center"><Text text="Scrap Qty" /></Column>
+                            <Column hAlign="Center"><Text text="Rework Qty" /></Column>
+                            <Column hAlign="Center"><Text text="Unit" /></Column>
+                            <Column><Text text="Order" /></Column>
+                        </columns>
+                        <!-- Rows are added programmatically (no data
+                             binding) in onViewConfirmationPress. -->
+                    </Table>
+                </content>
+                <beginButton>
+                    <Button text="Close" press=".onCloseConfirmationItemsDialog" />
+                </beginButton>
+            </Dialog>
+        </f:dependents>
+    </f:DynamicPage>
+</mvc:View>

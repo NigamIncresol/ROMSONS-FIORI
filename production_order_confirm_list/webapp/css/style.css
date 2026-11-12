@@ -1,0 +1,123 @@
+/* ═══════════════════════════════════════════════════════════════
+   Order Confirmation List – View1.css
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── PAGE ─────────────────────────────────────────────────────── */
+.pcPage {
+    background-color: #f5f6f7;
+}
+
+.pcHeader {
+    background: #fff;
+}
+
+.pcPage .sapFDynamicPageTitle,
+.pcPage .sapFDynamicPageHeader {
+    background-color: #eaf6ef !important;
+}
+
+.pcLogoRounded,
+.pcLogoRounded img {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.pcChipRow {
+    gap: 12px;
+    padding: 4px 0;
+    align-items: flex-end;
+}
+
+.pcSectionLabel {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+/* ── FILTER FIELDS (equal share of the row, consistent padding) ── */
+.pcFilterField {
+    flex: 1 1 0;
+    min-width: 160px;
+    padding: 4px 8px;
+    box-sizing: border-box;
+}
+
+.pcFilterField--action {
+    flex: 1 1 0;
+    min-width: 110px;
+}
+
+/* ── PANELS ───────────────────────────────────────────────────── */
+.pcPanel {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.pcPanelHeader {
+    background: #fafafa;
+}
+
+.pcOperatorTable {
+    overflow: hidden;
+}
+
+/* ── Smaller font for table data cells (not headers) ── */
+.pcOperatorTable .sapMListTblCell {
+    font-size: 0.8rem;
+}
+
+/* ── Tighter row padding for the order confirm list ── */
+.pcCompactRow .sapMListTblCell {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+/* ── OPERATION SEQUENCE STRIP (built from standard sap.m controls —
+   Icon for the step circle/connector, ObjectStatus for the status chip;
+   only spacing/circle styling is custom here) ─────────────────────── */
+.pcOpSeqRow {
+    gap: 4px;
+}
+
+.pcOpSeqTick.sapUiIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    font-size: 1rem;
+}
+
+.pcOpSeqItem {
+    text-align: center;
+    min-width: 110px;
+    padding: 0 4px;
+}
+
+.pcOpSeqNum {
+    font-weight: 700;
+    margin-top: 6px;
+}
+
+.pcOpSeqDesc {
+    color: #777;
+}
+
+.pcOpSeqArrow {
+    margin: 0 4px;
+    align-self: center;
+}
+
+/* ── NO DATA BANNER ──────────────────────────────────────────── */
+.pcNoOrderBanner {
+    padding: 32px 16px;
+}
+
+.pcNoOrderText {
+    color: #666;
+    text-align: center;
+}

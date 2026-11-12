@@ -1,0 +1,121 @@
+<svg width="100%" viewBox="0 0 680 420" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>Romsons login background</title>
+<style>
+  .bg { fill: #0a4f45; }
+  .mid { fill: #0d6b5e; }
+  .light { fill: #11897a; }
+  .pale { fill: #1aab96; }
+  .accent { fill: #ffffff; opacity: 0.06; }
+  .line { stroke: #ffffff; stroke-width: 0.5; opacity: 0.12; fill: none; }
+  .dot { fill: #ffffff; opacity: 0.15; }
+  .icon { fill: none; stroke: #ffffff; stroke-width: 1.2; opacity: 0.22; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+
+<rect width="680" height="420" class="bg"/>
+<rect x="0" y="0" width="680" height="420" class="mid" opacity="0.45"/>
+
+<ellipse cx="120" cy="80" rx="180" ry="120" class="light" opacity="0.3"/>
+<ellipse cx="580" cy="360" rx="200" ry="130" class="pale" opacity="0.2"/>
+<ellipse cx="600" cy="60" rx="100" ry="80" class="light" opacity="0.18"/>
+
+<circle cx="50" cy="200" r="80" class="accent"/>
+<circle cx="640" cy="180" r="110" class="accent"/>
+<circle cx="340" cy="420" r="100" class="accent"/>
+
+<line x1="0" y1="80" x2="680" y2="80" class="line"/>
+<line x1="0" y1="160" x2="680" y2="160" class="line"/>
+<line x1="0" y1="240" x2="680" y2="240" class="line"/>
+<line x1="0" y1="320" x2="680" y2="320" class="line"/>
+<line x1="80" y1="0" x2="80" y2="420" class="line"/>
+<line x1="200" y1="0" x2="200" y2="420" class="line"/>
+<line x1="340" y1="0" x2="340" y2="420" class="line"/>
+<line x1="480" y1="0" x2="480" y2="420" class="line"/>
+<line x1="600" y1="0" x2="600" y2="420" class="line"/>
+
+<circle cx="80" cy="80" r="3" class="dot"/>
+<circle cx="200" cy="80" r="3" class="dot"/>
+<circle cx="340" cy="80" r="3" class="dot"/>
+<circle cx="480" cy="80" r="3" class="dot"/>
+<circle cx="600" cy="80" r="3" class="dot"/>
+<circle cx="80" cy="160" r="3" class="dot"/>
+<circle cx="200" cy="160" r="3" class="dot"/>
+<circle cx="340" cy="160" r="3" class="dot"/>
+<circle cx="480" cy="160" r="3" class="dot"/>
+<circle cx="600" cy="160" r="3" class="dot"/>
+<circle cx="80" cy="240" r="3" class="dot"/>
+<circle cx="200" cy="240" r="3" class="dot"/>
+<circle cx="340" cy="240" r="3" class="dot"/>
+<circle cx="480" cy="240" r="3" class="dot"/>
+<circle cx="600" cy="240" r="3" class="dot"/>
+<circle cx="80" cy="320" r="3" class="dot"/>
+<circle cx="200" cy="320" r="3" class="dot"/>
+<circle cx="340" cy="320" r="3" class="dot"/>
+<circle cx="480" cy="320" r="3" class="dot"/>
+<circle cx="600" cy="320" r="3" class="dot"/>
+
+<g class="icon" transform="translate(60,130)">
+  <rect x="0" y="8" width="28" height="36" rx="4"/>
+  <rect x="8" y="0" width="12" height="16" rx="2"/>
+  <line x1="7" y1="20" x2="21" y2="20"/>
+  <line x1="7" y1="28" x2="21" y2="28"/>
+  <line x1="7" y1="36" x2="15" y2="36"/>
+</g>
+
+<g class="icon" transform="translate(150,60)">
+  <ellipse cx="14" cy="20" rx="10" ry="16"/>
+  <line x1="4" y1="20" x2="24" y2="20"/>
+  <line x1="14" y1="4" x2="14" y2="36"/>
+</g>
+
+<g class="icon" transform="translate(280,310)">
+  <path d="M4 28 L14 4 L24 28 Z"/>
+  <line x1="14" y1="4" x2="14" y2="0"/>
+  <line x1="8" y1="18" x2="20" y2="18"/>
+</g>
+
+<g class="icon" transform="translate(420,90)">
+  <rect x="2" y="10" width="24" height="20" rx="3"/>
+  <path d="M8 10 L8 6 Q8 2 14 2 Q20 2 20 6 L20 10"/>
+  <line x1="14" y1="16" x2="14" y2="24"/>
+  <line x1="10" y1="20" x2="18" y2="20"/>
+</g>
+
+<g class="icon" transform="translate(540,200)">
+  <circle cx="14" cy="14" r="12"/>
+  <path d="M8 14 L12 18 L20 10"/>
+</g>
+
+<g class="icon" transform="translate(110,290)">
+  <rect x="0" y="4" width="32" height="24" rx="3"/>
+  <rect x="10" y="0" width="12" height="8" rx="2"/>
+  <line x1="6" y1="14" x2="26" y2="14"/>
+  <line x1="6" y1="20" x2="26" y2="20"/>
+</g>
+
+<g class="icon" transform="translate(490,310)">
+  <path d="M4 24 Q4 8 14 4 Q24 8 24 24"/>
+  <line x1="4" y1="24" x2="24" y2="24"/>
+  <line x1="9" y1="14" x2="19" y2="14"/>
+</g>
+
+<g class="icon" transform="translate(610,130)">
+  <circle cx="14" cy="14" r="10"/>
+  <line x1="14" y1="8" x2="14" y2="14"/>
+  <line x1="14" y1="14" x2="19" y2="19"/>
+  <circle cx="14" cy="14" r="2"/>
+</g>
+
+<g class="icon" transform="translate(220,190)">
+  <rect x="2" y="6" width="9" height="22" rx="2"/>
+  <rect x="14" y="0" width="9" height="28" rx="2"/>
+  <rect x="26" y="10" width="9" height="18" rx="2"/>
+</g>
+
+<g class="icon" transform="translate(370,200)">
+  <circle cx="8" cy="8" r="6"/>
+  <circle cx="24" cy="8" r="6"/>
+  <circle cx="8" cy="24" r="6"/>
+  <circle cx="24" cy="24" r="6"/>
+</g>
+
+</svg>

@@ -1,0 +1,330 @@
+<mvc:View
+    controllerName="reservationdetails.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
+>
+    <f:DynamicPage
+        id="dynamicPage"
+        fitContent="true"
+        toggleHeaderOnTitleClick="true"
+        busyIndicatorDelay="0"
+    >
+
+        <!-- ══════════════════════════════════════════
+             TITLE
+        ══════════════════════════════════════════ -->
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <HBox alignItems="Center">
+                        <Image
+                            id="logoImage"
+                            height="36px"
+                            class="sapUiSmallMarginEnd logoRounded"
+                        />
+                        <Title text="Reservation Details View" />
+                    </HBox>
+                </f:heading>
+                <f:actions>
+                    <ObjectStatus
+                        icon="sap-icon://employee"
+                        title="EMP ID"
+                        text="{appModel>/employeeId}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <ObjectStatus
+                        icon="sap-icon://factory"
+                        title="PLANT"
+                        text="{appModel>/plant}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <Button
+                        icon="sap-icon://log"
+                        text="Logout"
+                        type="Negative"
+                        press="onLogout"
+                    />
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <!-- ══════════════════════════════════════════
+             HEADER (filters)
+        ══════════════════════════════════════════ -->
+        <f:header>
+            <f:DynamicPageHeader pinnable="true">
+                <HBox
+                    alignItems="End"
+                    justifyContent="End"
+                    width="100%"
+                >
+                    <VBox class="sapUiSmallMarginEnd">
+                        <Label text="RESERVATION NO" class="sectionLabel" />
+                        <Input
+                            id="reservationFilterInput"
+                            value="{appModel>/searchValue}"
+                            placeholder="Enter reservation number"
+                            width="180px"
+                            showValueHelp="true"
+                            valueHelpRequest=".onReservationValueHelp"
+                            submit=".onApplyReservationSearch"
+                        />
+                    </VBox>
+                    <Button
+                        tooltip="Scan Requisition Slip"
+                        type="Emphasized"
+                        icon="sap-icon://bar-code"
+                        press=".onScanReservation"
+                        class="sapUiTinyMarginEnd"
+                    />
+                    <Button
+                        text="Apply"
+                        type="Emphasized"
+                        icon="sap-icon://filter"
+                        press=".onApplyReservationSearch"
+                    />
+                </HBox>
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <!-- ══════════════════════════════════════════
+             CONTENT
+        ══════════════════════════════════════════ -->
+        <f:content>
+            <VBox class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop sapUiSmallMarginBottom">
+
+                <!-- Banner: no reservation param / not found / load error -->
+                <MessageStrip
+                    text="{appModel>/bannerText}"
+                    type="{appModel>/bannerType}"
+                    showIcon="true"
+                    class="sapUiSmallMarginBottom"
+                    visible="{appModel>/showBanner}"
+                />
+
+                <!-- Reservation details -->
+                <VBox visible="{= !!${materialsModel>/reservation} }">
+                    <Panel
+                        expandable="true"
+                        expanded="true"
+                        class="sapUiSmallMarginBottom storagePanel"
+                    >
+                        <headerToolbar>
+                            <Toolbar>
+                                <HBox width="100%" alignItems="Center" justifyContent="SpaceBetween">
+                                    <HBox alignItems="Center" wrap="NoWrap">
+                                        <ObjectStatus
+                                            title="Reservation No"
+                                            text="{path: 'materialsModel>/reservation/reservationNumber', formatter: '.formatReservationNumber'}"
+                                            state="None"
+                                            class="sapUiTinyMarginEnd boldStatus"
+                                        />
+                                        <ObjectStatus
+                                            title="Production Order No"
+                                            text="{materialsModel>/reservation/order}"
+                                            state="None"
+                                            class="boldStatus"
+                                        />
+                                    </HBox>
+                                    <ObjectStatus
+                                        text="Issue Loc: {materialsModel>/reservation/issueStorgaeLoc} → Receiving Loc: {materialsModel>/reservation/receivingStorgaeLoc}"
+                                        state="Information"
+                                        inverted="true"
+                                        class="sapUiTinyMarginBegin boldStatus"
+                                    />
+                                </HBox>
+                            </Toolbar>
+                        </headerToolbar>
+                        <content>
+                            <Panel
+                                expandable="false"
+                                expanded="true"
+                                headerText="Created Log"
+                                class="sapUiTinyMarginBottom createdLogPanel"
+                            >
+                                <content>
+                                    <HBox alignItems="Center" wrap="NoWrap">
+                                        <ObjectStatus
+                                            title="Employee ID"
+                                            text="{path: 'materialsModel>/reservation/employeeId', formatter: '.formatOrNA'}"
+                                            state="None"
+                                            class="sapUiTinyMarginEnd"
+                                        />
+                                        <ObjectStatus
+                                            title="Created By"
+                                            text="{path: 'materialsModel>/reservation/createdBy', formatter: '.formatOrNA'}"
+                                            state="None"
+                                            class="sapUiTinyMarginEnd"
+                                        />
+                                        <ObjectStatus
+                                            title="Created On"
+                                            text="{path: 'materialsModel>/reservation/createdDate', formatter: '.formatCreatedDate'}"
+                                            state="None"
+                                            class="sapUiTinyMarginEnd"
+                                        />
+                                        <ObjectStatus
+                                            title="Created Time"
+                                            text="{path: 'materialsModel>/reservation/createdTime', formatter: '.formatCreatedTime'}"
+                                            state="None"
+                                        />
+                                    </HBox>
+                                </content>
+                            </Panel>
+                            <Table
+                                items="{materialsModel>/reservation/items}"
+                                alternateRowColors="true"
+                                sticky="ColumnHeaders"
+                                class="materialTable"
+                            >
+                                <columns>
+                                    <Column width="3rem"><Text text="Item" /></Column>
+                                    <Column width="10rem"><Text text="Material" /></Column>
+                                    <Column><Text text="Description" /></Column>
+                                    <Column hAlign="End"><Text text="Stock (Shop Floor)" /></Column>
+                                    <Column hAlign="End"><Text text="Stock (Source)" /></Column>
+                                    <Column hAlign="End"><Text text="Stock (Plant)" /></Column>
+                                    <Column hAlign="End"><Text text="Required Qty" /></Column>
+                                    <Column hAlign="End"><Text text="Issued Qty" /></Column>
+                                    <Column hAlign="End"><Text text="Pending Qty" /></Column>
+                                    <Column width="3rem"><Text text="UoM" /></Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <ObjectStatus text="{materialsModel>reservationItemNo}" state="None" />
+                                            <Text text="{materialsModel>material}" />
+                                            <Text text="{materialsModel>materialDesc}" />
+                                            <ObjectNumber number="{path: 'materialsModel>stockSf', formatter: '.formatQty'}" state="None" />
+                                            <ObjectNumber number="{path: 'materialsModel>stockSrc', formatter: '.formatQty'}" state="None" />
+                                            <ObjectNumber number="{path: 'materialsModel>stockPlant', formatter: '.formatQty'}" state="None" />
+                                            <ObjectNumber number="{path: 'materialsModel>requirementQty', formatter: '.formatQty'}" state="Information" />
+                                            <ObjectNumber number="{path: 'materialsModel>withdrawalQty', formatter: '.formatQty'}" state="Success" />
+                                            <ObjectNumber number="{path: 'materialsModel>pendingQty', formatter: '.formatQty'}" state="Warning" />
+                                            <Text text="{materialsModel>units}" />
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </content>
+                    </Panel>
+
+                    <!-- Material Issue History -->
+                    <Panel
+                        expandable="true"
+                        expanded="true"
+                        class="sapUiSmallMarginBottom issueHistoryPanel"
+                    >
+                        <headerToolbar>
+                            <Toolbar>
+                                <Title text="Material Issue History" level="H6" />
+                            </Toolbar>
+                        </headerToolbar>
+                        <content>
+                            <Table
+                                items="{materialsModel>/reservation/matIssues}"
+                                alternateRowColors="true"
+                                sticky="ColumnHeaders"
+                                class="materialTable"
+                            >
+                                <columns>
+                                    <Column width="8rem"><Text text="Material Doc" /></Column>
+                                    <Column width="6rem"><Text text="Doc Year" /></Column>
+                                    <Column><Text text="Issue Sloc" /></Column>
+                                    <Column><Text text="Receive Sloc" /></Column>
+                                    <Column><Text text="Employee ID" /></Column>
+                                    <Column><Text text="Created By" /></Column>
+                                    <Column><Text text="Created On" /></Column>
+                                    <Column><Text text="Created Time" /></Column>
+                                    <Column width="8rem"><Text text="Details" /></Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="{materialsModel>materialDoc}" />
+                                            <Text text="{materialsModel>materialDocYear}" />
+                                            <Text text="{path: 'materialsModel>issueSloc', formatter: '.formatOrNA'}" />
+                                            <Text text="{path: 'materialsModel>receiveSloc', formatter: '.formatOrNA'}" />
+                                            <Text text="{path: 'materialsModel>employeeId', formatter: '.formatOrNA'}" />
+                                            <Text text="{path: 'materialsModel>createdBy', formatter: '.formatOrNA'}" />
+                                            <Text text="{path: 'materialsModel>createdDate', formatter: '.formatCreatedDate'}" />
+                                            <Text text="{path: 'materialsModel>createdTime', formatter: '.formatCreatedTime'}" />
+                                            <Button
+                                                text="View Details"
+                                                type="Emphasized"
+                                                press=".onViewIssueDetails"
+                                            />
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </content>
+                    </Panel>
+
+                    <!-- Material Receipt Confirmation History -->
+                    <Panel
+                        expandable="true"
+                        expanded="true"
+                        class="sapUiSmallMarginBottom receiptHistoryPanel"
+                    >
+                        <headerToolbar>
+                            <Toolbar>
+                                <Title text="Material Receipt Confirmation History" level="H6" />
+                            </Toolbar>
+                        </headerToolbar>
+                        <content>
+                            <Table
+                                items="{materialsModel>/reservation/matReceipts}"
+                                alternateRowColors="true"
+                                sticky="ColumnHeaders"
+                                class="materialTable"
+                            >
+                                <columns>
+                                    <Column width="8rem"><Text text="Material Doc" /></Column>
+                                    <Column width="6rem"><Text text="Doc Year" /></Column>
+                                    <Column width="8rem"><Text text="Issue Doc" /></Column>
+                                    <Column width="6rem"><Text text="Issue Doc Year" /></Column>
+                                    <Column><Text text="Issue Sloc" /></Column>
+                                    <Column><Text text="Receive Sloc" /></Column>
+                                    <Column><Text text="Employee ID" /></Column>
+                                    <Column><Text text="Created By" /></Column>
+                                    <Column><Text text="Created On" /></Column>
+                                    <Column><Text text="Created Time" /></Column>
+                                    <Column width="8rem"><Text text="Details" /></Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="{materialsModel>materialDoc}" />
+                                            <Text text="{materialsModel>materialDocYear}" />
+                                            <Text text="{materialsModel>issueDocument}" />
+                                            <Text text="{materialsModel>issueDocumentYear}" />
+                                            <Text text="{path: 'materialsModel>issueSloc', formatter: '.formatOrNA'}" />
+                                            <Text text="{path: 'materialsModel>receiveSloc', formatter: '.formatOrNA'}" />
+                                            <Text text="{path: 'materialsModel>employeeId', formatter: '.formatOrNA'}" />
+                                            <Text text="{path: 'materialsModel>createdBy', formatter: '.formatOrNA'}" />
+                                            <Text text="{path: 'materialsModel>createdDate', formatter: '.formatCreatedDate'}" />
+                                            <Text text="{path: 'materialsModel>createdTime', formatter: '.formatCreatedTime'}" />
+                                            <Button
+                                                text="View Details"
+                                                type="Emphasized"
+                                                press=".onViewReceiptDetails"
+                                            />
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </content>
+                    </Panel>
+                </VBox>
+
+            </VBox>
+        </f:content>
+
+    </f:DynamicPage>
+</mvc:View>

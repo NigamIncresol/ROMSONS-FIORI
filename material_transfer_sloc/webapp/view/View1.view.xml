@@ -1,0 +1,108 @@
+<mvc:View
+    controllerName="materialtransfersloc.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+>
+    <f:DynamicPage
+        id="dynamicPage"
+        fitContent="false"
+        toggleHeaderOnTitleClick="true"
+        busyIndicatorDelay="0"
+    >
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <HBox alignItems="Center">
+                        <Image
+                            id="logoImage"
+                            height="36px"
+                            class="sapUiSmallMarginEnd logoRounded"
+                        />
+                        <Title text="{i18n>title}" />
+                    </HBox>
+                </f:heading>
+                <f:actions>
+                    <ObjectStatus
+                        icon="sap-icon://employee"
+                        title="EMP ID"
+                        text="{appModel>/employeeId}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <ObjectStatus
+                        icon="sap-icon://factory"
+                        title="PLANT"
+                        text="{appModel>/plant}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <Button
+                        icon="sap-icon://log"
+                        text="Logout"
+                        type="Negative"
+                        press="onLogout"
+                    />
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+        <f:content>
+            <VBox class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop sapUiSmallMarginBottom">
+                <HBox alignItems="End" wrap="Wrap">
+                    <VBox class="sapUiSmallMarginEnd">
+                        <Label text="From Location" labelFor="fromLocInput" required="true" />
+                        <Input
+                            id="fromLocInput"
+                            value="{transferModel>/fromLoc}"
+                            placeholder="Enter From Storage Location"
+                            width="16rem"
+                            showValueHelp="true"
+                            valueHelpRequest=".onFromLocValueHelp"
+                            change=".onFromLocChange"
+                        />
+                    </VBox>
+                    <VBox class="sapUiSmallMarginEnd">
+                        <Label text="To Location" labelFor="toLocInput" required="true" />
+                        <Input
+                            id="toLocInput"
+                            value="{transferModel>/toLoc}"
+                            placeholder="Enter To Storage Location"
+                            showValueHelp="true"
+                            valueHelpRequest=".onToLocValueHelp"
+                            width="16rem"
+                        />
+                    </VBox>
+                    <VBox class="sapUiSmallMarginEnd">
+                        <Label text="Remark" labelFor="remarkInput" />
+                        <Input
+                            id="remarkInput"
+                            value="{transferModel>/remark}"
+                            placeholder="Remark"
+                            maxLength="24"
+                            width="16rem"
+                        />
+                    </VBox>
+                    <Button
+                        text="Transfer"
+                        icon="sap-icon://shipping-status"
+                        type="Success"
+                        press=".onTransfer"
+                    />
+                </HBox>
+                <ScrollContainer horizontal="true" vertical="false" width="100%" class="sapUiSmallMarginTop">
+                    <Table
+                        id="stockTable"
+                        mode="MultiSelect"
+                        alternateRowColors="true"
+                        sticky="ColumnHeaders"
+                        visible="{transferModel>/hasResults}"
+                        noDataText="No stock found for the selected location."
+                        class="materialTable"
+                    />
+                </ScrollContainer>
+            </VBox>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

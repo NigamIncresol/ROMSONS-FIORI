@@ -1,0 +1,127 @@
+<mvc:View
+    controllerName="ztargetalloc.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:layout="sap.ui.layout"
+    xmlns:f="sap.f"
+    height="100%"
+>
+    <f:DynamicPage
+        id="dynamicPage"
+        showFooter="true"
+    >
+        <!-- ================= TITLE ================= -->
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <Title text="{i18n>title}" />
+                </f:heading>
+                <f:actions>
+                    <DatePicker
+                        id="datePicker"
+                        width="150px"
+                        placeholder="Enter Date"
+                    />
+                    <ComboBox
+                        id="shiftComboBox"
+                        placeholder="Select Shift"
+                        width="150px"
+                    >
+                        <items>
+                            <core:Item
+                                key="A"
+                                text="A"
+                            />
+                            <core:Item
+                                key="B"
+                                text="B"
+                            />
+                        </items>
+                    </ComboBox>
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+        <!-- ================= FIXED HEADER ================= -->
+        <f:header>
+            <f:DynamicPageHeader pinnable="true" >
+                <VBox class="sapUiSmallMargin">
+                    <layout:Grid
+                        defaultSpan="L4 M6 S12"
+                        hSpacing="1"
+                        vSpacing="1"
+                        width="100%"
+                    >
+                        <Input
+                            id="productionOrderInput"
+                            placeholder="Production Order"
+                            showValueHelp="true"
+                        />
+                        <Input
+                            id="operationNoInput"
+                            placeholder="Operation No"
+                            showValueHelp="true"
+                        />
+                        <Input
+                            id="noOfEmployeeInput"
+                            placeholder="No. of Employee"
+                        />
+                    </layout:Grid>
+                    <HBox
+                        justifyContent="SpaceBetween"
+                        width="100%"
+                    >
+                        <!-- Left buttons: Save + Reset -->
+                        <HBox spacing="1">
+                            <Button
+                                id="resetButton"
+                                icon="sap-icon://reset"
+                                type="Negative"
+                                press="onResetPress"
+                                class="sapUiTinyMarginEnd"
+                            />
+                            <Button
+                                id="saveHeaderButton"
+                                text="Save"
+                                type="Success"
+                                icon="sap-icon://save"
+                                press="onSavePress"
+                                class="sapUiTinyMarginEnd"
+                            />
+                        </HBox>
+                        <!-- Right button: Go -->
+                        <HBox>
+                            <Button
+                                id="goButton"
+                                text="Go"
+                                type="Success"
+                            />
+                        </HBox>
+                    </HBox>
+                </VBox>
+            </f:DynamicPageHeader>
+        </f:header>
+        <!-- ================= SCROLLABLE CONTENT ================= -->
+        <f:content>
+            <VBox
+                id="contentVBox"
+                width="100%"
+                class="sapUiSmallMargin"
+            />
+        </f:content>
+        <!-- <f:footer>
+            <Bar>
+                <contentMiddle>
+                    
+                    <Button
+                        id="saveButton"
+                        text="Save"
+                        type="Emphasized"
+                        press="onSavePress"
+                    />
+                </contentMiddle>
+               
+            </Bar>
+        </f:footer> -->
+    </f:DynamicPage>
+</mvc:View>

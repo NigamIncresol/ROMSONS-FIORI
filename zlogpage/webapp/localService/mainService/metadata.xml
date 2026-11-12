@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="ZVR_RS_V3_SRV" xml:lang="en" sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <Annotation Term="Core.SchemaVersion" String="1.0.0" xmlns="http://docs.oasis-open.org/odata/ns/edm"/>
+            <EntityType Name="ZVR_USER_PWD" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ZempCode"/>
+                    <PropertyRef Name="Zpassword"/>
+                </Key>
+                <Property Name="ZempCode" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="ZEMP_CODE" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Zpassword" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="ZPASSWORD" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ZcsrfToken" Type="Edm.String" Nullable="false" MaxLength="32" sap:unicode="false" sap:label="UUID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="ZVR_TKN_VALIDATE" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ZcsrfToken"/>
+                </Key>
+                <Property Name="ZcsrfToken" Type="Edm.String" Nullable="false" MaxLength="32" sap:unicode="false" sap:label="UUID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Msg" Type="Edm.String" Nullable="false" sap:unicode="false" sap:label="MSG" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityContainer Name="ZVR_RS_V3_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="ZVR_USER_PWDSet" EntityType="ZVR_RS_V3_SRV.ZVR_USER_PWD" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="ZVR_TKN_VALIDATESet" EntityType="ZVR_RS_V3_SRV.ZVR_TKN_VALIDATE" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+            </EntityContainer>
+            <atom:link rel="self" href="https://s4hana2022.incresol.com:44300/sap/opu/odata/sap/ZVR_RS_V3_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="https://s4hana2022.incresol.com:44300/sap/opu/odata/sap/ZVR_RS_V3_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

@@ -1,0 +1,128 @@
+{
+  "_version": "1.42.0",
+  "sap.app": {
+    "id": "zlogpage",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.19.5",
+      "toolsId": "dcbe2c55-7f3d-4801-8008-d1f170abd9f6"
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.102.8",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "zlogpage.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {}
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "transition": "slide",
+        "type": "View",
+        "viewType": "XML",
+        "path": "zlogpage.view",
+        "async": true,
+        "viewPath": "zlogpage.view"
+      },
+      "routes": [
+        {
+          "name": "RouteView1",
+          "pattern": "",
+          "target": ["TargetView1"]
+        },
+        {
+          "name": "RouteView2",
+          "pattern": "view2/{employeeId}-{plant}",
+          "target": ["TargetView2"]
+        },
+        {
+          "name": "ForgotPassword",
+          "pattern": "forgotPassword/{employeeId}-{plant}",
+          "target": ["ForgotPassword"]
+        },
+        {
+          "name": "Reset",
+          "pattern": "reset/{employeeId}-{plant}",
+          "target": ["Reset"]
+        }
+      ],
+      "targets": {
+        "TargetView1": {
+          "id": "View1",
+          "name": "View1"
+        },
+        "TargetView2": {
+          "id": "View2",
+          "name": "View2"
+        },
+        "ForgotPassword": {
+          "id": "ForgotPassword",
+          "name": "ForgotPassword"
+        },
+        "Reset": {
+          "id": "Reset",
+          "name": "Reset"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "zlogpage.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "App"
+    }
+  }
+}

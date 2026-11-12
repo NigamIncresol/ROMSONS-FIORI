@@ -1,0 +1,504 @@
+<mvc:View
+    controllerName="confirmationlist.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
+>
+    <f:DynamicPage
+        id="dynamicPage"
+        fitContent="true"
+        toggleHeaderOnTitleClick="true"
+        busyIndicatorDelay="0"
+    >
+        <!-- ══════════════════════════════════════════
+             TITLE
+        ══════════════════════════════════════════ -->
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <HBox alignItems="Center">
+                        <Image
+                            id="logoImage"
+                            height="36px"
+                            class="sapUiSmallMarginEnd logoRounded"
+                        />
+                        <Title text="Confirmation List View" />
+                    </HBox>
+                </f:heading>
+                <f:actions>
+                    <ObjectStatus
+                        icon="sap-icon://employee"
+                        title="EMP ID"
+                        text="{appModel>/employeeId}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <ObjectStatus
+                        icon="sap-icon://factory"
+                        title="PLANT"
+                        text="{appModel>/plant}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <Button
+                        icon="sap-icon://log"
+                        text="Logout"
+                        type="Negative"
+                        press="onLogout"
+                    />
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <!-- ══════════════════════════════════════════
+             HEADER (FILTERS)
+        ══════════════════════════════════════════ -->
+        <f:header>
+            <f:DynamicPageHeader pinnable="true">
+                <VBox>
+                    <HBox
+                        alignItems="Center"
+                        justifyContent="SpaceBetween"
+                        class="sapUiTinyMarginBottom"
+                    >
+                        <HBox alignItems="Center">
+                            <SearchField
+                                id="confirmationSearchField"
+                                placeholder="Search by Material Doc. / Order / Reservation No."
+                                width="28rem"
+                                liveChange="onSearchConfirmation"
+                                class="sapUiTinyMarginEnd"
+                            />
+                        </HBox>
+                    </HBox>
+
+                    <!-- ══════════════════════════════════════════
+                         FILTERS
+                    ══════════════════════════════════════════ -->
+                    <HBox
+                        alignItems="End"
+                        wrap="NoWrap"
+                        width="100%"
+                    >
+                        <VBox
+                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom filterField"
+                        >
+                            <Label text="Material Doc" />
+                            <Input
+                                id="filterMaterialDoc"
+                                width="100%"
+                                showValueHelp="true"
+                                valueHelpRequest=".onValueHelpMaterialDoc"
+                            />
+                        </VBox>
+                        <VBox
+                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom"
+                            justifyContent="End"
+                        >
+                            <Button
+                                icon="sap-icon://bar-code"
+                                tooltip="Scan Receiving Slip"
+                                type="Emphasized"
+                                press="onScanReceiptSlip"
+                            />
+                        </VBox>
+                        <VBox
+                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom filterField"
+                        >
+                            <Label text="Doc Year" />
+                            <Input
+                                id="filterMaterialDocYear"
+                                width="100%"
+                                showValueHelp="true"
+                                valueHelpRequest=".onValueHelpMaterialDocYear"
+                            />
+                        </VBox>
+                        <VBox
+                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom filterField"
+                        >
+                            <Label text="Order" />
+                            <Input
+                                id="filterOrder"
+                                width="100%"
+                                showValueHelp="true"
+                                valueHelpRequest=".onValueHelpOrder"
+                            />
+                        </VBox>
+                        <VBox
+                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom filterField"
+                        >
+                            <Label text="Reservation No" />
+                            <Input
+                                id="filterReservationNumber"
+                                width="100%"
+                                showValueHelp="true"
+                                valueHelpRequest=".onValueHelpReservation"
+                            />
+                        </VBox>
+                        <VBox
+                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom filterField"
+                        >
+                            <Label text="Created Date" />
+                            <DatePicker
+                                id="filterCreatedDate"
+                                width="100%"
+                            />
+                        </VBox>
+                    </HBox>
+                    <HBox
+                        alignItems="End"
+                        wrap="NoWrap"
+                        width="100%"
+                    >
+                        <VBox
+                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom filterField"
+                        >
+                            <Label text="Issue Loc" />
+                            <Input
+                                id="filterIssueSloc"
+                                width="100%"
+                                showValueHelp="true"
+                                valueHelpRequest=".onValueHelpIssueSloc"
+                            />
+                        </VBox>
+                        <VBox
+                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom filterField"
+                        >
+                            <Label text="Receiving Loc" />
+                            <Input
+                                id="filterReceiveSloc"
+                                width="100%"
+                                showValueHelp="true"
+                                valueHelpRequest=".onValueHelpReceiveSloc"
+                            />
+                        </VBox>
+                        <VBox
+                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom filterField"
+                        >
+                            <Label text="Department" />
+                            <Input
+                                id="filterDepartment"
+                                width="100%"
+                                showValueHelp="true"
+                                valueHelpRequest=".onValueHelpDepartment"
+                            />
+                        </VBox>
+                        <VBox
+                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom filterField"
+                        >
+                            <Label text="House" />
+                            <Input
+                                id="filterHouse"
+                                width="100%"
+                                showValueHelp="true"
+                                valueHelpRequest=".onValueHelpHouse"
+                            />
+                        </VBox>
+                        <HBox
+                            class="sapUiTinyMarginBottom filterField"
+                            alignItems="End"
+                        >
+                            <Button
+                                text="Apply Filters"
+                                type="Emphasized"
+                                class="sapUiTinyMarginEnd"
+                                press="onApplyFilters"
+                            />
+                            <Button
+                                text="Clear Filters"
+                                type="Transparent"
+                                press="onClearFilters"
+                            />
+                        </HBox>
+                    </HBox>
+                </VBox>
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <!-- ══════════════════════════════════════════
+             CONTENT
+        ══════════════════════════════════════════ -->
+        <f:content>
+            <VBox
+                class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop sapUiSmallMarginBottom"
+            >
+                <!-- Active filters summary -->
+                <MessageStrip
+                    text="{confirmationsModel>/activeFiltersText}"
+                    visible="{= !!${confirmationsModel>/activeFiltersText} }"
+                    type="Information"
+                    showIcon="true"
+                    showCloseButton="true"
+                    close="onClearFilters"
+                    class="sapUiSmallMarginBottom"
+                />
+
+                <!-- Empty state: no confirmations at all -->
+                <VBox
+                    visible="{= ${confirmationsModel>/confirmations/length} === 0 &amp;&amp; !${confirmationsModel>/searchQuery} }"
+                    alignItems="Center"
+                    class="sapUiLargeMarginTop sapUiLargeMarginBottom"
+                >
+                    <core:Icon
+                        src="sap-icon://shipping-status"
+                        size="3rem"
+                        color="var(--sapNeutralColor)"
+                        class="sapUiSmallMarginBottom"
+                    />
+                    <Title
+                        text="No Confirmations Found"
+                        level="H4"
+                    />
+                    <Text
+                        text="No material confirmations are recorded for this employee/plant."
+                        class="sapUiSmallMarginTop"
+                    />
+                </VBox>
+
+                <!-- Empty state: search yielded no matches -->
+                <VBox
+                    visible="{= ${confirmationsModel>/confirmations/length} === 0 &amp;&amp; !!${confirmationsModel>/searchQuery} }"
+                    alignItems="Center"
+                    class="sapUiLargeMarginTop sapUiLargeMarginBottom"
+                >
+                    <core:Icon
+                        src="sap-icon://search"
+                        size="3rem"
+                        color="var(--sapNeutralColor)"
+                        class="sapUiSmallMarginBottom"
+                    />
+                    <Title
+                        text="No Matching Confirmations"
+                        level="H4"
+                    />
+                    <Text
+                        text="{= 'No confirmation matches \'' + ${confirmationsModel>/searchQuery} + '\'.' }"
+                        class="sapUiSmallMarginTop"
+                    />
+                </VBox>
+
+                <!-- One panel per confirmation -->
+                <VBox
+                    visible="{= ${confirmationsModel>/confirmations/length} > 0 }"
+                    items="{confirmationsModel>/confirmations}"
+                >
+                    <items>
+                        <Panel
+                            expandable="true"
+                            expanded="{confirmationsModel>expanded}"
+                            class="sapUiSmallMarginBottom storagePanel"
+                        >
+                            <headerToolbar>
+                                <Toolbar>
+                                    <HBox
+                                        width="100%"
+                                        alignItems="Center"
+                                        justifyContent="SpaceBetween"
+                                    >
+                                        <HBox
+                                            alignItems="Center"
+                                            wrap="NoWrap"
+                                        >
+                                            <ObjectStatus
+                                                title="Material Doc"
+                                                text="{confirmationsModel>materialDoc}"
+                                                state="Indication05"
+                                                class="sapUiTinyMarginEnd boldStatus"
+                                            />
+                                            <Text
+                                                text="|"
+                                                class="sapUiTinyMarginEnd"
+                                            />
+                                            <ObjectStatus
+                                                title="Doc Year"
+                                                text="{confirmationsModel>materialDocYear}"
+                                                state="Indication03"
+                                                class="sapUiTinyMarginEnd boldStatus"
+                                            />
+                                            <Text
+                                                text="|"
+                                                class="sapUiTinyMarginEnd"
+                                            />
+                                            <ObjectStatus
+                                                title="Order"
+                                                text="{path: 'confirmationsModel>order', formatter: '.formatOrNA'}"
+                                                state="Indication02"
+                                                class="sapUiTinyMarginEnd boldStatus"
+                                            />
+                                            <Text
+                                                text="|"
+                                                class="sapUiTinyMarginEnd"
+                                            />
+                                            <ObjectStatus
+                                                title="Reservation No"
+                                                text="{path: 'confirmationsModel>reservationNumber', formatter: '.formatIssueNumber'}"
+                                                state="Indication04"
+                                                class="boldStatus"
+                                            />
+                                            <Text
+                                                text="|"
+                                                class="sapUiTinyMarginBegin sapUiTinyMarginEnd"
+                                            />
+                                            <ObjectStatus
+                                                title="Created Date Time"
+                                                text="{parts: [{path: 'confirmationsModel>createdDate'}, {path: 'confirmationsModel>createdTime'}], formatter: '.formatCreatedDateTime'}"
+                                                state="Information"
+                                            />
+                                        </HBox>
+                                        <ObjectStatus
+                                            text="{path: 'confirmationsModel>issueSloc', formatter: '.formatOrNA'} → {path: 'confirmationsModel>receiveSloc', formatter: '.formatOrNA'}"
+                                            state="Information"
+                                            inverted="true"
+                                            class="sapUiTinyMarginBegin"
+                                        />
+                                    </HBox>
+                                </Toolbar>
+                            </headerToolbar>
+                            <content>
+                                <HBox
+                                    alignItems="Center"
+                                    wrap="Wrap"
+                                    class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
+                                >
+                                    <ObjectStatus
+                                        title="Department"
+                                        text="{path: 'confirmationsModel>department', formatter: '.formatOrNA'}"
+                                        state="None"
+                                        class="sapUiSmallMarginEnd"
+                                    />
+                                    <ObjectStatus
+                                        title="House"
+                                        text="{parts: [{path: 'confirmationsModel>houseId'}, {path: 'confirmationsModel>houseDesc'}], formatter: '.formatHouse'}"
+                                        state="None"
+                                    />
+                                </HBox>
+                                <Panel
+                                    expandable="false"
+                                    expanded="true"
+                                    headerText="Created Log"
+                                    class="sapUiTinyMarginBottom createdLogPanel"
+                                >
+                                    <content>
+                                        <HBox
+                                            alignItems="Center"
+                                            wrap="NoWrap"
+                                        >
+                                            <ObjectStatus
+                                                title="Issue Doc"
+                                                text="{path: 'confirmationsModel>issueDocument', formatter: '.formatIssueNumber'}"
+                                                state="None"
+                                                class="sapUiTinyMarginEnd"
+                                            />
+                                            <ObjectStatus
+                                                title="Issue Doc Year"
+                                                text="{path: 'confirmationsModel>issueDocumentYear', formatter: '.formatOrNA'}"
+                                                state="None"
+                                                class="sapUiTinyMarginEnd"
+                                            />
+                                            <ObjectStatus
+                                                title="Plant"
+                                                text="{path: 'confirmationsModel>plant', formatter: '.formatOrNA'}"
+                                                state="None"
+                                                class="sapUiTinyMarginEnd"
+                                            />
+                                            <ObjectStatus
+                                                title="Employee ID"
+                                                text="{path: 'confirmationsModel>employeeId', formatter: '.formatOrNA'}"
+                                                state="None"
+                                                class="sapUiTinyMarginEnd"
+                                            />
+                                            <ObjectStatus
+                                                title="Created By"
+                                                text="{path: 'confirmationsModel>createdBy', formatter: '.formatOrNA'}"
+                                                state="None"
+                                                class="sapUiTinyMarginEnd"
+                                            />
+                                            <ObjectStatus
+                                                title="Created On"
+                                                text="{path: 'confirmationsModel>createdDate', formatter: '.formatCreatedDate'}"
+                                                state="None"
+                                                class="sapUiTinyMarginEnd"
+                                            />
+                                            <ObjectStatus
+                                                title="Created Time"
+                                                text="{path: 'confirmationsModel>createdTime', formatter: '.formatCreatedTime'}"
+                                                state="None"
+                                            />
+                                        </HBox>
+                                    </content>
+                                </Panel>
+                                <Table
+                                    items="{confirmationsModel>items}"
+                                    alternateRowColors="true"
+                                    sticky="ColumnHeaders"
+                                    class="materialTable"
+                                >
+                                    <columns>
+                                        <Column width="3rem">
+                                            <Text text="Item" />
+                                        </Column>
+                                        <Column width="10rem">
+                                            <Text text="Material" />
+                                        </Column>
+                                        <Column>
+                                            <Text text="Description" />
+                                        </Column>
+                                        <Column width="8rem">
+                                            <Text text="Batch" />
+                                        </Column>
+                                        <Column hAlign="End">
+                                            <Text text="Quantity" />
+                                        </Column>
+                                        <Column width="3rem">
+                                            <Text text="UoM" />
+                                        </Column>
+                                    </columns>
+                                    <items>
+                                        <ColumnListItem>
+                                            <cells>
+                                                <ObjectStatus
+                                                    text="{confirmationsModel>materialDocItem}"
+                                                    state="None"
+                                                />
+                                                <Text
+                                                    text="{confirmationsModel>material}"
+                                                />
+                                                <Text
+                                                    text="{confirmationsModel>materialDesc}"
+                                                />
+                                                <Text
+                                                    text="{confirmationsModel>batch}"
+                                                />
+                                                <ObjectNumber
+                                                    number="{path: 'confirmationsModel>quantity', formatter: '.formatQuantity'}"
+                                                    state="Success"
+                                                />
+                                                <Text
+                                                    text="{confirmationsModel>unit}"
+                                                />
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
+                                <HBox
+                                    justifyContent="End"
+                                    class="sapUiTinyMarginTop"
+                                >
+                                    <Button
+                                        icon="sap-icon://print"
+                                        text="Print Receipt Slip"
+                                        type="Success"
+                                        press=".onPrintMaterialReceiptSlip"
+                                    />
+                                </HBox>
+                            </content>
+                        </Panel>
+                    </items>
+                </VBox>
+            </VBox>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

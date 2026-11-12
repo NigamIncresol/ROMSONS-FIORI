@@ -1,0 +1,136 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Dialog
+        title="Material Consumption"
+        contentWidth="95%"
+        contentHeight="80%"
+        resizable="false"
+        draggable="true"
+    >
+        <content>
+            <VBox class="sapUiTinyMargin">
+                <Table
+                    id="consumptionTable"
+                    items="{consumptionModel>/results}"
+                    noDataText="No consumption data found."
+                    class="pcOperatorTable"
+                    alternateRowColors="true"
+                    width="100%"
+                    fixedLayout="true"
+                >
+                    <headerToolbar>
+                        <Toolbar class="pcPanelHeader">
+                            <Title text="Material Details" level="H5" />
+                        </Toolbar>
+                    </headerToolbar>
+                    <columns>
+                        <Column width="9%"><Text text="Item No" /></Column>
+                        <Column width="16%"><Text text="Material" /></Column>
+                        <Column width="24%"><Text text="Material Desc" /></Column>
+                        <Column width="11%" hAlign="Center"><Text text="Quantity" /></Column>
+                        <Column width="9%" hAlign="Center"><Text text="Unit" /></Column>
+                        <Column width="11%" hAlign="Center"><Text text="Storage Loc" /></Column>
+                        <Column width="10%" hAlign="Center"><Text text="Movement Type" /></Column>
+                        <Column width="10%" hAlign="Center"><Text text="Actions" /></Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Text text="{consumptionModel>itemNo}" />
+                                <Text text="{consumptionModel>material}" class="pcMatDesc" />
+                                <Text text="{consumptionModel>materialDesc}" />
+                                <Input
+                                    value="{consumptionModel>Quantity}"
+                                    textAlign="Center"
+                                    change=".onConsumptionQtyChange"
+                                />
+                                <Text text="{consumptionModel>unit}" />
+                                <Text text="{consumptionModel>storageLoc}" />
+                                <ObjectStatus
+                                    text="{consumptionModel>movementType}"
+                                    state="Information"
+                                    inverted="true"
+                                />
+                                <Button
+                                    text="Get Batch"
+                                    type="Emphasized"
+                                    icon="sap-icon://batch-payments"
+                                    press=".onGetBatchInfo"
+                                />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+
+                <!-- ── Batch Details (from componentbatchdetails) ─────── -->
+                <MessageStrip
+                    text="{= 'Batch split for ' + ${batchContextModel>/material} + ' (' + ${batchContextModel>/materialDesc} + ') — Quantity: ' + ${batchContextModel>/quantity} + ' ' + ${batchContextModel>/unit} + '. Total Split Qty: ' + ${batchContextModel>/totalSplitQty} + ' ' + ${batchContextModel>/unit} + '. The sum of Split Qty must not exceed this quantity.' }"
+                    type="{= ${batchContextModel>/totalSplitQty} > ${batchContextModel>/quantity} ? 'Error' : 'Information' }"
+                    showIcon="true"
+                    visible="{= !!${batchContextModel>/material} }"
+                    class="sapUiTinyMarginTop sapUiTinyMarginBottom"
+                />
+                <Table
+                    items="{batchModel>/results}"
+                    noDataText="Click 'Get Batch' on a material row to view its batch split."
+                    class="pcOperatorTable"
+                    alternateRowColors="true"
+                    width="100%"
+                    fixedLayout="true"
+                >
+                    <headerToolbar>
+                        <Toolbar class="pcPanelHeader">
+                            <Title text="Batch Details" level="H5" />
+                            <ToolbarSpacer />
+                            <ObjectStatus
+                                title="Total Batch Qty"
+                                text="{= ${batchContextModel>/totalSplitQty} + ' ' + ${batchContextModel>/unit} }"
+                                state="Information"
+                                inverted="true"
+                            />
+                        </Toolbar>
+                    </headerToolbar>
+                    <columns>
+                        <Column width="20%"><Text text="Batch" /></Column>
+                        <Column width="20%" hAlign="Center"><Text text="Yield" /></Column>
+                        <Column width="20%" hAlign="Center"><Text text="Available Qty" /></Column>
+                        <Column width="20%" hAlign="Center"><Text text="Split Qty" /></Column>
+                        <Column width="20%" hAlign="Center"><Text text="Unit" /></Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Text text="{batchModel>batch}" class="pcMatDesc" />
+                                <Text text="{batchModel>yield}" />
+                                <ObjectNumber
+                                    number="{batchModel>availableQty}"
+                                    unit="{batchModel>unit}"
+                                    state="Information"
+                                />
+                                <Input
+                                    value="{batchModel>splitQty}"
+                                    textAlign="Center"
+                                    change=".onBatchSplitQtyChange"
+                                />
+                                <Text text="{batchModel>unit}" />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </VBox>
+        </content>
+        <beginButton>
+            <Button
+                text="Save as Draft"
+                icon="sap-icon://save"
+                type="Success"
+                press=".onSaveConsumptionDraft"
+            />
+        </beginButton>
+        <endButton>
+            <Button text="Close" icon="sap-icon://decline" type="Negative" press=".onCloseConsumptionDialog" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

@@ -1,0 +1,194 @@
+<mvc:View
+    controllerName="zlogpage.controller.Reset"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+    displayBlock="true"
+>
+    <Page
+        id="resetPage"
+        showHeader="false"
+        backgroundDesign="Transparent"
+    >
+        <FlexBox
+            height="auto"
+            width="100%"
+            justifyContent="Center"
+            alignItems="Center"
+            direction="Column"
+            backgroundDesign="Transparent"
+            class="loginPageBackground"
+        >
+            <HBox class="loginCardBox">
+                <VBox width="100%">
+                    <!-- LOGO + TITLE BLOCK -->
+                    <VBox
+                        alignItems="Center"
+                        justifyContent="Center"
+                        class="sapUiMediumMarginTop sapUiSmallMarginBottom"
+                    >
+                        <Image
+                            id="logoImage"
+                            width="160px"
+                            densityAware="false"
+                            decorative="false"
+                            alt="Romsons"
+                        />
+                        <Title
+                            text="Reset Password"
+                            level="H3"
+                            titleStyle="H5"
+                            class="sapUiSmallMarginTop"
+                        />
+                        <Text
+                            text="Set a new password for your account"
+                            class="sapUiTinyMarginTop sapThemeText"
+                            textAlign="Center"
+                        />
+                    </VBox>
+
+                    <!-- FORM -->
+                    <f:SimpleForm
+                        editable="true"
+                        layout="ResponsiveGridLayout"
+                        labelSpanXL="4"
+                        labelSpanL="4"
+                        labelSpanM="4"
+                        labelSpanS="12"
+                        adjustLabelSpan="false"
+                        emptySpanXL="0"
+                        emptySpanL="0"
+                        emptySpanM="0"
+                        emptySpanS="0"
+                        columnsXL="1"
+                        columnsL="1"
+                        columnsM="1"
+                        singleContainerFullSize="false"
+                        class="sapUiSmallMarginTop"
+                    >
+                        <f:content>
+                            <Label
+                                text="Old Password"
+                                required="true"
+                                labelFor="oldPasswordInput"
+                                design="Bold"
+                            />
+                            <HBox
+                                alignItems="Center"
+                                width="100%"
+                                class="passwordInputBox"
+                            >
+                                <Input
+                                    id="oldPasswordInput"
+                                    type="Password"
+                                    placeholder="Enter old password"
+                                    width="100%"
+                                />
+                                <core:Icon
+                                    id="oldPasswordToggleIcon"
+                                    src="sap-icon://show"
+                                    press="onToggleOldPassword"
+                                    tooltip="Show password"
+                                    class="passwordToggleIcon"
+                                />
+                            </HBox>
+
+                            <Label
+                                text="New Password"
+                                required="true"
+                                labelFor="newPasswordInput"
+                                design="Bold"
+                            />
+                            <HBox
+                                alignItems="Center"
+                                width="100%"
+                                class="passwordInputBox"
+                            >
+                                <Input
+                                    id="newPasswordInput"
+                                    type="Password"
+                                    placeholder="Enter new password"
+                                    width="100%"
+                                    maxLength="15"
+                                    liveChange="onNewPasswordLiveChange"
+                                />
+                                <core:Icon
+                                    id="newPasswordToggleIcon"
+                                    src="sap-icon://show"
+                                    press="onToggleNewPassword"
+                                    tooltip="Show password"
+                                    class="passwordToggleIcon"
+                                />
+                            </HBox>
+                            <Text
+                                id="pwdHintText"
+                                text="Must be 8–15 characters and include uppercase, lowercase, a number and a special character"
+                                class="pwdHintMsg"
+                            />
+
+                            <Label
+                                text="Confirm Password"
+                                required="true"
+                                labelFor="confirmPasswordInput"
+                                design="Bold"
+                            />
+                            <HBox
+                                alignItems="Center"
+                                width="100%"
+                                class="passwordInputBox"
+                            >
+                                <Input
+                                    id="confirmPasswordInput"
+                                    type="Password"
+                                    placeholder="Confirm password"
+                                    width="100%"
+                                    liveChange="onConfirmPasswordLiveChange"
+                                />
+                                <core:Icon
+                                    id="confirmPasswordToggleIcon"
+                                    src="sap-icon://show"
+                                    press="onToggleConfirmPassword"
+                                    tooltip="Show password"
+                                    class="passwordToggleIcon"
+                                />
+                            </HBox>
+                        </f:content>
+                    </f:SimpleForm>
+
+                    <!-- RESET BUTTON -->
+                    <Button
+                        text="Reset Password"
+                        type="Emphasized"
+                        width="100%"
+
+                        press="onResetPassword"
+                        class="sapUiSmallMarginTop sapUiSmallMarginBottom"
+                    />
+
+                    <!-- BACK TO LOGIN -->
+                    <HBox
+                        justifyContent="Center"
+                        width="100%"
+                    >
+                        <Link
+                            text="Back to Sign In"
+                            press="onBackToLogin"
+                        />
+                    </HBox>
+
+                    <!-- FOOTER -->
+                    <!-- <VBox
+                        alignItems="Center"
+                        class="sapUiMediumMarginTop"
+                    >
+                        <Text
+                            text="© 2026 Romsons Group · All rights reserved"
+                            class="sapUiTinyMarginTop sapThemeText"
+                        />
+                    </VBox> -->
+                </VBox>
+            </HBox>
+        </FlexBox>
+    </Page>
+</mvc:View>

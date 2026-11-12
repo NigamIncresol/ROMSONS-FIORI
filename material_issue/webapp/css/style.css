@@ -1,0 +1,159 @@
+/* ── DynamicPage title and header background ── */
+.sapFDynamicPageTitle,
+.sapFDynamicPageHeader {
+    background-color: #eaf6ef !important;
+}
+
+/* ── Logo ── */
+.logoRounded {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* ── Header filter field label ── */
+.sectionLabel {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* ── Order Details panel background ── */
+.orderDetailsPanel,
+.orderDetailsPanel > .sapMPanelContent,
+.orderDetailsPanel > .sapMPanelHdr,
+.orderDetailsPanel .sapMPanelHdr,
+.orderDetailsPanel .sapMPanelHeader,
+.orderDetailsPanel .sapMPanelWrappingDivTb {
+    background-color: #e3f2fd !important;
+}
+
+/* ── Storage location panel header ── */
+.storagePanel .sapMPanelHeadingDiv,
+.storagePanel .sapMPanelHdr,
+.storagePanel .sapMPanelWrappingDivTb,
+.storagePanel .sapMPanelHeader,
+.storagePanel .sapMPanelHdr .sapMToolBar,
+.storagePanel .sapMPanelHeader .sapMToolBar,
+.storagePanel .sapMPanelHeaderTB,
+.storagePanel .sapMIBar.sapMPanelHeaderTB {
+    background-color: #fffde7 !important;
+}
+
+/* ── Material table column header background ── */
+.materialTable .sapMListTblHeaderCell,
+.materialTable .sapMListTblHeader {
+    background-color: #f5f5f5 !important;
+}
+
+/* ── Material table smaller font ── */
+html body .materialTable,
+html body .materialTable *,
+html body .materialTable .sapMText,
+html body .materialTable .sapMObjectNumberText,
+html body .materialTable .sapMObjectNumberUnit,
+html body .materialTable .sapMObjectStatusText,
+html body .materialTable .sapMListTblCell,
+html body .materialTable .sapMListTblHeaderCell,
+html body .materialTable .sapMInputBaseInner {
+    font-size: 12px !important;
+}
+
+/* ── Components table border ── */
+.materialTable {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px 6px 0 0;
+    overflow: hidden;
+}
+
+/* ── Submit button flush with table bottom ── */
+.tableSubmitBar {
+    border: 1px solid #e0e0e0;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    padding: 6px 8px;
+    background: #ffffff;
+}
+
+/* ── Detail grid rows ── */
+.detailRow {
+    border-bottom: 1px solid #e8e8e8;
+    padding: 14px 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+.detailRow:last-child {
+    border-bottom: none;
+}
+
+/* ── Each cell inside a detail row ── */
+.detailCell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    padding: 0 8px;
+    border-right: 1px solid #f0f0f0;
+    box-sizing: border-box;
+}
+.detailCell:last-child {
+    border-right: none;
+}
+
+/* ── Label above the value ── */
+.detailLabel {
+    font-size: 12px;
+    color: #6a7177;
+    font-family: '72', '72full', Arial, sans-serif;
+    margin-bottom: 6px;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+/* ── Plain text value ── */
+.detailValue {
+    font-size: 14px;
+    font-weight: 600;
+    color: #32363a;
+    font-family: '72', '72full', Arial, sans-serif;
+}
+
+/* ── Batch dialog header (matches Order Details blue) ── */
+.batchDialog .batchDialogHeader,
+.batchDialog .batchDialogHeader.sapMBar {
+    background-color: #e3f2fd !important;
+}
+
+.batchDialogTitle .sapMTitle,
+.batchDialogTitle {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    line-height: 1.3 !important;
+}
+
+.batchDialogSubtitle {
+    font-size: 12px !important;
+    color: #6a7177 !important;
+}
+
+/* ── Batch panel header (matches Storage Location yellow) ── */
+.batchPanel,
+.batchPanel .sapMPanelHeadingDiv,
+.batchPanel .sapMPanelHdr,
+.batchPanel .sapMPanelHeader,
+.batchPanel .sapMPanelWrappingDivTb,
+.batchPanel > .sapMPanelHdr,
+.batchPanel .sapMPanelHdr .sapMToolBar,
+.batchPanel .sapMPanelHeader .sapMToolBar,
+.batchPanel .sapMPanelHdr.sapMBar,
+.batchPanel .sapMPanelHeaderToolbar,
+.batchPanel .sapMPanelHdr .sapMBar,
+.batchPanel .sapMPanelHdr .sapMBarLeft,
+.batchPanel .sapMPanelHdr .sapMBarMiddle,
+.batchPanel .sapMPanelHdr .sapMBarRight,
+.batchPanel .sapMPanelHeaderTB,
+.batchPanel .sapMIBar.sapMPanelHeaderTB {
+    background-color: #fffde7 !important;
+    border-color: #fffde7 !important;
+}

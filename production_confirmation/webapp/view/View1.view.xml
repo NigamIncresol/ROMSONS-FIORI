@@ -1,0 +1,699 @@
+<mvc:View
+    controllerName="productionconfirmation.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:tnt="sap.tnt"
+    xmlns:f="sap.f"
+    xmlns:form="sap.ui.layout.form"
+>
+    <f:DynamicPage
+        id="dynamicPage"
+        class="pcPage"
+        fitContent="true"
+        toggleHeaderOnTitleClick="true"
+    >
+        <!-- ══════════════════════════════════════════
+             DYNAMIC PAGE TITLE  –  "Production Confirmation"
+        ══════════════════════════════════════════ -->
+        <f:title>
+            <f:DynamicPageTitle class="pcHeader">
+                <!-- Page title (always visible, even when header collapses) -->
+                <f:heading>
+                    <HBox alignItems="Center">
+                        <Image
+                            id="appLogo"
+                            height="36px"
+                            class="sapUiSmallMarginEnd pcLogoRounded"
+                        />
+                        <Title text="Production Confirmation" />
+                    </HBox>
+                </f:heading>
+                <f:actions>
+                    <ObjectStatus
+                        icon="sap-icon://document"
+                        title="ORDER"
+                        text="{productionOrderModel>/order}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <ObjectStatus
+                        icon="sap-icon://employee"
+                        title="EMP ID"
+                        text="{appModel>/employeeId}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <ObjectStatus
+                        icon="sap-icon://factory"
+                        title="PLANT"
+                        text="{appModel>/plant}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <Button
+                        icon="sap-icon://log"
+                        text="Logout"
+                        type="Negative"
+                        press="onLogout"
+                    />
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <!-- ══════════════════════════════════════════
+             DYNAMIC PAGE HEADER  –  Filters
+        ══════════════════════════════════════════ -->
+        <f:header>
+            <f:DynamicPageHeader pinnable="true" class="pcHeader">
+                <HBox
+                    alignItems="End"
+                    wrap="Wrap"
+                    justifyContent="Start"
+                    width="100%"
+                    class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop sapUiSmallMarginBottom pcChipRow"
+                >
+                    <VBox class="pcFilterField">
+                        <Label text="ORDER ID" class="pcSectionLabel" />
+                        <HBox alignItems="Center" width="100%">
+                            <Input
+                                id="orderFilterInput"
+                                value="{viewModel>/filterOrder}"
+                                placeholder="Enter order ID"
+                                showValueHelp="true"
+                                valueHelpRequest=".onOrderValueHelp"
+                                submit=".onApplyFilter"
+                                change=".onOrderIdChange"
+                            >
+                                <layoutData>
+                                    <FlexItemData growFactor="1" />
+                                </layoutData>
+                            </Input>
+                            <Button
+                                icon="sap-icon://bar-code"
+                                type="Emphasized"
+                                tooltip="Scan Order ID"
+                                press=".onScanOrderId"
+                                class="sapUiTinyMarginBegin"
+                            />
+                        </HBox>
+                    </VBox>
+                    <VBox class="pcFilterField">
+                        <Label text="DATE" class="pcSectionLabel" />
+                        <Input
+                            id="dateFilterInput"
+                            value="{ path: 'viewModel>/filterDate', formatter: '.formatDisplayDate', mode: 'OneWay' }"
+                            placeholder="DD.MM.YYYY"
+                            showValueHelp="true"
+                            valueHelpRequest=".onDateValueHelp"
+                            width="100%"
+                            change=".onDateTextChange"
+                        />
+                    </VBox>
+                    <VBox class="pcFilterField">
+                        <Label text="SHIFT" class="pcSectionLabel" />
+                        <Select
+                            id="shiftSelect"
+                            selectedKey="{viewModel>/filterShift}"
+                            change=".onShiftChange"
+                            width="100%"
+                            forceSelection="false"
+                            items="{shiftListModel>/results}"
+                        >
+                            <core:Item
+                                key="{shiftListModel>shiftId}"
+                                text="{= 'Shift ' + ${shiftListModel>shiftId} + ' · ' + ${shiftListModel>startTimeFmt} + ' - ' + ${shiftListModel>endTimeFmt} }"
+                            />
+                        </Select>
+                    </VBox>
+                    <VBox class="pcFilterField">
+                        <Label text="OPERATION" class="pcSectionLabel" />
+                        <Select
+                            id="operationSelect"
+                            change=".onOperationChange"
+                            width="100%"
+                            forceSelection="false"
+                            enabled="{viewModel>/operationEnabled}"
+                            items="{operationListModel>/results}"
+                        >
+                            <core:Item
+                                key="{operationListModel>operation}"
+                                text="{= ${operationListModel>operation} + (${operationListModel>operationDesc} ? ' · ' + ${operationListModel>operationDesc} : '') }"
+                            />
+                        </Select>
+                    </VBox>
+                    <VBox class="pcFilterField pcFilterField--action">
+                        <Label text=" " class="pcSectionLabel" />
+                        <HBox width="100%">
+                            <Button
+                                text="Apply"
+                                type="Emphasized"
+                                icon="sap-icon://filter"
+                                press=".onApplyFilter"
+                            >
+                                <layoutData>
+                                    <FlexItemData growFactor="1" />
+                                </layoutData>
+                            </Button>
+                            <Button
+                                text="Clear"
+                                type="Transparent"
+                                icon="sap-icon://clear-filter"
+                                press=".onClearFilter"
+                                class="sapUiTinyMarginBegin"
+                            >
+                                <layoutData>
+                                    <FlexItemData growFactor="1" />
+                                </layoutData>
+                            </Button>
+                        </HBox>
+                    </VBox>
+                </HBox>
+
+                <!-- ── Unapplied Filter Warning ─────────────── -->
+                <MessageStrip
+                    text="You've changed the filters - click Apply to load the updated results."
+                    type="Warning"
+                    showIcon="true"
+                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop"
+                    visible="{viewModel>/filtersDirty}"
+                />
+
+                <!-- ── Prompt to select + apply an operation ─────────── -->
+                <MessageStrip
+                    text="Select an operation and click Apply to submit order confirmation."
+                    type="Information"
+                    showIcon="true"
+                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop"
+                    visible="{= ${viewModel>/operationEnabled} &amp;&amp; !${viewModel>/operationDetailLoaded} }"
+                />
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <!-- ══════════════════════════════════════════
+             DYNAMIC PAGE CONTENT
+        ══════════════════════════════════════════ -->
+        <f:content>
+            <VBox
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop sapUiTinyMarginBottom"
+            >
+                <!-- ── No Order Banner ──────────────────────── -->
+                <VBox
+                    visible="{= !${viewModel>/orderLoaded} }"
+                    alignItems="Center"
+                    class="pcNoOrderBanner sapUiLargeMarginTop"
+                >
+                    <core:Icon src="sap-icon://search" size="3rem" color="#aaaaaa" class="sapUiSmallMarginBottom" />
+                    <Title text="No Production Order ID Available" level="H4" class="sapUiTinyMarginBottom" />
+                    <Text text="Enter an Order ID in the filter above and click Apply to load the details." class="pcNoOrderText" />
+                </VBox>
+
+                <!-- ── ORDER INFO ──────────────────────────── -->
+                <Panel
+                    expandable="true"
+                    expanded="false"
+                    class="pcPanel sapUiSmallMarginBottom"
+                    visible="{viewModel>/orderLoaded}"
+                >
+                    <headerToolbar>
+                        <Toolbar class="pcPanelHeader">
+                            <Title text="Order Details" level="H5" />
+                        </Toolbar>
+                    </headerToolbar>
+                    <content>
+                        <VBox class="pcPanelContent">
+                            <HBox
+                                width="100%"
+                                renderType="Bare"
+                                justifyContent="SpaceBetween"
+                                wrap="Wrap"
+                            >
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" baseSize="12.5%" /></layoutData>
+                                    <Label text="Mat. Code" />
+                                    <Text text="{productionOrderModel>/material}" class="pcMatDesc" />
+                                </VBox>
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" baseSize="12.5%" /></layoutData>
+                                    <Label text="Mat. Desc" />
+                                    <Text text="{productionOrderModel>/materialDesc}" class="pcMatDesc" />
+                                </VBox>
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" baseSize="12.5%" /></layoutData>
+                                    <Label text="Order Qty" />
+                                    <ObjectNumber number="{productionOrderModel>/quantity}" unit="{productionOrderModel>/unit}" state="Information" />
+                                </VBox>
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" baseSize="12.5%" /></layoutData>
+                                    <Label text="Completed" />
+                                    <ObjectNumber number="{productionOrderModel>/completedQty}" unit="{productionOrderModel>/unit}" state="Success" />
+                                </VBox>
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" baseSize="12.5%" /></layoutData>
+                                    <Label text="Pending" />
+                                    <ObjectNumber number="{productionOrderModel>/pendingQty}" unit="{productionOrderModel>/unit}" state="Warning" />
+                                </VBox>
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" baseSize="12.5%" /></layoutData>
+                                    <Label text="Progress" />
+                                    <ObjectNumber number="{productionOrderModel>/progress}" unit="%" state="Success" />
+                                </VBox>
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" baseSize="12.5%" /></layoutData>
+                                    <Label text="Unit" />
+                                    <ObjectStatus text="{productionOrderModel>/unit}" state="Information" inverted="true" />
+                                </VBox>
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" baseSize="12.5%" /></layoutData>
+                                    <Label text="Status" />
+                                    <ObjectStatus text="{productionOrderModel>/statusBadge}" state="{= ${productionOrderModel>/statusBadge} === 'DELAYED' ? 'Error' : 'Success' }" inverted="true" />
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </content>
+                </Panel>
+
+                <!-- ── MOULD INFORMATION ──────────────────── -->
+                <Panel
+                    expandable="true"
+                    expanded="false"
+                    class="pcPanel sapUiSmallMarginBottom"
+                    visible="{= ${productionOrderModel>/IsMouldOrder} === 'X' }"
+                >
+                    <headerToolbar>
+                        <Toolbar class="pcPanelHeader">
+                            <Title text="Mould Details" level="H5" />
+                        </Toolbar>
+                    </headerToolbar>
+                    <content>
+                        <VBox class="pcPanelContent">
+                            <HBox
+                                width="100%"
+                                renderType="Bare"
+                                justifyContent="SpaceBetween"
+                                wrap="Wrap"
+                            >
+                                <VBox alignItems="Center">
+                                    <layoutData><FlexItemData growFactor="1" /></layoutData>
+                                    <Label text="Mould ID" />
+                                    <ObjectStatus text="{productionOrderModel>/MouldId}" state="Information" />
+                                </VBox>
+                                <VBox alignItems="Center">
+                                    <layoutData><FlexItemData growFactor="1" /></layoutData>
+                                    <Label text="Mould Description" />
+                                    <ObjectStatus text="{productionOrderModel>/MouldDesc}" state="None" />
+                                </VBox>
+                                <VBox alignItems="Center">
+                                    <layoutData><FlexItemData growFactor="1" /></layoutData>
+                                    <Label text="Mould Cavity / Pln Cavity" />
+                                    <HBox alignItems="Center">
+                                        <ObjectStatus text="{productionOrderModel>/MouldCavity}" state="Success" />
+                                        <Text text="/" class="sapUiTinyMarginBeginEnd" />
+                                        <ObjectStatus text="{productionOrderModel>/PlnCavity}" state="Success" />
+                                    </HBox>
+                                </VBox>
+                                <VBox alignItems="Center">
+                                    <layoutData><FlexItemData growFactor="1" /></layoutData>
+                                    <Label text="Min Cycle Time / Pln Min Cycle" />
+                                    <HBox alignItems="Center">
+                                        <ObjectStatus text="{ path: 'productionOrderModel>/MinCycleTime', formatter: '.formatDurationHMS' }" state="Information" />
+                                        <Text text="/" class="sapUiTinyMarginBeginEnd" />
+                                        <ObjectStatus text="{ path: 'productionOrderModel>/PlnMinCycle', formatter: '.formatDurationHMS' }" state="Information" />
+                                    </HBox>
+                                </VBox>
+                                <VBox alignItems="Center">
+                                    <layoutData><FlexItemData growFactor="1" /></layoutData>
+                                    <Label text="Max Cycle Time / Pln Max Cycle" />
+                                    <HBox alignItems="Center">
+                                        <ObjectStatus text="{ path: 'productionOrderModel>/MaxCycleTime', formatter: '.formatDurationHMS' }" state="Warning" />
+                                        <Text text="/" class="sapUiTinyMarginBeginEnd" />
+                                        <ObjectStatus text="{ path: 'productionOrderModel>/PlnMaxCycle', formatter: '.formatDurationHMS' }" state="Warning" />
+                                    </HBox>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </content>
+                </Panel>
+
+                <!-- ── OPERATION DETAILS + OPERATOR ASSIGNMENT ─────── -->
+                <Panel
+                    expandable="true"
+                    expanded="false"
+                    class="pcPanel sapUiSmallMarginBottom"
+                    visible="{viewModel>/operationDetailLoaded}"
+                >
+                    <headerToolbar>
+                        <Toolbar class="pcPanelHeader">
+                            <Title text="Operation Details" level="H5" />
+                            <ObjectStatus
+                                text="{operationDetailModel>/operation}"
+                                title="Operation"
+                                state="Warning"
+                                class="sapUiMediumMarginBegin"
+                            />
+                            <ObjectStatus
+                                text="{operationDetailModel>/operationDesc}"
+                                title="Description"
+                                state="Warning"
+                                class="sapUiMediumMarginBegin"
+                            />
+                        </Toolbar>
+                    </headerToolbar>
+                    <content>
+                        <VBox class="pcPanelContent">
+                            <!-- ── Operation details sourced from npToOperation ── -->
+                            <HBox
+                                width="100%"
+                                renderType="Bare"
+                                justifyContent="SpaceBetween"
+                                wrap="Wrap"
+                                class="sapUiSmallMarginBottom"
+                            >
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" /></layoutData>
+                                    <Label text="Work Center" />
+                                    <Text text="{operationDetailModel>/workCenter}" class="pcMatDesc" />
+                                </VBox>
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" /></layoutData>
+                                    <Label text="Work Center Desc" />
+                                    <Text text="{operationDetailModel>/workCenterDesc}" class="pcMatDesc" />
+                                </VBox>
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" /></layoutData>
+                                    <Label text="Quantity" />
+                                    <ObjectNumber number="{operationDetailModel>/quantity}" unit="{operationDetailModel>/unit}" state="Information" />
+                                </VBox>
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" /></layoutData>
+                                    <Label text="Yield Qty" />
+                                    <ObjectNumber number="{operationDetailModel>/yieldQty}" unit="{operationDetailModel>/unit}" state="Success" />
+                                </VBox>
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" /></layoutData>
+                                    <Label text="Scrap Qty" />
+                                    <ObjectNumber number="{operationDetailModel>/scrapQty}" unit="{operationDetailModel>/unit}" state="Warning" />
+                                </VBox>
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" /></layoutData>
+                                    <Label text="Target Qty" />
+                                    <ObjectNumber number="{operationDetailModel>/targetQty}" state="Information" />
+                                </VBox>
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" /></layoutData>
+                                    <Label text="Oper Hrs" />
+                                    <Text text="{operationDetailModel>/operHrs}" class="pcMatDesc" />
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </content>
+                </Panel>
+
+                <!-- ── ACTIVITY DETAILS (activityType1-6, only if present) ── -->
+                <Panel
+                    expandable="true"
+                    expanded="false"
+                    class="pcPanel sapUiSmallMarginBottom"
+                    visible="{= !!${operationDetailModel>/activities} &amp;&amp; ${operationDetailModel>/activities}.length > 0 }"
+                >
+                    <headerToolbar>
+                        <Toolbar class="pcPanelHeader">
+                            <Title text="Activity Details" level="H5" />
+                        </Toolbar>
+                    </headerToolbar>
+                    <content>
+                        <VBox class="pcPanelContent">
+                            <HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                                <Label text="Activity" width="140px" class="pcSectionLabel" />
+                                <Label text="Hours" class="pcSectionLabel" />
+                            </HBox>
+                            <VBox items="{operationDetailModel>/activities}">
+                                <items>
+                                    <HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                                        <Label text="{operationDetailModel>label}" width="140px" />
+                                        <ObjectNumber
+                                            number="{operationDetailModel>value}"
+                                            unit="{operationDetailModel>unit}"
+                                            state="Information"
+                                        />
+                                    </HBox>
+                                </items>
+                            </VBox>
+                        </VBox>
+                    </content>
+                </Panel>
+
+                <!-- ── SUBMIT ORDER CONFIRMATION (npToAssignment) ──── -->
+                <Panel
+                    expandable="true"
+                    expanded="true"
+                    class="pcPanel sapUiSmallMarginBottom"
+                    visible="{viewModel>/operationDetailLoaded}"
+                >
+                    <headerToolbar>
+                        <Toolbar class="pcPanelHeader">
+                            <Title text="Submit Order Confirmation" level="H5" />
+                        </Toolbar>
+                    </headerToolbar>
+                    <content>
+                        <VBox class="pcPanelContent">
+                            <!-- ── Confirmation header form (applies to the whole entry) ── -->
+                            <form:SimpleForm
+                                editable="true"
+                                layout="ResponsiveGridLayout"
+                                labelSpanXL="4"
+                                labelSpanL="4"
+                                labelSpanM="4"
+                                labelSpanS="12"
+                                columnsXL="2"
+                                columnsL="2"
+                                columnsM="1"
+                                singleContainerFullSize="false"
+                                class="sapUiSmallMarginBottom"
+                            >
+                                <form:content>
+                                    <Label text="Posting Date" />
+                                    <DatePicker
+                                        value="{confirmationHeaderModel>/postingDate}"
+                                        valueFormat="yyyy-MM-dd"
+                                        displayFormat="dd MMM yyyy"
+                                    />
+
+                                    <Label text="Exec Start Date" />
+                                    <DatePicker
+                                        value="{confirmationHeaderModel>/execStrtDt}"
+                                        valueFormat="yyyy-MM-dd"
+                                        displayFormat="dd MMM yyyy"
+                                    />
+
+                                    <Label text="Exec Start Time" />
+                                    <TimePicker
+                                        value="{confirmationHeaderModel>/execStrtTm}"
+                                        valueFormat="HH:mm:ss"
+                                        displayFormat="HH:mm:ss"
+                                    />
+
+                                    <Label text="Exec End Date" />
+                                    <DatePicker
+                                        value="{confirmationHeaderModel>/execEndDt}"
+                                        valueFormat="yyyy-MM-dd"
+                                        displayFormat="dd MMM yyyy"
+                                    />
+
+                                    <Label text="Exec End Time" />
+                                    <TimePicker
+                                        value="{confirmationHeaderModel>/execEndTm}"
+                                        valueFormat="HH:mm:ss"
+                                        displayFormat="HH:mm:ss"
+                                    />
+
+                                    <Label text="Break Time" />
+                                    <Input
+                                        value="{confirmationHeaderModel>/breakTime}"
+                                        placeholder="e.g. 2.500"
+                                        type="Number"
+                                    />
+
+                                    <Label text="Break Time Unit" />
+                                    <Input
+                                        value="{confirmationHeaderModel>/breakTimeUnit}"
+                                        editable="false"
+                                    />
+
+                                    <Label text="Confirmation Text" />
+                                    <TextArea
+                                        value="{confirmationHeaderModel>/confirmationText}"
+                                        placeholder="Enter confirmation text"
+                                        maxLength="40"
+                                        rows="2"
+                                        width="100%"
+                                    />
+
+                                    <!-- ── Mould-order-only fields (mandatory when IsMouldOrder = X) ── -->
+                                    <Label
+                                        text="Actual Cavity No"
+                                        required="true"
+                                        visible="{= ${productionOrderModel>/IsMouldOrder} === 'X' }"
+                                    />
+                                    <Input
+                                        value="{confirmationHeaderModel>/actualCavityNo}"
+                                        placeholder="Enter actual cavity no"
+                                        visible="{= ${productionOrderModel>/IsMouldOrder} === 'X' }"
+                                    />
+
+                                    <Label
+                                        text="Actual Cycle Time"
+                                        required="true"
+                                        visible="{= ${productionOrderModel>/IsMouldOrder} === 'X' }"
+                                    />
+                                    <TimePicker
+                                        value="{confirmationHeaderModel>/actualCycleTime}"
+                                        valueFormat="HH:mm:ss"
+                                        displayFormat="HH:mm:ss"
+                                        visible="{= ${productionOrderModel>/IsMouldOrder} === 'X' }"
+                                    />
+
+                                    <Label
+                                        text="Number of Shots"
+                                        required="true"
+                                        visible="{= ${productionOrderModel>/IsMouldOrder} === 'X' }"
+                                    />
+                                    <Input
+                                        value="{confirmationHeaderModel>/numberOfShots}"
+                                        placeholder="Enter number of shots"
+                                        type="Number"
+                                        visible="{= ${productionOrderModel>/IsMouldOrder} === 'X' }"
+                                    />
+                                </form:content>
+                            </form:SimpleForm>
+
+                            <!-- ── Operator table ── -->
+                            <Table
+                                items="{confirmationTableModel>/results}"
+                                noDataText="Add operators for assigning order confirmation."
+                                class="pcOperatorTable"
+                                alternateRowColors="true"
+                            >
+                                <headerToolbar>
+                                    <OverflowToolbar>
+                                        <Title text="Assigned Operators" level="H5" class="pcAssignedOperatorsHeading" />
+                                        <ToolbarSpacer />
+                                        <Input
+                                            id="operatorValueHelpInput"
+                                            value="{viewModel>/selectedOperatorLabel}"
+                                            placeholder="Select an operator to add"
+                                            showValueHelp="true"
+                                            valueHelpRequest=".onOpenOperatorValueHelp"
+                                            width="260px"
+                                        />
+                                    </OverflowToolbar>
+                                </headerToolbar>
+                                <columns>
+                                    <Column><Text text="Operator ID" /></Column>
+                                    <Column hAlign="Center"><Text text="Planned Hrs" /></Column>
+                                    <Column hAlign="Center"><Text text="Target Qty" /></Column>
+                                    <Column hAlign="Center"><Text text="Conf. Qty" /></Column>
+                                    <Column hAlign="Center"><Text text="House ID" /></Column>
+                                    <Column hAlign="Center">
+                                        <Text text="Yield Qty" />
+                                        <footer>
+                                            <Text text="{= 'Total: ' + ${viewModel>/confirmationTotals/yieldQty} }" class="pcMatDesc" />
+                                        </footer>
+                                    </Column>
+                                    <Column hAlign="Center">
+                                        <Text text="Rework Qty" />
+                                        <footer>
+                                            <Text text="{= 'Total: ' + ${viewModel>/confirmationTotals/reworkQty} }" class="pcMatDesc" />
+                                        </footer>
+                                    </Column>
+                                    <Column hAlign="Center">
+                                        <Text text="Scrap Qty" />
+                                        <footer>
+                                            <Text text="{= 'Total: ' + ${viewModel>/confirmationTotals/scrapQty} }" class="pcMatDesc" />
+                                        </footer>
+                                    </Column>
+                                    <Column hAlign="Center"><Text text="Unit" /></Column>
+                                    <Column hAlign="Center"><Text text="Actions" /></Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <ObjectStatus
+                                                text="{confirmationTableModel>employeeId}"
+                                                icon="sap-icon://employee"
+                                                state="Success"
+                                                inverted="true"
+                                            />
+                                            <Text text="{confirmationTableModel>plannedHrsFmt}" />
+                                            <ObjectNumber
+                                                number="{confirmationTableModel>targetQty}"
+                                                unit="{confirmationTableModel>unit}"
+                                            />
+                                            <ObjectNumber
+                                                number="{confirmationTableModel>confirmedQty}"
+                                                unit="{confirmationTableModel>unit}"
+                                                state="Information"
+                                            />
+                                            <Text text="{confirmationTableModel>houseId}" />
+                                            <Input
+                                                value="{confirmationTableModel>yieldQty}"
+                                                textAlign="Center"
+                                                change=".onOperatorYieldChange"
+                                            />
+                                            <Input
+                                                value="{confirmationTableModel>reworkQty}"
+                                                textAlign="Center"
+                                                enabled="false"
+                                            />
+                                            <Input
+                                                value="{confirmationTableModel>scrapQty}"
+                                                textAlign="Center"
+                                                enabled="false"
+                                            />
+                                            <Input
+                                                value="{confirmationTableModel>unit}"
+                                                textAlign="Center"
+                                            />
+                                            <Button
+                                                icon="sap-icon://delete"
+                                                type="Negative"
+                                                tooltip="Remove operator"
+                                                press=".onRemoveConfirmationOperator"
+                                            />
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+
+                            <HBox
+                                justifyContent="End"
+                                class="sapUiSmallMarginTop"
+                            >
+                                <Button
+                                    text="Goods Movement"
+                                    type="Emphasized"
+                                    icon="sap-icon://add-document"
+                                    press=".onAddConsumption"
+                                />
+                            </HBox>
+                            <HBox
+                                justifyContent="End"
+                                class="sapUiTinyMarginTop"
+                            >
+                                <Button
+                                    text="Submit"
+                                    type="Success"
+                                    icon="sap-icon://accept"
+                                    press=".onSubmitOrderConfirmation"
+                                />
+                            </HBox>
+                        </VBox>
+                    </content>
+                </Panel>
+            </VBox>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

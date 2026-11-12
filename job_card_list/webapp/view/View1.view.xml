@@ -1,0 +1,320 @@
+<mvc:View
+    controllerName="jobcardlist.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
+>
+    <f:DynamicPage
+        id="dynamicPage"
+        fitContent="true"
+        toggleHeaderOnTitleClick="true"
+        busyIndicatorDelay="0"
+    >
+        <!-- ══════════════════════════════════════════
+             TITLE
+        ══════════════════════════════════════════ -->
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <HBox alignItems="Center">
+                        <Image
+                            id="logoImage"
+                            height="36px"
+                            class="sapUiSmallMarginEnd logoRounded"
+                        />
+                        <Title text="Job Card List View" />
+                    </HBox>
+                </f:heading>
+                <f:actions>
+                    <ObjectStatus
+                        icon="sap-icon://employee"
+                        title="EMP ID"
+                        text="{appModel>/employeeId}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <ObjectStatus
+                        icon="sap-icon://factory"
+                        title="PLANT"
+                        text="{appModel>/plant}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <Button
+                        icon="sap-icon://log"
+                        text="Logout"
+                        type="Negative"
+                        press="onLogout"
+                    />
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <!-- ══════════════════════════════════════════
+             FILTER BAR
+        ══════════════════════════════════════════ -->
+        <f:header>
+            <f:DynamicPageHeader pinnable="true">
+                <VBox>
+                    <!-- Row 1: title, global search, scan -->
+                    <HBox
+                        alignItems="Center"
+                        justifyContent="SpaceBetween"
+                        wrap="Wrap"
+                        class="sapUiSmallMarginBottom"
+                    >
+                        <HBox alignItems="Center">
+                            <Input
+                                id="scanInput"
+                                placeholder="Scan job card QR here"
+                                width="16rem"
+                                class="sapUiSmallMarginEnd"
+                                change="onScanInputChange"
+                            />
+                            <SearchField
+                                placeholder="Search by Order / Shift / Operation / House ID / Desc"
+                                width="28rem"
+                                class="sapUiSmallMarginEnd"
+                                liveChange="onSearchJobCard"
+                            />
+                        </HBox>
+                    </HBox>
+
+                    <!-- Row 2: per-field filters -->
+                    <HBox
+                        alignItems="End"
+                        wrap="Wrap"
+                        class="filterBar"
+                    >
+                        <VBox class="filterField sapUiTinyMarginEnd">
+                            <Label text="Order" />
+                            <Input
+                                id="orderFilter"
+                                placeholder="e.g. 1035860"
+                                width="100%"
+                                showValueHelp="true"
+                                valueHelpRequest="onOrderValueHelp"
+                                submit="onOrderSubmit"
+                            />
+                        </VBox>
+                        <VBox class="filterScanField sapUiTinyMarginEnd">
+                            <Label text=" " />
+                            <Button
+                                icon="sap-icon://qr-code"
+                                type="Emphasized"
+                                tooltip="Scan Job Card"
+                                press="onScanOrder"
+                            />
+                        </VBox>
+                        <VBox class="filterField sapUiTinyMarginEnd">
+                            <Label text="House ID" />
+                            <Input
+                                id="houseIdFilter"
+                                placeholder="e.g. 0001"
+                                width="100%"
+                                showValueHelp="true"
+                                valueHelpRequest="onHouseValueHelp"
+                            />
+                        </VBox>
+                        <VBox class="filterField sapUiTinyMarginEnd">
+                            <Label text="Shift" />
+                            <Input
+                                id="shiftFilter"
+                                placeholder="e.g. A"
+                                width="100%"
+                                showValueHelp="true"
+                                valueHelpRequest="onShiftValueHelp"
+                            />
+                        </VBox>
+                        <VBox class="filterField sapUiTinyMarginEnd">
+                            <Label text="Shift Date" />
+                            <Input
+                                id="shiftDateFilter"
+                                placeholder="dd.MM.yyyy"
+                                width="100%"
+                                showValueHelp="true"
+                                valueHelpRequest="onShiftDateValueHelp"
+                            />
+                        </VBox>
+                        <VBox class="filterActionField sapUiTinyMarginEnd">
+                            <Label text=" " />
+                            <Button
+                                text="Apply Filters"
+                                type="Emphasized"
+                                width="7rem"
+                                press="onApplyDateFilter"
+                            />
+                        </VBox>
+                        <VBox class="filterActionField">
+                            <Label text=" " />
+                            <Button
+                                text="Clear Filters"
+                                type="Transparent"
+                                width="7rem"
+                                press="onClearDateFilter"
+                            />
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <!-- ══════════════════════════════════════════
+             CONTENT
+        ══════════════════════════════════════════ -->
+        <f:content>
+            <VBox
+                class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop sapUiSmallMarginBottom"
+            >
+                <!-- Active filters info -->
+                <MessageStrip
+                    text="{jobCardsModel>/activeFiltersText}"
+                    type="Information"
+                    showIcon="true"
+                    showCloseButton="false"
+                    visible="{= !!${jobCardsModel>/activeFiltersText} }"
+                    class="sapUiSmallMarginBottom"
+                />
+
+                <!-- Empty state: no job cards at all -->
+                <VBox
+                    visible="{= ${jobCardsModel>/jobCards/length} === 0 &amp;&amp; !${jobCardsModel>/searchQuery} }"
+                    alignItems="Center"
+                    class="sapUiLargeMarginTop sapUiLargeMarginBottom"
+                >
+                    <core:Icon
+                        src="sap-icon://shipping-status"
+                        size="3rem"
+                        color="var(--sapNeutralColor)"
+                        class="sapUiSmallMarginBottom"
+                    />
+                    <Title
+                        text="No Job Cards Found"
+                        level="H4"
+                    />
+                    <Text
+                        text="No job cards are recorded for this employee/plant."
+                        class="sapUiSmallMarginTop"
+                    />
+                </VBox>
+
+                <!-- Empty state: search yielded no matches -->
+                <VBox
+                    visible="{= ${jobCardsModel>/jobCards/length} === 0 &amp;&amp; !!${jobCardsModel>/searchQuery} }"
+                    alignItems="Center"
+                    class="sapUiLargeMarginTop sapUiLargeMarginBottom"
+                >
+                    <core:Icon
+                        src="sap-icon://search"
+                        size="3rem"
+                        color="var(--sapNeutralColor)"
+                        class="sapUiSmallMarginBottom"
+                    />
+                    <Title
+                        text="No Matching Job Cards"
+                        level="H4"
+                    />
+                    <Text
+                        text="{= 'No job card matches \'' + ${jobCardsModel>/searchQuery} + '\'.' }"
+                        class="sapUiSmallMarginTop"
+                    />
+                </VBox>
+
+                <!-- One entry per job card -->
+                <Table
+                    visible="{= ${jobCardsModel>/jobCards/length} > 0 }"
+                    items="{jobCardsModel>/jobCards}"
+                    alternateRowColors="true"
+                    sticky="ColumnHeaders"
+                    class="materialTable"
+                >
+                    <columns>
+                        <Column width="12%">
+                            <Text text="Order" />
+                        </Column>
+                        <Column width="6%">
+                            <Text text="House ID" />
+                        </Column>
+                        <Column width="15%">
+                            <Text text="House Description" />
+                        </Column>
+                        <Column width="11%">
+                            <Text text="Batch" />
+                        </Column>
+                        <Column width="12%">
+                            <Text text="Shift Date" />
+                        </Column>
+                        <Column width="6%">
+                            <Text text="Shift" />
+                        </Column>
+                        <Column width="12%">
+                            <Text text="Assigned Operators" />
+                        </Column>
+                        <Column
+                            width="13%"
+                            hAlign="Center"
+                        >
+                            <Text text="View Details" />
+                        </Column>
+                        <Column
+                            width="13%"
+                            hAlign="Center"
+                        >
+                            <Text text="Print Job Card" />
+                        </Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <ObjectStatus
+                                    text="{path: 'jobCardsModel>order', formatter: '.formatIssueNumber'}"
+                                    state="Indication05"
+                                    class="boldStatus"
+                                />
+                                <Text
+                                    text="{path: 'jobCardsModel>houseId', formatter: '.formatOrNA'}"
+                                />
+                                <Text
+                                    text="{path: 'jobCardsModel>houseDesc', formatter: '.formatOrNA'}"
+                                />
+                                <Text
+                                    text="{path: 'jobCardsModel>Charg', formatter: '.formatOrNA'}"
+                                />
+                                <Text
+                                    text="{path: 'jobCardsModel>shiftDt', formatter: '.formatCreatedDate'}"
+                                />
+                                <ObjectStatus
+                                    text="{path: 'jobCardsModel>shiftId', formatter: '.formatOrNA'}"
+                                    state="Indication03"
+                                />
+                                <ObjectStatus
+                                    text="{path: 'jobCardsModel>assigOper', formatter: '.formatIssueNumber'}"
+                                    state="Indication02"
+                                />
+                                <HBox justifyContent="Center">
+                                    <Button
+                                        icon="sap-icon://detail-view"
+                                        text="View Details"
+                                        type="Neutral"
+                                        press=".onViewJobCardDetails"
+                                    />
+                                </HBox>
+                                <HBox justifyContent="Center">
+                                    <Button
+                                        icon="sap-icon://print"
+                                        text="Print Job Card"
+                                        type="Success"
+                                        press=".onPrintJobCard"
+                                    />
+                                </HBox>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </VBox>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

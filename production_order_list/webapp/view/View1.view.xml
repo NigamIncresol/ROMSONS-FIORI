@@ -1,0 +1,509 @@
+<mvc:View
+    controllerName="productionorder.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
+    xmlns:tnt="sap.tnt"
+    xmlns:l="sap.ui.layout"
+>
+    <f:DynamicPage
+        id="dynamicPage"
+        class="customDynamicPage"
+        fitContent="true"
+        toggleHeaderOnTitleClick="true"
+        busyIndicatorDelay="0"
+    >
+        <!-- ══════════════════════════════════════════
+             DYNAMIC PAGE TITLE
+        ══════════════════════════════════════════ -->
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <HBox alignItems="Center">
+                        <Image
+                            id="logoImage"
+                            height="36px"
+                            class="sapUiSmallMarginEnd logoRounded"
+                        />
+                        <Title text="{i18n>title}" />
+                    </HBox>
+                </f:heading>
+                <f:actions>
+                    <Button
+                        icon="sap-icon://employee"
+                        text="{appModel>/employeeId}"
+                        type="Ghost"
+                        enabled="false"
+                        class="sapUiSmallMarginEnd headerBadgeBtn"
+                    >
+                        <layoutData>
+                            <OverflowToolbarLayoutData priority="Low" />
+                        </layoutData>
+                    </Button>
+                    <Button
+                        icon="sap-icon://factory"
+                        text="{appModel>/plant}"
+                        type="Ghost"
+                        enabled="false"
+                        class="sapUiSmallMarginEnd headerBadgeBtn"
+                    >
+                        <layoutData>
+                            <OverflowToolbarLayoutData priority="Low" />
+                        </layoutData>
+                    </Button>
+                    <Button
+                        icon="sap-icon://log"
+                        text="Logout"
+                        type="Negative"
+                        press="onLogout"
+                    >
+                        <layoutData>
+                            <OverflowToolbarLayoutData priority="Low" />
+                        </layoutData>
+                    </Button>
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <!-- ══════════════════════════════════════════
+             DYNAMIC PAGE HEADER  –  Filter / Search
+        ══════════════════════════════════════════ -->
+        <f:header>
+            <f:DynamicPageHeader pinnable="true">
+                <VBox
+                    width="100%"
+                    class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop sapUiSmallMarginBottom"
+                >
+                    <!-- Row 1: Search + Scan -->
+                    <HBox width="100%" alignItems="Center" class="sapUiSmallMarginBottom">
+                        <SearchField
+                            id="searchField"
+                            placeholder="Search by Order, Material, Type, Status..."
+                            search="onSearch"
+                        >
+                            <layoutData>
+                                <FlexItemData growFactor="1" />
+                            </layoutData>
+                        </SearchField>
+                        <Button
+                            id="barcodeScannerBtn"
+                            icon="sap-icon://bar-code"
+                            type="Emphasized"
+                            press=".onScanBarcode"
+                            class="sapUiTinyMarginBegin"
+                        />
+                    </HBox>
+
+                    <!-- Row 2: Filters + Apply + Clear inline -->
+                    <HBox
+                        id="filterBar"
+                        width="100%"
+                        wrap="Wrap"
+                        alignItems="End"
+                        busyIndicatorDelay="0"
+                        class="filterBar"
+                    >
+                        <VBox class="filterItem sapUiSmallMarginEnd sapUiSmallMarginBottom">
+                            <Label text="House ID" />
+                            <MultiInput id="filterHouseId" width="100%" placeholder="Select" showValueHelp="true"
+                                valueHelpRequest=".onFilterValueHelp" />
+                        </VBox>
+                        <VBox class="filterItem sapUiSmallMarginEnd sapUiSmallMarginBottom">
+                            <Label text="Production Order" />
+                            <MultiInput id="filterOrder" width="100%" placeholder="Type to search..."
+                                showValueHelp="true" showSuggestion="true"
+                                valueHelpRequest=".onFilterValueHelp"
+                                suggest=".onOrderSuggest"
+                                suggestionItemSelected=".onOrderSuggestionSelected" />
+                        </VBox>
+                        <VBox class="filterItem sapUiSmallMarginEnd sapUiSmallMarginBottom">
+                            <Label text="Order Type" />
+                            <MultiInput id="filterOrderType" width="100%" placeholder="Select" showValueHelp="true"
+                                valueHelpRequest=".onFilterValueHelp" />
+                        </VBox>
+                        <VBox class="filterItem sapUiSmallMarginEnd sapUiSmallMarginBottom">
+                            <Label text="Material" />
+                            <MultiInput id="filterMaterial" width="100%" placeholder="Select" showValueHelp="true"
+                                valueHelpRequest=".onFilterValueHelp" />
+                        </VBox>
+                        <VBox class="filterItem sapUiSmallMarginEnd sapUiSmallMarginBottom">
+                            <Label text="Order Status" />
+                            <MultiInput id="filterOrderStatus" width="100%" placeholder="Select" showValueHelp="true"
+                                valueHelpRequest=".onFilterValueHelp" />
+                        </VBox>
+                        <VBox class="filterItem sapUiSmallMarginEnd sapUiSmallMarginBottom">
+                            <Label text="Family" />
+                            <MultiInput id="filterFamily" width="100%" placeholder="Select" showValueHelp="true"
+                                valueHelpRequest=".onFilterValueHelp" />
+                        </VBox>
+                        <VBox class="filterItem sapUiSmallMarginEnd sapUiSmallMarginBottom">
+                            <Label text="Department" />
+                            <MultiInput id="filterDepartment" width="100%" placeholder="Select" showValueHelp="true"
+                                valueHelpRequest=".onFilterValueHelp" />
+                        </VBox>
+                        <!-- <VBox class="filterItem sapUiSmallMarginEnd sapUiSmallMarginBottom">
+                            <Label text="Shift" />
+                            <MultiInput id="filterShift" width="100%" placeholder="Select" showValueHelp="true"
+                                valueHelpRequest=".onFilterValueHelp" />
+                        </VBox> -->
+                        <VBox class="filterItem sapUiSmallMarginEnd sapUiSmallMarginBottom">
+                            <Label text="Worklist" />
+                            <MultiInput id="filterWorklist" width="100%" placeholder="Select" showValueHelp="true"
+                                valueHelpRequest=".onFilterValueHelp" />
+                        </VBox>
+                        <VBox class="filterItem sapUiSmallMarginEnd sapUiSmallMarginBottom">
+                            <Label text="Batch" />
+                            <MultiInput id="filterBatch" width="100%" placeholder="Select" showValueHelp="true"
+                                valueHelpRequest=".onFilterValueHelp" />
+                        </VBox>
+                        <VBox class="filterItem sapUiSmallMarginEnd sapUiSmallMarginBottom">
+                            <Label text="Created Date" />
+                            <DateRangeSelection id="filterCreatedOn" width="100%"
+                                displayFormat="dd MMM yyyy" delimiter="-" />
+                        </VBox>
+                        <VBox class="filterItem sapUiSmallMarginEnd sapUiSmallMarginBottom">
+                            <Label text="Released On" />
+                            <DateRangeSelection id="filterActualRelease" width="100%"
+                                displayFormat="dd MMM yyyy" delimiter="-" />
+                        </VBox>
+                        <VBox class="filterItem sapUiSmallMarginEnd sapUiSmallMarginBottom">
+                            <Label text="Start Date" />
+                            <DateRangeSelection id="filterStartDate" width="100%"
+                                displayFormat="dd MMM yyyy" delimiter="-" />
+                        </VBox>
+                        <VBox class="filterItem sapUiSmallMarginEnd sapUiSmallMarginBottom">
+                            <Label text="Finish Date" />
+                            <DateRangeSelection id="filterFinishDate" width="100%"
+                                displayFormat="dd MMM yyyy" delimiter="-" />
+                        </VBox>
+                        <!-- Apply + Clear inline at end -->
+                        <HBox alignItems="End" class="sapUiSmallMarginBottom filterActionBtns">
+                            <Button
+                                icon="sap-icon://filter"
+                                text="Apply Filters"
+                                type="Emphasized"
+                                press="onApplyFilters"
+                                class="sapUiTinyMarginEnd"
+                            />
+                            <Button
+                                icon="sap-icon://clear-filter"
+                                type="Transparent"
+                                press="onClearFilters"
+                                tooltip="Clear Filters"
+                            />
+                        </HBox>
+                    </HBox>
+                </VBox>
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <!-- ══════════════════════════════════════════
+             DYNAMIC PAGE CONTENT
+        ══════════════════════════════════════════ -->
+        <f:content>
+            <VBox
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginBottom"
+            >
+                <HBox
+                    id="titleRefreshBar"
+                    busyIndicatorDelay="0"
+                    alignItems="Center"
+                    class="sapUiSmallMarginBegin sapUiTinyMarginTop sapUiTinyMarginBottom"
+                >
+                    <Title
+                        text="PRODUCTION ORDERS"
+                        level="H4"
+                    />
+                    <Button
+                        icon="sap-icon://refresh"
+                        type="Transparent"
+                        tooltip="Refresh Orders"
+                        press="onRefreshOrders"
+                        class="sapUiTinyMarginBegin sapUiTinyMarginBottom refreshBtn"
+                    />
+                </HBox>
+                <MessageStrip
+                    text="{appModel>/filterBannerText}"
+                    type="Information"
+                    showIcon="true"
+                    visible="{appModel>/filtersApplied}"
+                    class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginBottom"
+                />
+
+                <!-- ── Empty state ── -->
+                <VBox
+                    visible="{= ${ordersModel>/orders/length} === 0 }"
+                    alignItems="Center"
+                    class="sapUiLargeMarginTop sapUiLargeMarginBottom"
+                >
+                    <core:Icon
+                        src="sap-icon://document"
+                        size="3rem"
+                        color="var(--sapNeutralColor)"
+                        class="sapUiSmallMarginBottom"
+                    />
+                    <Title
+                        text="No Production Orders Found"
+                        level="H4"
+                    />
+                    <Text
+                        text="{= ${appModel>/filtersApplied} ? 'No production orders match your current filters.' : 'No production orders found for this user.' }"
+                        class="sapUiSmallMarginTop"
+                    />
+                </VBox>
+
+                <!-- ── Data-driven order panels ── -->
+                <VBox id="ordersListVBox" busyIndicatorDelay="0" items="{ordersModel>/orders}">
+                    <items>
+                        <Panel
+                            expandable="true"
+                            expanded="false"
+                            class="sapUiSmallMarginBottom modernOrderPanel"
+                        >
+                            <headerToolbar>
+                                <OverflowToolbar>
+                                    <ObjectStatus
+                                        text="{ordersModel>order}"
+                                        title="Order"
+                                        state="Information"
+                                        inverted="true"
+                                    />
+                                    <ObjectStatus
+                                        text="{= ${ordersModel>orderType} + (${ordersModel>orderTypeDesc} ? ' - ' + ${ordersModel>orderTypeDesc} : '') }"
+                                        title="Order Type"
+                                        state="Information"
+                                        inverted="true"
+                                        class="sapUiTinyMarginBegin"
+                                    />
+                                    <ObjectStatus
+                                        text="{ordersModel>houseDesc}"
+                                        title="House"
+                                        state="None"
+                                        class="sapUiTinyMarginBegin"
+                                    />
+                                    <ObjectStatus
+                                        text="{ordersModel>Department}"
+                                        title="Dept"
+                                        state="None"
+                                        class="sapUiTinyMarginBegin"
+                                        visible="{= !!${ordersModel>Department} }"
+                                    />
+                                    <ObjectStatus
+                                        text="{ordersModel>ShiftId}"
+                                        title="Shift"
+                                        state="None"
+                                        class="sapUiTinyMarginBegin"
+                                        visible="{= !!${ordersModel>ShiftId} }"
+                                    />
+                                    <ObjectStatus
+                                        text="{ordersModel>batch}"
+                                        title="Batch"
+                                        state="None"
+                                        class="sapUiTinyMarginBegin"
+                                        visible="{= !!${ordersModel>batch} }"
+                                    />
+                                    <ObjectStatus
+                                        text="{
+                                            path: 'ordersModel>createdOn',
+                                            formatter: '.formatDate'
+                                        }"
+                                        title="Order Date"
+                                        state="None"
+                                        class="sapUiTinyMarginBegin"
+                                        visible="{= !!${ordersModel>createdOn} }"
+                                    />
+                                    <core:HTML
+                                        content="{
+                                            path: 'ordersModel>progress',
+                                            formatter: '.formatCircularProgress'
+                                        }"
+                                        class="sapUiTinyMarginBegin"
+                                    />
+                                    <ObjectStatus
+                                        text="{
+                                            path: 'ordersModel>assigOper',
+                                            formatter: '.formatOperatorCount'
+                                        }"
+                                        title="Operators"
+                                        icon="sap-icon://group"
+                                        state="Indication13"
+                                        inverted="true"
+                                        class="sapUiTinyMarginBegin"
+                                    />
+
+                                    <ToolbarSpacer />
+
+                                    <core:Icon
+                                        src="sap-icon://calendar"
+                                        class="sapUiTinyMarginEnd"
+                                    />
+                                    <Text
+                                        text="{
+                                            parts: [
+                                                'ordersModel>startDate',
+                                                'ordersModel>finishDate'
+                                            ],
+                                            formatter: '.formatDateRange'
+                                        }"
+                                        class="sapUiTinyMarginEnd"
+                                    />
+                                    <ObjectStatus
+                                        text="{ordersModel>statusBadge}"
+                                        inverted="true"
+                                        state="{
+                                            path: 'ordersModel>colorCode',
+                                            formatter: '.formatStatusState'
+                                        }"
+                                        class="smallBadge"
+                                    />
+                                </OverflowToolbar>
+                            </headerToolbar>
+
+                            <content>
+                                <VBox
+                                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop"
+                                >
+                                    <!-- ── ALL DETAILS: 3 COLUMNS ── -->
+                                    <HBox
+                                        width="100%"
+                                        renderType="Bare"
+                                        class="sapUiTinyMarginBottom contentHBox"
+                                        alignItems="Start"
+                                    >
+                                        <!-- Column 1: Order Details -->
+                                        <VBox width="33%" class="panelCol">
+                                            <Label text="ORDER DETAILS" class="colGroupLabel" />
+                                            <HBox class="sapUiTinyMarginTop">
+                                                <VBox alignItems="Start" width="50%">
+                                                    <Label text="Order ID" />
+                                                    <ObjectStatus text="{ path: 'ordersModel>order', formatter: '.formatFallback' }" state="Information" inverted="true" />
+                                                </VBox>
+                                                <VBox alignItems="Start" width="50%">
+                                                    <Label text="Order Type" />
+                                                    <ObjectStatus text="{= ${ordersModel>orderType} + (${ordersModel>orderTypeDesc} ? ' - ' + ${ordersModel>orderTypeDesc} : '') }" state="None" />
+                                                </VBox>
+                                            </HBox>
+                                            <HBox class="sapUiTinyMarginTop">
+                                                <VBox alignItems="Start" width="50%">
+                                                    <Label text="Order Status" />
+                                                    <ObjectStatus text="{= ${ordersModel>orderStatus} + (${ordersModel>orderStatusDesc} ? ' - ' + ${ordersModel>orderStatusDesc} : '') }" state="None" inverted="true" />
+                                                </VBox>
+                                                <VBox alignItems="Start" width="50%">
+                                                    <Label text="Order Date" />
+                                                    <ObjectStatus text="{ path: 'ordersModel>createdOn', formatter: '.formatDate' }" state="None" />
+                                                </VBox>
+                                            </HBox>
+                                            <HBox class="sapUiTinyMarginTop">
+                                                <VBox alignItems="Start" width="50%">
+                                                    <Label text="Release Date" />
+                                                    <ObjectStatus text="{ path: 'ordersModel>actualRelease', formatter: '.formatDate' }" state="None" />
+                                                </VBox>
+                                            </HBox>
+                                        </VBox>
+
+                                        <!-- Column 2: Quantity Details -->
+                                        <VBox width="33%" class="panelCol panelColMid">
+                                            <Label text="ORDER QUANTITY" class="colGroupLabel" />
+                                            <HBox class="sapUiTinyMarginTop">
+                                                <VBox alignItems="Start" width="50%">
+                                                    <Label text="Order Qty" />
+                                                    <ObjectStatus text="{ path: 'ordersModel>quantity', formatter: '.formatIndianNumber' }" state="Information" inverted="true" />
+                                                </VBox>
+                                                <VBox alignItems="Start" width="50%">
+                                                    <Label text="Confirmed" />
+                                                    <ObjectStatus text="{ path: 'ordersModel>completedQty', formatter: '.formatIndianNumber' }" state="Success" inverted="true" />
+                                                </VBox>
+                                            </HBox>
+                                            <HBox class="sapUiTinyMarginTop">
+                                                <VBox alignItems="Start" width="50%">
+                                                    <Label text="Remaining" />
+                                                    <ObjectStatus text="{ path: 'ordersModel>pendingQty', formatter: '.formatIndianNumber' }" state="Warning" inverted="true" />
+                                                </VBox>
+                                                <VBox alignItems="Start" width="50%">
+                                                    <Label text="Unit" />
+                                                    <ObjectStatus text="{ path: 'ordersModel>unit', formatter: '.formatFallback' }" state="Information" inverted="true" />
+                                                </VBox>
+                                            </HBox>
+                                        </VBox>
+
+                                        <!-- Column 3: Material Details -->
+                                        <VBox width="34%" class="panelCol panelColMid">
+                                            <Label text="MATERIAL DETAILS" class="colGroupLabel" />
+                                            <HBox class="sapUiTinyMarginTop">
+                                                <VBox alignItems="Start" width="50%">
+                                                    <Label text="Family" />
+                                                    <ObjectStatus text="{ path: 'ordersModel>family', formatter: '.formatFallback' }" state="Information" inverted="true" />
+                                                </VBox>
+                                                <VBox alignItems="Start" width="50%">
+                                                    <Label text="Material Code" />
+                                                    <ObjectStatus text="{ path: 'ordersModel>material', formatter: '.formatFallback' }" state="Information" inverted="true" />
+                                                </VBox>
+                                            </HBox>
+                                            <HBox class="sapUiTinyMarginTop">
+                                                <VBox alignItems="Start" width="50%">
+                                                    <Label text="Description" />
+                                                    <ObjectStatus text="{ path: 'ordersModel>materialDesc', formatter: '.formatFallback' }" state="None" />
+                                                </VBox>
+                                                <VBox alignItems="Start" width="50%">
+                                                    <Label text="Batch" />
+                                                    <ObjectStatus text="{ path: 'ordersModel>batch', formatter: '.formatFallback' }" state="None" />
+                                                </VBox>
+                                            </HBox>
+                                            <HBox class="sapUiTinyMarginTop">
+                                                <VBox alignItems="Start" width="50%">
+                                                    <Label text="Material Group" />
+                                                    <ObjectStatus text="{= ${ordersModel>materialGroup} + (${ordersModel>materialGroupDesc} ? ' - ' + ${ordersModel>materialGroupDesc} : '') }" state="None" />
+                                                </VBox>
+                                            </HBox>
+                                        </VBox>
+                                    </HBox>
+
+                                    <!-- ── ACTION ROW ── -->
+                                    <OverflowToolbar class="actionOverflowToolbar" style="Clear">
+                                        <ToolbarSpacer />
+                                        <Button
+                                            icon="sap-icon://locked"
+                                            text="Release Order"
+                                            type="Emphasized"
+                                            press="onReleaseOrder"
+                                            enabled="{= parseFloat(${ordersModel>progress}) !== 100 &amp;&amp; ${ordersModel>orderStatus} === 'CRTD' }"
+                                        />
+                                        <Button
+                                            icon="sap-icon://group"
+                                            text="Assign Operators"
+                                            type="Emphasized"
+                                            press="onAssignOperators"
+                                            enabled="{= parseFloat(${ordersModel>progress}) !== 100 &amp;&amp; ${ordersModel>orderStatus} !== 'CRTD' }"
+                                        />
+                                        <Button
+                                            icon="sap-icon://shipping-status"
+                                            text="Create Reservation"
+                                            type="Emphasized"
+                                            press="onRequestMaterials"
+                                            enabled="{= parseFloat(${ordersModel>progress}) !== 100 &amp;&amp; ${ordersModel>orderStatus} !== 'CRTD' }"
+                                        />
+                                        <!-- <Button
+                                            icon="sap-icon://accept"
+                                            text="Confirm Receipt"
+                                            type="Emphasized"
+                                            press="onConfirmReceipt"
+                                            enabled="{= parseFloat(${ordersModel>progress}) !== 100 &amp;&amp; ${ordersModel>orderStatus} !== 'CRTD' }"
+                                        /> -->
+                                        <Button
+                                            icon="sap-icon://print"
+                                            text="Print Job Card"
+                                            type="Emphasized"
+                                            press="onPrintOrderCard"
+                                            enabled="{= parseFloat(${ordersModel>progress}) !== 100 &amp;&amp; ${ordersModel>orderStatus} !== 'CRTD' }"
+                                        />
+                                    </OverflowToolbar>
+                                </VBox>
+                            </content>
+                        </Panel>
+                    </items>
+                </VBox>
+            </VBox>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

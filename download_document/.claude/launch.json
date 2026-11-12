@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "download_document",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start-custom"],
+      "port": 9011
+    }
+  ]
+}

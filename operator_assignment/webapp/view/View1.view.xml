@@ -1,0 +1,795 @@
+<mvc:View
+    controllerName="operatorassignment.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:tnt="sap.tnt"
+    xmlns:f="sap.f"
+    core:require="{formatter: 'operatorassignment/model/formatter'}"
+>
+    <f:DynamicPage
+        id="dynamicPage"
+        class="oaPage"
+        fitContent="true"
+        toggleHeaderOnTitleClick="true"
+    >
+        <!-- ══════════════════════════════════════════
+             DYNAMIC PAGE TITLE  –  "Operator Assignment"
+        ══════════════════════════════════════════ -->
+        <f:title>
+            <f:DynamicPageTitle class="oaOrderDetailsHeader">
+                <!-- Page title (always visible, even when header collapses) -->
+                <f:heading>
+                    <HBox alignItems="Center">
+                        <Image
+                            id="appLogo"
+                            height="36px"
+                            class="sapUiSmallMarginEnd oaLogoRounded"
+                        />
+                        <Title text="Create Operator Assignment" />
+                    </HBox>
+                </f:heading>
+                <f:actions>
+                    <ObjectStatus
+                        icon="sap-icon://document"
+                        title="ORDER"
+                        text="{productionOrderModel>/order}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <ObjectStatus
+                        icon="sap-icon://employee"
+                        title="EMP ID"
+                        text="{appModel>/employeeId}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <ObjectStatus
+                        icon="sap-icon://factory"
+                        title="PLANT"
+                        text="{appModel>/plant}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <Button
+                        icon="sap-icon://log"
+                        text="Logout"
+                        type="Negative"
+                        press="onLogout"
+                    />
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <!-- ══════════════════════════════════════════
+             DYNAMIC PAGE HEADER  –  House / Order Details + Shift
+        ══════════════════════════════════════════ -->
+        <f:header>
+            <f:DynamicPageHeader pinnable="true" class="oaOrderDetailsHeader">
+                <HBox
+                    alignItems="Center"
+                    justifyContent="SpaceBetween"
+                    width="100%"
+                    class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop sapUiSmallMarginBottom"
+                >
+                    <!-- Left: House Info -->
+                    <HBox alignItems="Center" class="oaChipRow">
+                        <ObjectStatus
+                            title="HOUSE ID"
+                            text="{productionOrderModel>/houseId}"
+                            state="Warning"
+                            class="sapUiSmallMarginEnd"
+                        />
+                        <ObjectStatus
+                            title="HOUSE DESC"
+                            text="{productionOrderModel>/houseDesc}"
+                            state="Warning"
+                        />
+                    </HBox>
+
+                    <!-- Right: Filters -->
+                    <HBox alignItems="End" wrap="Wrap" class="oaChipRow">
+                        <VBox class="sapUiSmallMarginEnd">
+                            <Label text="ORDER ID" class="oaSectionLabel" />
+                            <HBox alignItems="Center">
+                                <Input
+                                    id="orderFilterInput"
+                                    value="{viewModel>/filterOrder}"
+                                    placeholder="Enter order ID"
+                                    width="180px"
+                                    showValueHelp="true"
+                                    valueHelpRequest=".onOrderValueHelp"
+                                    submit=".onApplyFilter"
+                                    change=".onOrderIdChange"
+                                />
+                                <Button
+                                    icon="sap-icon://bar-code"
+                                    type="Emphasized"
+                                    tooltip="Scan Order ID"
+                                    press=".onScanOrderId"
+                                    class="sapUiTinyMarginBegin"
+                                />
+                            </HBox>
+                        </VBox>
+                        <VBox class="sapUiSmallMarginEnd">
+                            <Label text="DATE" class="oaSectionLabel" />
+                            <DatePicker
+                                id="dateFilterInput"
+                                value="{viewModel>/filterDate}"
+                                valueFormat="yyyy-MM-dd"
+                                displayFormat="dd MMM yyyy"
+                                width="180px"
+                                change=".onFilterDateChange"
+                            />
+                        </VBox>
+                        <VBox class="sapUiSmallMarginEnd">
+                            <Label text="SHIFT" class="oaSectionLabel" />
+                            <Select
+                                id="shiftSelect"
+                                change=".onShiftChange"
+                                width="240px"
+                                forceSelection="false"
+                                items="{shiftListModel>/results}"
+                            >
+                                <core:Item
+                                    key="{shiftListModel>shiftId}"
+                                    text="Shift {shiftListModel>shiftId} · {shiftListModel>startTimeFmt} - {shiftListModel>endTimeFmt}"
+                                />
+                            </Select>
+                        </VBox>
+                        <Button
+                            text="Apply"
+                            type="Emphasized"
+                            icon="sap-icon://filter"
+                            press=".onApplyFilter"
+                        />
+                    </HBox>
+                </HBox>
+
+                <!-- ── Unapplied Filter Warning ─────────────── -->
+                <MessageStrip
+                    text="You've changed the filters - click Apply to load the updated results."
+                    type="Warning"
+                    showIcon="true"
+                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop"
+                    visible="{viewModel>/filtersDirty}"
+                />
+                <!-- ── Past Date View-Mode Banner ────────────── -->
+                <MessageStrip
+                    text="You're viewing a past date in read-only mode - assignments cannot be added, edited, or removed."
+                    type="Warning"
+                    showIcon="true"
+                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop"
+                    visible="{viewModel>/appliedPastDate}"
+                />
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <!-- ══════════════════════════════════════════
+             DYNAMIC PAGE CONTENT
+        ══════════════════════════════════════════ -->
+        <f:content>
+            <VBox
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop sapUiTinyMarginBottom"
+            >
+                <!-- ── No Order Banner ──────────────────────── -->
+                <VBox
+                    visible="{= !${viewModel>/orderLoaded} }"
+                    alignItems="Center"
+                    class="oaNoOrderBanner sapUiLargeMarginTop"
+                >
+                    <core:Icon src="sap-icon://search" size="3rem" color="#aaaaaa" class="sapUiSmallMarginBottom" />
+                    <Title text="No Production Order ID Available" level="H4" class="sapUiTinyMarginBottom" />
+                    <Text text="Enter an Order ID in the filter above and click Apply to load the assignment details." class="oaNoOrderText" />
+                </VBox>
+                <!-- ── ORDER INFO ──────────────────────────── -->
+                <Panel
+                    expandable="true"
+                    expanded="false"
+                    class="oaPanel sapUiSmallMarginBottom"
+                    visible="{viewModel>/orderLoaded}"
+                >
+                    <headerToolbar>
+                        <Toolbar class="oaPanelHeader">
+                            <!-- <core:Icon
+                                src="sap-icon://document-text"
+                                class="oaPanelIcon sapUiTinyMarginEnd"
+                            /> -->
+                            <Title
+                                text="Order Details"
+                                level="H5"
+                            />
+                            <!-- <ObjectStatus
+                                text="Assembly"
+                                state="Information"
+                                inverted="true"
+                                class="sapUiTinyMarginBegin sapUiTinyMarginEnd"
+                            /> -->
+                        </Toolbar>
+                    </headerToolbar>
+                    <content>
+                        <VBox class="oaPanelContent">
+                            <HBox
+                                width="100%"
+                                renderType="Bare"
+                                justifyContent="SpaceBetween"
+                            >
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" baseSize="12.5%" /></layoutData>
+                                    <Label text="Mat. Code" />
+                                    <Text text="{productionOrderModel>/material}" class="oaMatDesc" />
+                                </VBox>
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" baseSize="12.5%" /></layoutData>
+                                    <Label text="Mat. Desc" />
+                                    <Text text="{productionOrderModel>/materialDesc}" class="oaMatDesc" />
+                                </VBox>
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" baseSize="12.5%" /></layoutData>
+                                    <Label text="Order Qty" />
+                                    <ObjectNumber number="{path: 'productionOrderModel>/quantity', formatter: 'formatter.qty'}" unit="{productionOrderModel>/unit}" state="Information" />
+                                </VBox>
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" baseSize="12.5%" /></layoutData>
+                                    <Label text="Completed" />
+                                    <ObjectNumber number="{path: 'productionOrderModel>/completedQty', formatter: 'formatter.qty'}" unit="{productionOrderModel>/unit}" state="Success" />
+                                </VBox>
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" baseSize="12.5%" /></layoutData>
+                                    <Label text="Pending" />
+                                    <ObjectNumber number="{path: 'productionOrderModel>/pendingQty', formatter: 'formatter.qty'}" unit="{productionOrderModel>/unit}" state="Warning" />
+                                </VBox>
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" baseSize="12.5%" /></layoutData>
+                                    <Label text="Progress" />
+                                    <ObjectNumber number="{productionOrderModel>/progress}" unit="%" state="Success" />
+                                </VBox>
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" baseSize="12.5%" /></layoutData>
+                                    <Label text="Unit" />
+                                    <ObjectStatus text="{productionOrderModel>/unit}" state="Information" inverted="true" />
+                                </VBox>
+                                <VBox alignItems="Start">
+                                    <layoutData><FlexItemData growFactor="1" baseSize="12.5%" /></layoutData>
+                                    <Label text="Status" />
+                                    <ObjectStatus text="{productionOrderModel>/statusBadge}" state="{= ${productionOrderModel>/statusBadge} === 'DELAYED' ? 'Error' : 'Success' }" inverted="true" />
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </content>
+                </Panel>
+
+                <!-- ── MOULD INFORMATION ──────────────────── -->
+                <Panel
+                    expandable="true"
+                    expanded="false"
+                    class="oaPanel sapUiSmallMarginBottom"
+                    visible="{= ${productionOrderModel>/IsMouldOrder} === 'X' }"
+                >
+                    <headerToolbar>
+                        <Toolbar class="oaPanelHeader">
+                            <!-- <core:Icon
+                                src="sap-icon://customize"
+                                class="oaPanelIcon sapUiTinyMarginEnd"
+                            /> -->
+                            <Title
+                                text="Mould Details"
+                                level="H5"
+                            />
+                        </Toolbar>
+                    </headerToolbar>
+                    <content>
+                        <VBox class="oaPanelContent">
+                            <HBox
+                                width="100%"
+                                renderType="Bare"
+                                justifyContent="SpaceBetween"
+                            >
+                                <VBox alignItems="Center">
+                                    <layoutData>
+                                        <FlexItemData growFactor="1" />
+                                    </layoutData>
+                                    <Label text="Mould ID" />
+                                    <ObjectStatus
+                                        text="{productionOrderModel>/MouldId}"
+                                        state="Information"
+                                    />
+                                </VBox>
+
+                                <VBox alignItems="Center">
+                                    <layoutData>
+                                        <FlexItemData growFactor="1" />
+                                    </layoutData>
+                                    <Label text="Mould Description" />
+                                    <ObjectStatus
+                                        text="{productionOrderModel>/MouldDesc}"
+                                        state="None"
+                                    />
+                                </VBox>
+
+                                <VBox alignItems="Center">
+                                    <layoutData>
+                                        <FlexItemData growFactor="1" />
+                                    </layoutData>
+                                    <Label text="Mould Cavity / Pln Cavity" />
+                                    <ObjectStatus
+                                        text="{productionOrderModel>/MouldCavity} / {productionOrderModel>/PlnCavity}"
+                                        state="Success"
+                                    />
+                                </VBox>
+
+                                <VBox alignItems="Center">
+                                    <layoutData>
+                                        <FlexItemData growFactor="1" />
+                                    </layoutData>
+                                    <Label text="Min Cycle Time / Pln Min Cycle" />
+                                    <ObjectStatus
+                                        text="{productionOrderModel>/MinCycleTime} / {productionOrderModel>/PlnMinCycle}"
+                                        state="Information"
+                                    />
+                                </VBox>
+
+                                <VBox alignItems="Center">
+                                    <layoutData>
+                                        <FlexItemData growFactor="1" />
+                                    </layoutData>
+                                    <Label text="Max Cycle Time / Pln Max Cycle" />
+                                    <ObjectStatus
+                                        text="{productionOrderModel>/MaxCycleTime} / {productionOrderModel>/PlnMaxCycle}"
+                                        state="Warning"
+                                    />
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </content>
+                </Panel>
+
+                <!-- ── ASSIGNMENT SUMMARY ──────────────────── -->
+                <Panel
+                    expandable="false"
+                    expanded="true"
+                    class="oaPanel sapUiSmallMarginBottom"
+                    visible="false"
+                >
+                    <headerToolbar>
+                        <Toolbar>
+                            <core:Icon
+                                src="sap-icon://bar-chart"
+                                class="oaPanelIcon sapUiTinyMarginEnd"
+                            />
+                            <Title
+                                text="Assignment Summary"
+                                level="H5"
+                            />
+                            <ObjectStatus
+                                text="{viewModel>/summary/shiftLabel}"
+                                state="Warning"
+                                inverted="true"
+                                class="sapUiTinyMarginBegin"
+                            />
+                            <ToolbarSpacer />
+                            <ObjectStatus
+                                text="{viewModel>/summary/statusText}"
+                                state="{viewModel>/summary/statusState}"
+                                inverted="true"
+                            />
+                        </Toolbar>
+                    </headerToolbar>
+                    <content>
+                        <VBox>
+                            <Label
+                                text="Shift-A · 21 Mar 2026"
+                                class="oaSectionLabel sapUiTinyMarginBottom"
+                            />
+                            <HBox
+                                alignItems="Stretch"
+                                justifyContent="SpaceBetween"
+                                class="kpiRow kpiRow--summary"
+                                wrap="Wrap"
+                            >
+                                <VBox
+                                    alignItems="Center"
+                                    class="kpiCard kpiCard--sumWarning"
+                                >
+                                    <Text
+                                        text="Ops assigned"
+                                        class="kpiLabel"
+                                    />
+                                    <Text
+                                        text="{viewModel>/summary/opsAssigned}"
+                                        class="oaKpiVal oaKpiOrange sapUiTinyMarginTop"
+                                    />
+                                </VBox>
+                                <VBox
+                                    alignItems="Center"
+                                    class="kpiCard kpiCard--sumSuccess"
+                                >
+                                    <Text
+                                        text="Operators"
+                                        class="kpiLabel"
+                                    />
+                                    <Text
+                                        text="{viewModel>/summary/totalOperators}"
+                                        class="oaKpiVal oaKpiGreen sapUiTinyMarginTop"
+                                    />
+                                </VBox>
+                                <VBox
+                                    alignItems="Center"
+                                    class="kpiCard kpiCard--sumInfo"
+                                >
+                                    <Text
+                                        text="Target"
+                                        class="kpiLabel"
+                                    />
+                                    <Text
+                                        text="{path: 'viewModel>/summary/totalTarget', formatter: 'formatter.qty'}"
+                                        class="oaKpiVal oaKpiBlue sapUiTinyMarginTop"
+                                    />
+                                </VBox>
+                                <VBox
+                                    alignItems="Center"
+                                    class="kpiCard kpiCard--sumNeutral"
+                                >
+                                    <Text
+                                        text="Hours"
+                                        class="kpiLabel"
+                                    />
+                                    <Text
+                                        text="{viewModel>/summary/totalHours}"
+                                        class="oaKpiVal sapUiTinyMarginTop"
+                                    />
+                                </VBox>
+                                <VBox
+                                    alignItems="Center"
+                                    class="kpiCard kpiCard--sumWarning"
+                                >
+                                    <Text
+                                        text="Partial"
+                                        class="kpiLabel"
+                                    />
+                                    <Text
+                                        text="{viewModel>/summary/partialOperators}"
+                                        class="oaKpiVal oaKpiOrange sapUiTinyMarginTop"
+                                    />
+                                </VBox>
+                                <VBox
+                                    alignItems="Center"
+                                    class="kpiCard kpiCard--sumNeutral"
+                                >
+                                    <Text
+                                        text="Shift"
+                                        class="kpiLabel"
+                                    />
+                                    <Text
+                                        text="12 hrs"
+                                        class="oaKpiVal sapUiTinyMarginTop"
+                                    />
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </content>
+                </Panel>
+
+                <!-- ── Operations panels (data-driven) ───── -->
+                <HBox
+                    alignItems="Center"
+                    justifyContent="SpaceBetween"
+                    width="100%"
+                    class="sapUiSmallMarginBegin sapUiSmallMarginTop sapUiSmallMarginBottom"
+                    visible="{viewModel>/orderLoaded}"
+                >
+                    <Title
+                        text="Available Operations"
+                        level="H4"
+                    />
+                    <!-- InfoLabel moved into each operation panel's toolbar -->
+                </HBox>
+
+                <VBox items="{viewModel>/depts}">
+                    <items>
+                        <Panel
+                            expandable="true"
+                            expanded="{= ${viewModel>/depts}.indexOf(${viewModel>}) === 0 }"
+                            class="sapUiSmallMarginBottom"
+                        >
+                            <headerToolbar>
+                                <Toolbar class="oaOpPanelToolbar">
+                                    <ObjectStatus
+                                        text="{viewModel>operation} - {viewModel>operationDesc}"
+                                        title="Operation"
+                                        state="Warning"
+                                        class="oaTextNormal"
+                                    />
+                                    <ObjectStatus
+                                        text="{viewModel>workCenter} - {viewModel>workCenterDesc}"
+                                        title="Work Center"
+                                        state="Warning"
+                                        class="sapUiSmallMarginBegin oaTextNormal"
+                                    />
+                                    <ObjectStatus
+                                        text="{parts: [{path: 'viewModel>operTargetQty'}, {path: 'viewModel>operTargetUnit'}], formatter: 'formatter.qtyWithUnit'}"
+                                        title="{= ${viewModel>isMachineSpecific} ? 'Target Qty (Per Shift)' : 'Target Qty (Per Operator)' }"
+                                        state="Warning"
+                                        class="sapUiSmallMarginBegin oaTextNormal"
+                                    />
+                                    <ToolbarSpacer />
+                                    <ObjectStatus
+                                        text="Machine Specific"
+                                        state="Information"
+                                        inverted="true"
+                                        visible="{viewModel>isMachineSpecific}"
+                                        class="sapUiTinyMarginBegin oaTextNormal oaSmallBadge"
+                                    />
+                                    <ObjectStatus
+                                        text="Labour Specific"
+                                        state="Information"
+                                        inverted="true"
+                                        visible="{viewModel>isLaborSpecific}"
+                                        class="sapUiTinyMarginBegin oaTextNormal oaSmallBadge"
+                                    />
+                                </Toolbar>
+                            </headerToolbar>
+                            <content>
+                                <VBox class="oaPanelContent">
+                                    <!-- Production Details + Operator Details in one row -->
+                                    <HBox
+                                        width="100%"
+                                        alignItems="Stretch"
+                                        class="sapUiTinyMarginBottom"
+                                        wrap="Wrap"
+                                    >
+                                        <!-- Production Details -->
+                                        <VBox class="oaDetailsBox">
+                                            <layoutData>
+                                                <FlexItemData growFactor="1" minWidth="200px" />
+                                            </layoutData>
+                                            <Title
+                                                text="Production Details"
+                                                level="H6"
+                                                class="oaDetailsBoxTitle"
+                                            />
+                                            <HBox
+                                                width="100%"
+                                                justifyContent="SpaceBetween"
+                                                alignItems="Center"
+                                            >
+                                                <VBox alignItems="Center">
+                                                    <layoutData>
+                                                        <FlexItemData growFactor="1" />
+                                                    </layoutData>
+                                                    <Label text="Quantity" />
+                                                    <ObjectNumber
+                                                        number="{path: 'viewModel>quantity', formatter: 'formatter.qty'}"
+                                                        unit="{viewModel>unit}"
+                                                    />
+                                                </VBox>
+                                                <VBox alignItems="Center">
+                                                    <layoutData>
+                                                        <FlexItemData growFactor="1" />
+                                                    </layoutData>
+                                                    <Label text="Yield Qty" />
+                                                    <ObjectNumber
+                                                        number="{path: 'viewModel>yieldQty', formatter: 'formatter.qty'}"
+                                                        unit="{viewModel>unit}"
+                                                        state="Success"
+                                                    />
+                                                </VBox>
+                                                <VBox alignItems="Center">
+                                                    <layoutData>
+                                                        <FlexItemData growFactor="1" />
+                                                    </layoutData>
+                                                    <Label text="Unit" />
+                                                    <ObjectStatus
+                                                        text="{viewModel>unit}"
+                                                        state="Information"
+                                                    />
+                                                </VBox>
+                                            </HBox>
+                                        </VBox>
+
+                                        <!-- Operator Details -->
+                                        <VBox class="oaDetailsBox oaDetailsBox--start">
+                                            <layoutData>
+                                                <FlexItemData growFactor="1" minWidth="200px" />
+                                            </layoutData>
+                                            <Title
+                                                text="Operator Details"
+                                                level="H6"
+                                                class="oaDetailsBoxTitle"
+                                            />
+                                            <HBox
+                                                width="100%"
+                                                justifyContent="SpaceBetween"
+                                                alignItems="Center"
+                                            >
+                                                <VBox alignItems="Center">
+                                                    <layoutData>
+                                                        <FlexItemData growFactor="1" />
+                                                    </layoutData>
+                                                    <Label text="Operators" />
+                                                    <ObjectNumber
+                                                        number="{viewModel>operatorCount}"
+                                                    />
+                                                </VBox>
+                                                <VBox alignItems="Center">
+                                                    <layoutData>
+                                                        <FlexItemData growFactor="1" />
+                                                    </layoutData>
+                                                    <Label text="Total Target" />
+                                                    <ObjectNumber
+                                                        number="{path: 'viewModel>totalTarget', formatter: 'formatter.qty'}"
+                                                        state="Information"
+                                                    />
+                                                </VBox>
+                                                <VBox alignItems="Center">
+                                                    <layoutData>
+                                                        <FlexItemData growFactor="1" />
+                                                    </layoutData>
+                                                    <Label text="Total Hrs" />
+                                                    <ObjectNumber
+                                                        number="{viewModel>totalHours}"
+                                                    />
+                                                </VBox>
+                                            </HBox>
+                                        </VBox>
+                                    </HBox>
+
+                                    <!-- ── OPERATOR TABLE ── -->
+                                    <Table
+                                        items="{viewModel>operators}"
+                                        noDataText="No operators assigned yet."
+                                        class="oaOperatorTable sapUiTinyMarginBottom sapUiTinyMarginTop"
+                                        alternateRowColors="true"
+                                        sticky="ColumnHeaders"
+                                    >
+                                        <headerToolbar>
+                                            <OverflowToolbar class="oaAssignedOpsToolbar">
+                                                <Title text="Assigned Operators" level="H5" />
+                                                <BusyIndicator
+                                                    visible="{viewModel>/operatorsLoading}"
+                                                    size="0.6rem"
+                                                    class="sapUiTinyMarginBegin"
+                                                />
+                                                <ToolbarSpacer />
+                                                <ObjectStatus
+                                                    icon="sap-icon://bell-2"
+                                                    text="Select a shift to begin assigning operators."
+                                                    state="Warning"
+                                                    visible="{= !${viewModel>/summary/shiftSelected} }"
+                                                    class="sapUiTinyMarginEnd"
+                                                />
+                                                <Input
+                                                    value="{viewModel>selectedOperatorName}"
+                                                    placeholder="Select an operator"
+                                                    showValueHelp="true"
+                                                    valueHelpRequest=".onOpenOperatorDialog"
+                                                    enabled="{= ${viewModel>/summary/shiftSelected} &amp;&amp; !${viewModel>/operatorsLoading} &amp;&amp; !${viewModel>/isPastDate} }"
+                                                    editable="{= !${viewModel>/isPastDate} }"
+                                                    width="300px"
+                                                />
+                                            </OverflowToolbar>
+                                        </headerToolbar>
+                                        <columns>
+                                            <Column
+                                                width="20%"
+                                                minScreenWidth="Tablet"
+                                            >
+                                                <Text text="Employee" />
+                                            </Column>
+                                            <Column
+                                                width="20%"
+                                                hAlign="Center"
+                                            >
+                                                <Text text="Op. Hours" />
+                                            </Column>
+                                            <Column
+                                                width="20%"
+                                                hAlign="Center"
+                                            >
+                                                <Text text="Assigned Hours" />
+                                            </Column>
+                                            <Column
+                                                width="20%"
+                                                hAlign="Center"
+                                            >
+                                                <Text text="Target Qty" />
+                                            </Column>
+                                            <!-- <Column
+                                                width="12%"
+                                                hAlign="Center"
+                                                minScreenWidth="Tablet"
+                                            >
+                                                <Text text="Free Hours" />
+                                            </Column> -->
+                                            <Column
+                                                width="20%"
+                                                hAlign="Center"
+                                            >
+                                                <Text text="Actions" />
+                                            </Column>
+                                        </columns>
+                                        <items>
+                                            <ColumnListItem>
+                                                <cells>
+                                                    <ObjectStatus
+                                                        text="{viewModel>displayName}"
+                                                        icon="sap-icon://employee"
+                                                        state="{= ${viewModel>isNew} ? 'Error' : (${viewModel>isModified} ? 'Information' : 'Success')}"
+                                                        inverted="true"
+                                                    />
+                                                    <Input
+                                                        value="{viewModel>operHrs}"
+                                                        editable="false"
+                                                        width="100%"
+                                                        textAlign="Center"
+                                                        class="oaReadonlyInput"
+                                                    />
+                                                    <Input
+                                                        value="{viewModel>hours}"
+                                                        change=".onHoursChange"
+                                                        editable="{= !${viewModel>/isPastDate} }"
+                                                        width="100%"
+                                                        textAlign="Center"
+                                                    />
+                                                    <Input
+                                                        value="{viewModel>targetQty}"
+                                                        change=".onTargetChange"
+                                                        editable="{= ${viewModel>isMachineSpecific} &amp;&amp; !${viewModel>/isPastDate} }"
+                                                        width="100%"
+                                                        textAlign="Center"
+                                                        class="{= ${viewModel>isMachineSpecific} ? '' : 'oaReadonlyInput' }"
+                                                    />
+                                                    <!-- <Input
+                                                        value="{viewModel>freeHours}"
+                                                        editable="false"
+                                                        width="100%"
+                                                        textAlign="Center"
+                                                        class="oaReadonlyInput"
+                                                    /> -->
+                                                    <HBox justifyContent="Center" alignItems="Center">
+                                                        <Button
+                                                            icon="sap-icon://delete"
+                                                            type="Negative"
+                                                            press=".onRemoveOperator"
+                                                            tooltip="Remove operator"
+                                                            class="oaRemoveBtn"
+                                                            enabled="{= !${viewModel>/isPastDate} }"
+                                                        />
+                                                    </HBox>
+                                                </cells>
+                                            </ColumnListItem>
+                                        </items>
+                                    </Table>
+
+                                    <HBox justifyContent="End" alignItems="Center" class="sapUiTinyMarginTop">
+                                        <ObjectStatus
+                                            icon="sap-icon://warning"
+                                            text="Unsaved"
+                                            state="Warning"
+                                            inverted="true"
+                                            visible="{viewModel>hasUnsavedChanges}"
+                                            class="oaUnsavedBadge sapUiSmallMarginEnd"
+                                        />
+                                        <Button
+                                            icon="sap-icon://save"
+                                            text="Save Assignment"
+                                            type="Success"
+                                            press=".onSaveAssignment"
+                                            enabled="{= ${viewModel>/summary/shiftSelected} &amp;&amp; !${viewModel>/isPastDate} }"
+                                            class="oaSaveBtn"
+                                        />
+                                    </HBox>
+
+                                </VBox>
+                            </content>
+                        </Panel>
+                    </items>
+                </VBox>
+
+            </VBox>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

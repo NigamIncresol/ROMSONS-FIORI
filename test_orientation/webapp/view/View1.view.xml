@@ -1,0 +1,95 @@
+<mvc:View
+    controllerName="testorientation.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+>
+    <Page
+        id="page"
+        title="{i18n>title}"
+    >
+        <VBox
+            id="orientationWarning"
+            visible="false"
+            width="100%"
+            height="100%"
+            justifyContent="Center"
+            alignItems="Center"
+        >
+            <VBox
+                justifyContent="Center"
+                alignItems="Center"
+                class="rotateMessageCard sapUiResponsiveMargin"
+            >
+                <core:HTML
+                    class="rotateMessageIcon"
+                    content="&lt;svg viewBox='0 0 64 64' width='56' height='56' xmlns='http://www.w3.org/2000/svg'&gt;&lt;rect class='rotateMessagePhone' x='20' y='8' width='24' height='48' rx='5' fill='none' stroke='currentColor' stroke-width='3.5'/&gt;&lt;circle cx='32' cy='48' r='1.8' fill='currentColor' class='rotateMessagePhone'/&gt;&lt;/svg&gt;"
+                />
+
+                <Title
+                    text="Rotate your device"
+                    level="H2"
+                    class="sapUiTinyMarginTop"
+                />
+                <Text
+                    text="Please switch to Landscape mode for the best experience."
+                    class="rotateMessageText sapUiTinyMarginTop"
+                    textAlign="Center"
+                />
+            </VBox>
+        </VBox>
+        <VBox
+            id="leaveAppForm"
+            visible="false"
+            width="100%"
+            height="100%"
+            justifyContent="Center"
+            alignItems="Center"
+            class="sapUiResponsiveMargin"
+        >
+            <core:Icon
+                src="sap-icon://log"
+                size="3rem"
+                class="sapUiMediumMarginBottom"
+            />
+            <Title
+                text="Leave Application"
+                class="sapUiSmallMarginBottom"
+            />
+            <f:SimpleForm
+                xmlns:f="sap.ui.layout.form"
+                editable="true"
+                layout="ResponsiveGridLayout"
+            >
+                <Label text="Reason" />
+                <Select id="leaveReasonSelect">
+                    <core:Item
+                        key="taskComplete"
+                        text="Task Completed"
+                    />
+                    <core:Item
+                        key="issue"
+                        text="Ran into an Issue"
+                    />
+                    <core:Item
+                        key="other"
+                        text="Other"
+                    />
+                </Select>
+                <Label text="Comments" />
+                <TextArea
+                    id="leaveCommentsInput"
+                    rows="3"
+                    width="100%"
+                    placeholder="Add any additional comments..."
+                />
+            </f:SimpleForm>
+            <Button
+                text="Leave App"
+                type="Reject"
+                press="onLeaveApp"
+                class="sapUiSmallMarginTop"
+            />
+        </VBox>
+    </Page>
+</mvc:View>

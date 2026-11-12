@@ -1,0 +1,406 @@
+<mvc:View
+    controllerName="materialrequest.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
+>
+    <f:DynamicPage
+        id="dynamicPage"
+        fitContent="true"
+        toggleHeaderOnTitleClick="true"
+        busyIndicatorDelay="0"
+    >
+
+        <!-- ══════════════════════════════════════════
+             TITLE
+        ══════════════════════════════════════════ -->
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <HBox alignItems="Center">
+                        <Image
+                            id="logoImage"
+                            height="36px"
+                            class="sapUiSmallMarginEnd logoRounded"
+                        />
+                        <Title text="Create Material Reservation" />
+                    </HBox>
+                </f:heading>
+                <f:actions>
+                    <ObjectStatus
+                        icon="sap-icon://document"
+                        title="ORDER"
+                        text="{appModel>/orderId}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <ObjectStatus
+                        icon="sap-icon://employee"
+                        title="EMP ID"
+                        text="{appModel>/employeeId}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <ObjectStatus
+                        icon="sap-icon://factory"
+                        title="PLANT"
+                        text="{appModel>/plant}"
+                        state="Indication20"
+                        inverted="true"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <Button
+                        icon="sap-icon://log"
+                        text="Logout"
+                        type="Negative"
+                        press="onLogout"
+                    />
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <!-- ══════════════════════════════════════════
+             HEADER – Search bar
+        ══════════════════════════════════════════ -->
+        <f:header>
+            <f:DynamicPageHeader pinnable="true">
+                <HBox
+                    alignItems="End"
+                    justifyContent="End"
+                    class="sapUiTinyMarginTop sapUiTinyMarginBottom sapUiSmallMarginEnd mrChipRow"
+                >
+                    <VBox class="sapUiSmallMarginEnd">
+                        <Label text="Order ID" class="mrSectionLabel" design="Bold" />
+                        <Input
+                            id="orderIdInput"
+                            value="{appModel>/searchOrderId}"
+                            placeholder="Enter or select Order ID"
+                            width="220px"
+                            submit=".onApplyOrder"
+                            showValueHelp="true"
+                            valueHelpRequest=".onOrderValueHelp"
+                        />
+                    </VBox>
+                    <Button
+                        icon="sap-icon://bar-code"
+                        type="Emphasized"
+                        tooltip="Scan Barcode"
+                        press=".onScanOrder"
+                        class="sapUiTinyMarginEnd"
+                    />
+                    <Button
+                        text="Apply"
+                        type="Emphasized"
+                        icon="sap-icon://filter"
+                        press=".onApplyOrder"
+                    />
+                </HBox>
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <!-- ══════════════════════════════════════════
+             CONTENT
+        ══════════════════════════════════════════ -->
+        <f:content>
+            <VBox class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop sapUiSmallMarginBottom">
+
+                <!-- ── NO ORDER BANNER ── -->
+                <VBox
+                    visible="{= !${appModel>/orderLoaded} }"
+                    alignItems="Center"
+                    class="mrNoBanner"
+                >
+                    <core:Icon src="sap-icon://document" size="3.5rem" color="var(--sapNeutralColor)" class="sapUiSmallMarginBottom" />
+                    <Title text="No Production Order ID Available" level="H3" class="sapUiSmallMarginBottom" />
+                    <Text text="Enter an Order ID in the filter above and click Apply to load material details." class="mrNoBannerText" />
+                </VBox>
+
+                <!-- ── ORDER DETAILS PANEL ── -->
+                <VBox visible="{appModel>/orderLoaded}">
+                <Panel
+                    expandable="true"
+                    expanded="false"
+                    class="sapUiSmallMarginBottom orderDetailsPanel"
+                >
+                    <headerToolbar>
+                        <Toolbar class="orderDetailsPanelHeader">
+                            <Title text="Order Details" level="H5" />
+                        </Toolbar>
+                    </headerToolbar>
+                    <content>
+                        <!-- Row 1: Order ID | Order Type | Order Status | Order Date -->
+                        <HBox renderType="Bare" class="detailRow">
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Order ID&lt;/div&gt;" />
+                                <ObjectStatus text="{materialsModel>/order/order}" state="Information" inverted="true" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Order Type&lt;/div&gt;" />
+                                <HBox alignItems="Center">
+                                    <ObjectStatus text="{materialsModel>/order/orderType}" state="None" inverted="true" />
+                                    <core:HTML content="&lt;span class='detailDateSep'&gt;&amp;nbsp;-&amp;nbsp;&lt;/span&gt;" />
+                                    <Text text="{materialsModel>/order/orderTypeDesc}" class="detailValue" />
+                                </HBox>
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Order Status&lt;/div&gt;" />
+                                <HBox alignItems="Center">
+                                    <ObjectStatus text="{materialsModel>/order/orderStatus}" state="None" inverted="true" />
+                                    <core:HTML content="&lt;span class='detailDateSep'&gt;&amp;nbsp;-&amp;nbsp;&lt;/span&gt;" />
+                                    <Text text="{materialsModel>/order/orderStatusDesc}" class="detailValue" />
+                                </HBox>
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Order Date&lt;/div&gt;" />
+                                <Text text="{ path: 'materialsModel>/order/createdOn', formatter: '.formatSingleDate' }" class="detailValue" />
+                            </VBox>
+                        </HBox>
+
+                        <!-- Row 2: Start Date | Finish Date | House | Department -->
+                        <HBox renderType="Bare" class="detailRow">
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Start Date&lt;/div&gt;" />
+                                <Text text="{ path: 'materialsModel>/order/startDate', formatter: '.formatSingleDate' }" class="detailValue" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Finish Date&lt;/div&gt;" />
+                                <Text text="{ path: 'materialsModel>/order/finishDate', formatter: '.formatSingleDate' }" class="detailValue" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;House&lt;/div&gt;" />
+                                <HBox alignItems="Center">
+                                    <ObjectStatus text="{materialsModel>/order/houseId}" state="None" inverted="true" />
+                                    <core:HTML content="&lt;span class='detailDateSep'&gt;&amp;nbsp;-&amp;nbsp;&lt;/span&gt;" />
+                                    <Text text="{materialsModel>/order/houseDesc}" class="detailValue" />
+                                </HBox>
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Department&lt;/div&gt;" />
+                                <core:HTML content="&lt;div class='detailValue'&gt;{materialsModel>/order/Department}&lt;/div&gt;" />
+                            </VBox>
+                        </HBox>
+
+                        <!-- Row 3: Order Qty | Confirmed | Remaining | Receiving Storage Location -->
+                        <HBox renderType="Bare" class="detailRow">
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Order Qty&lt;/div&gt;" />
+                                <ObjectNumber number="{ path: 'materialsModel>/order/quantity', formatter: '.formatQty' }" unit="{materialsModel>/order/unit}" state="Information" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Confirmed&lt;/div&gt;" />
+                                <ObjectNumber number="{ path: 'materialsModel>/order/completedQty', formatter: '.formatQty' }" unit="{materialsModel>/order/unit}" state="Success" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Remaining&lt;/div&gt;" />
+                                <ObjectNumber number="{ path: 'materialsModel>/order/pendingQty', formatter: '.formatQty' }" unit="{materialsModel>/order/unit}" state="Warning" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Receiving Storage Location&lt;/div&gt;" />
+                                <HBox alignItems="Center">
+                                    <ObjectStatus text="{materialsModel>/order/receivingSloc}" state="None" inverted="true" />
+                                    <core:HTML content="&lt;span class='detailDateSep'&gt;&amp;nbsp;-&amp;nbsp;&lt;/span&gt;" />
+                                    <Text text="{materialsModel>/order/receivingSlocDesc}" class="detailValue" />
+                                </HBox>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Row 4: Description | Material Code | Batch | Status -->
+                        <HBox renderType="Bare" class="detailRow">
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Description&lt;/div&gt;" />
+                                <core:HTML content="&lt;div class='detailValue'&gt;{materialsModel>/order/materialDesc}&lt;/div&gt;" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Material Code&lt;/div&gt;" />
+                                <ObjectStatus text="{materialsModel>/order/material}" state="Information" inverted="true" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Batch&lt;/div&gt;" />
+                                <core:HTML content="&lt;div class='detailValue'&gt;{materialsModel>/order/batch}&lt;/div&gt;" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Status&lt;/div&gt;" />
+                                <ObjectStatus
+                                    text="{materialsModel>/order/statusBadge}"
+                                    inverted="true"
+                                    state="{ path: 'materialsModel>/order/colorCode', formatter: '.formatStatusState' }"
+                                />
+                            </VBox>
+                        </HBox>
+                    </content>
+                </Panel>
+
+                <!-- ── MOULD ORDER PANEL (visible only when IsMouldOrder = X) ── -->
+                <Panel
+                    expandable="true"
+                    expanded="false"
+                    visible="{= ${materialsModel>/order/IsMouldOrder} === 'X' }"
+                    class="sapUiSmallMarginBottom orderDetailsPanel"
+                >
+                    <headerToolbar>
+                        <Toolbar class="orderDetailsPanelHeader">
+                            <Title text="Mould Order Details" level="H5" />
+                        </Toolbar>
+                    </headerToolbar>
+                    <content>
+                        <!-- Row 1: Mould ID | Mould Description | Mould Cavity | Min Cycle Time | Max Cycle Time -->
+                        <HBox renderType="Bare" class="detailRow">
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Mould ID&lt;/div&gt;" />
+                                <ObjectStatus text="{materialsModel>/order/MouldId}" state="Information" inverted="true" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Mould Description&lt;/div&gt;" />
+                                <core:HTML content="&lt;div class='detailValue'&gt;{materialsModel>/order/MouldDesc}&lt;/div&gt;" />
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Mould Cavity&lt;/div&gt;" />
+                                <HBox alignItems="Center">
+                                    <ObjectStatus text="{materialsModel>/order/MouldCavity}" state="None" inverted="false" />
+                                    <core:HTML content="&lt;span class='detailDateSep'&gt;&amp;nbsp;/&amp;nbsp;&lt;/span&gt;" />
+                                    <ObjectStatus text="{materialsModel>/order/PlnCavity}" state="None" inverted="false" />
+                                </HBox>
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Min Cycle Time&lt;/div&gt;" />
+                                <HBox alignItems="Center">
+                                    <ObjectStatus text="{ path: 'materialsModel>/order/MinCycleTime', formatter: '.formatDuration' }" state="Success" inverted="false" />
+                                    <core:HTML content="&lt;span class='detailDateSep'&gt;&amp;nbsp;/&amp;nbsp;&lt;/span&gt;" />
+                                    <ObjectStatus text="{ path: 'materialsModel>/order/PlnMinCycle', formatter: '.formatDuration' }" state="Success" inverted="false" />
+                                </HBox>
+                            </VBox>
+                            <VBox class="detailCell">
+                                <core:HTML content="&lt;div class='detailLabel'&gt;Max Cycle Time&lt;/div&gt;" />
+                                <HBox alignItems="Center">
+                                    <ObjectStatus text="{ path: 'materialsModel>/order/MaxCycleTime', formatter: '.formatDuration' }" state="Warning" inverted="false" />
+                                    <core:HTML content="&lt;span class='detailDateSep'&gt;&amp;nbsp;/&amp;nbsp;&lt;/span&gt;" />
+                                    <ObjectStatus text="{ path: 'materialsModel>/order/PlnMaxCycle', formatter: '.formatDuration' }" state="Warning" inverted="false" />
+                                </HBox>
+                            </VBox>
+                        </HBox>
+                    </content>
+                </Panel>
+
+                <!-- ── COMPONENTS TABLE ── -->
+                <Title
+                    text="Material Details"
+                    level="H5"
+                    class="sapUiSmallMarginBottom sapUiSmallMarginTop"
+                />
+
+                <!-- Empty state -->
+                <VBox
+                    visible="{= ${materialsModel>/groups/length} === 0 }"
+                    alignItems="Center"
+                    class="sapUiLargeMarginTop sapUiLargeMarginBottom"
+                >
+                    <core:Icon
+                        src="sap-icon://shipping-status"
+                        size="3rem"
+                        color="var(--sapNeutralColor)"
+                        class="sapUiSmallMarginBottom"
+                    />
+                    <Title text="No Components Found" level="H4" />
+                    <Text
+                        text="No material components are linked to this production order."
+                        class="sapUiSmallMarginTop"
+                    />
+                </VBox>
+
+                <!-- Grouped tables by Issue Storage Location -->
+                <VBox
+                    visible="{= ${materialsModel>/groups/length} > 0 }"
+                    items="{materialsModel>/groups}"
+                >
+                    <items>
+                        <Panel
+                            expandable="true"
+                            expanded="false"
+                            class="sapUiSmallMarginBottom storagePanel"
+                        >
+                            <headerToolbar>
+                                <Toolbar class="storagePanelHeader">
+                                    <Title text="Issue Storage Location: {materialsModel>storageLocation}" level="H5" />
+                                </Toolbar>
+                            </headerToolbar>
+                            <content>
+                                <Table
+                                    items="{materialsModel>items}"
+                                    alternateRowColors="true"
+                                    sticky="ColumnHeaders"
+                                    class="materialTable"
+                                >
+                                    <columns>
+                                        <Column width="2.5rem" hAlign="Center">
+                                            <CheckBox
+                                                selected="{materialsModel>selected}"
+                                                select=".onSelectAllItems"
+                                            />
+                                        </Column>
+                                        <Column width="3rem"><Text text="Item" /></Column>
+                                        <Column width="10rem"><Text text="Component" /></Column>
+                                        <Column><Text text="Description" /></Column>
+                                        <Column width="5rem"><Text text="Operation" wrapping="false" /></Column>
+                                        <Column hAlign="End"><Text text="Required Qty" /></Column>
+                                        <Column hAlign="End"><Text text="Reservation Qty" /></Column>
+                                        <Column hAlign="End"><Text text="Issued Qty" /></Column>
+                                        <Column hAlign="End"><Text text="Received Qty" /></Column>
+                                        <Column hAlign="End"><Text text="Stock (Shop Floor)" /></Column>
+                                        <Column hAlign="End"><Text text="Stock (Source)" /></Column>
+                                        <Column hAlign="End" width="10rem"><Text text="Target Qty" /></Column>
+                                        <Column width="3rem"><Text text="UoM" /></Column>
+                                    </columns>
+                                    <items>
+                                        <ColumnListItem>
+                                            <cells>
+                                                <CheckBox
+                                                    selected="{materialsModel>selected}"
+                                                    select=".onSelectItem"
+                                                />
+                                                <ObjectStatus text="{materialsModel>item}" state="None" />
+                                                <Text text="{materialsModel>component}" />
+                                                <Text text="{materialsModel>materialDesc}" />
+                                                <Text text="{materialsModel>operation}" />
+                                                <ObjectNumber number="{ path: 'materialsModel>reqQuan', formatter: '.formatQty' }" unit="{materialsModel>baseUom}" state="Information" />
+                                                <ObjectNumber number="{ path: 'materialsModel>reservationQty', formatter: '.formatQty' }" unit="{materialsModel>baseUom}" state="None" />
+                                                <ObjectNumber number="{ path: 'materialsModel>IssuedQty', formatter: '.formatQty' }" unit="{materialsModel>baseUom}" state="Warning" />
+                                                <ObjectNumber number="{ path: 'materialsModel>ReceivedQty', formatter: '.formatQty' }" unit="{materialsModel>baseUom}" state="Success" />
+                                                <ObjectNumber number="{ path: 'materialsModel>stockSf', formatter: '.formatQty' }" unit="{materialsModel>baseUom}" state="None" />
+                                                <ObjectNumber number="{ path: 'materialsModel>stockSrc', formatter: '.formatQty' }" unit="{materialsModel>baseUom}" state="None" />
+                                                <Input
+                                                    value="{materialsModel>pendReq}"
+                                                    type="Number"
+                                                    width="8rem"
+                                                    enabled="{= parseFloat(${materialsModel>reqQuan}) !== parseFloat(${materialsModel>reservationQty}) }"
+                                                    liveChange=".onTargetQtyChange"
+                                                />
+                                                <Text text="{materialsModel>baseUom}" />
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
+                                <HBox justifyContent="End" class="tableSubmitBar">
+                                    <Button
+                                        text="Submit Request"
+                                        type="Success"
+                                        press=".onSubmitRequest"
+                                        enabled="{= ${materialsModel>canSubmit} &amp;&amp; !${materialsModel>isReceivingLoc} }"
+                                        tooltip="{= ${materialsModel>isReceivingLoc} ? 'Issue location matches receiving location — submission not allowed' : '' }"
+                                    />
+                                </HBox>
+                            </content>
+                        </Panel>
+                    </items>
+                </VBox>
+
+                </VBox>
+                <!-- ── /orderLoaded VBox ── -->
+
+            </VBox>
+        </f:content>
+
+    </f:DynamicPage>
+</mvc:View>

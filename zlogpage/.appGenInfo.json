@@ -1,0 +1,24 @@
+{
+  "generationParameters": {
+    "generationDate": "Mon Apr 06 2026 16:57:52 GMT+0530 (India Standard Time)",
+    "generatorPlatform": "Visual Studio Code",
+    "serviceType": "SAP System (ABAP On-Premise)",
+    "metadataFilename": "",
+    "serviceUrl": "https://s4hana2022.incresol.com:44300/sap/opu/odata/sap/ZVR_RS_V3_SRV",
+    "appName": "zlogpage",
+    "appTitle": "App Title",
+    "appDescription": "An SAP Fiori application.",
+    "appNamespace": "",
+    "ui5Theme": "sap_horizon",
+    "ui5Version": "1.102.8",
+    "enableCodeAssist": false,
+    "enableEslint": false,
+    "enableTypeScript": false,
+    "showMockDataInfo": true,
+    "generatorVersion": "1.19.5",
+    "template": "Basic V2",
+    "generatorName": "SAP Fiori Application Generator",
+    "entityRelatedConfig": [],
+    "launchText": "To launch the generated application, run the following from the generated application root folder:\n\n```\n    npm start\n```"
+  }
+}

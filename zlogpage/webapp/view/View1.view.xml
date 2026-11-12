@@ -1,0 +1,149 @@
+<mvc:View
+    controllerName="zlogpage.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    displayBlock="true"
+    xmlns="sap.m"
+>
+    <Page
+        id="page"
+        showHeader="false"
+        backgroundDesign="Transparent"
+    >
+        <FlexBox
+            height="auto"
+            width="100%"
+            justifyContent="Center"
+            alignItems="End"
+            direction="Column"
+            backgroundDesign="Transparent"
+            class="loginPageBackground"
+        >
+            <!-- LOGIN CARD -->
+            <HBox class="loginCardBox">
+                <VBox width="100%">
+                    <!-- LOGO + BRAND BLOCK -->
+                    <VBox
+                        alignItems="Center"
+                        justifyContent="Center"
+                        class="sapUiMediumMarginTop sapUiSmallMarginBottom"
+                    >
+                        <Image
+                            id="logoImage"
+                            width="160px"
+                            densityAware="false"
+                            decorative="false"
+                            alt="Romsons"
+                        />
+                        <Title
+                            text="Login Portal"
+                            level="H3"
+                            titleStyle="H5"
+                            class="sapUiSmallMarginTop"
+                        />
+                        <Text
+                            text="Sign in to continue to your workspace"
+                            class="sapUiTinyMarginTop sapThemeText"
+                            textAlign="Center"
+                        />
+                    </VBox>
+
+                    <!-- FORM -->
+                    <f:SimpleForm
+                        editable="true"
+                        layout="ResponsiveGridLayout"
+                        labelSpanXL="4"
+                        labelSpanL="4"
+                        labelSpanM="4"
+                        labelSpanS="12"
+                        adjustLabelSpan="false"
+                        emptySpanXL="0"
+                        emptySpanL="0"
+                        emptySpanM="0"
+                        emptySpanS="0"
+                        columnsXL="1"
+                        columnsL="1"
+                        columnsM="1"
+                        singleContainerFullSize="false"
+                        class="sapUiSmallMarginTop"
+                    >
+                        <f:content>
+                            <Label
+                                text="Plant ID"
+                                required="true"
+                                labelFor="plantInput"
+                                design="Bold"
+                                visible="false"
+                            />
+                            <Input
+                                id="plantInput"
+                                placeholder="Enter plant ID"
+                                visible="false"
+                            />
+
+                            <Label
+                                text="Employee ID"
+                                required="true"
+                                labelFor="usernameInput"
+                                design="Bold"
+                            />
+                            <Input
+                                id="usernameInput"
+                                placeholder="Enter employee ID"
+                                maxLength="20"
+                            />
+
+                            <Label
+                                text="Password"
+                                required="true"
+                                labelFor="passwordInput"
+                                design="Bold"
+                            />
+                            <HBox
+                                alignItems="Center"
+                                width="100%"
+                                class="passwordInputBox"
+                            >
+                                <Input
+                                    id="passwordInput"
+                                    placeholder="Enter password"
+                                    type="Password"
+                                    width="100%"
+                                />
+                                <core:Icon
+                                    id="passwordToggleIcon"
+                                    src="sap-icon://show"
+                                    press="onTogglePassword"
+                                    tooltip="Show password"
+                                    class="passwordToggleIcon"
+                                />
+                            </HBox>
+                        </f:content>
+                    </f:SimpleForm>
+
+                    <!-- LOGIN BUTTON -->
+                    <Button
+                        text="Sign In"
+                        type="Emphasized"
+                        width="100%"
+                        press="onLoginPress"
+                        class="sapUiSmallMarginTop sapUiSmallMarginBottom"
+                    />
+
+                    <!-- FORGOT PASSWORD -->
+                    <HBox
+                        justifyContent="Center"
+                        width="100%"
+                    >
+                        <Link
+                            text="Forgot your password?"
+                            press="onForgotPassword"
+                        />
+                    </HBox>
+                </VBox>
+            </HBox>
+        </FlexBox>
+    </Page>
+</mvc:View>

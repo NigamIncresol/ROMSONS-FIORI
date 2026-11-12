@@ -1,0 +1,92 @@
+/* ── DynamicPage title and header background ── */
+.sapFDynamicPageTitle,
+.sapFDynamicPageHeader {
+    background-color: #eaf6ef !important;
+}
+
+/* ── Logo ── */
+.logoRounded {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* ── Storage location panel header ── */
+.storagePanel .sapMPanelHeadingDiv,
+.storagePanel .sapMPanelHdr,
+.storagePanel .sapMPanelWrappingDivTb,
+.storagePanel .sapMPanelHeader,
+.storagePanel .sapMPanelHdr .sapMToolBar,
+.storagePanel .sapMPanelHeader .sapMToolBar,
+.storagePanel .sapMPanelHeaderTB,
+.storagePanel .sapMIBar.sapMPanelHeaderTB {
+    background-color: #fffde7 !important;
+}
+
+/* ── Created Log panel header: no background ── */
+.createdLogPanel .sapMPanelHeadingDiv,
+.createdLogPanel .sapMPanelHdr,
+.createdLogPanel .sapMPanelWrappingDivTb,
+.createdLogPanel .sapMPanelHeader,
+.createdLogPanel .sapMPanelHdr .sapMToolBar,
+.createdLogPanel .sapMPanelHeader .sapMToolBar,
+.createdLogPanel .sapMPanelHeaderTB,
+.createdLogPanel .sapMIBar.sapMPanelHeaderTB {
+    background-color: transparent !important;
+}
+
+/* ── Bold issue/order number ── */
+.boldStatus .sapMObjectStatusText {
+    font-weight: 900 !important;
+    font-size: 14px !important;
+}
+
+/* ── Material table column header background ── */
+.materialTable .sapMListTblHeaderCell,
+.materialTable .sapMListTblHeader {
+    background-color: #f5f5f5 !important;
+}
+
+/* ── Material table smaller font ── */
+html body .materialTable,
+html body .materialTable *,
+html body .materialTable .sapMText,
+html body .materialTable .sapMObjectNumberText,
+html body .materialTable .sapMObjectNumberUnit,
+html body .materialTable .sapMObjectStatusText,
+html body .materialTable .sapMListTblCell,
+html body .materialTable .sapMListTblHeaderCell,
+html body .materialTable .sapMInputBaseInner {
+    font-size: 12px !important;
+}
+
+/* ── Components table border ── */
+.materialTable {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px 6px 0 0;
+    overflow: hidden;
+}
+
+/* ── Issue slip PDF viewer (matches print_job_card's jobCardPdfViewer) ── */
+.jobCardPdfViewer {
+    width: 100%;
+    height: 75vh;
+    min-height: 500px;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+}
+
+/* ── Filter bar (inside DynamicPageHeader) ── */
+.issueFilterBar .sapMLabel {
+    font-size: 12px;
+    color: #556;
+    margin-bottom: 2px;
+}
+
+/* ── Barcode scanner camera container ── */
+.barcodeScannerBox {
+    width: 100%;
+    min-height: 260px;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
