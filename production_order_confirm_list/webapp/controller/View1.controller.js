@@ -146,6 +146,16 @@ sap.ui.define(
           "opSeqModel",
         );
 
+        // Put the cursor in the QR scan field once the view first renders.
+        this.getView().addEventDelegate({
+          onAfterRendering: function () {
+            if (!this._bScanInputFocused) {
+              this._bScanInputFocused = true;
+              this._focusScanInput();
+            }
+          }.bind(this),
+        });
+
         this._fetchOperationList(sOrderId || "");
 
         if (sOrderId || sUrlDate || sUrlShift) {
@@ -612,6 +622,10 @@ sap.ui.define(
           }.bind(this),
           complete: function () {
             this.getView().setBusy(false);
+            if (this._bRefocusScan) {
+              this._bRefocusScan = false;
+              this._focusScanInput();
+            }
           }.bind(this),
         });
       },
@@ -1071,6 +1085,63 @@ sap.ui.define(
               "Unable to access the camera for scanning: " + err,
             );
           });
+      },
+
+      // ── Hardware QR scanner input (scanner types the code + Enter) ───
+      _focusScanInput: function () {
+        var oInput = this.byId("qrScanInput");
+        if (oInput) {
+          setTimeout(function () {
+            oInput.focus();
+          }, 0);
+        }
+      },
+
+      onQrScanSubmit: function (oEvent) {
+        var oInput = oEvent.getSource();
+        var sValue = (oEvent.getParameter("value") || "").trim();
+
+        // Always clear for the next scan and keep the cursor in the field.
+        oInput.setValue("");
+        this._bRefocusScan = true;
+        this._focusScanInput();
+
+        if (!sValue) {
+          return;
+        }
+
+        var oScanned = null;
+        try {
+          oScanned = JSON.parse(sValue);
+        } catch (e) {
+          oScanned = null;
+        }
+
+        var bValidDate =
+          oScanned &&
+          /^\d{1,2}\.\d{1,2}\.\d{4}$/.test(
+            String(oScanned["Shift Date"] || "").trim(),
+          );
+        var bValid =
+          oScanned &&
+          typeof oScanned === "object" &&
+          String(oScanned["Order No"] || "").trim() &&
+          String(oScanned["Shift ID"] || "").trim() &&
+          bValidDate;
+
+        if (!bValid) {
+          MessageBox.error(
+            "Invalid QR code. It must contain Order No, Shift Date and Shift ID.",
+            {
+              onClose: function () {
+                this._focusScanInput();
+              }.bind(this),
+            },
+          );
+          return;
+        }
+
+        this._applyScannedOrder(sValue);
       },
 
       _applyScannedOrder: function (sDecodedText) {

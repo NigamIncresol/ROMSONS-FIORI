@@ -69,6 +69,19 @@
         ══════════════════════════════════════════ -->
         <f:header>
             <f:DynamicPageHeader pinnable="true" class="oaOrderDetailsHeader">
+                <!-- ── QR Scan Input (physical scanner sends Enter) ── -->
+                <HBox
+                    alignItems="Center"
+                    class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop"
+                >
+                    <Input
+                        id="scanInput"
+                        placeholder="Scan job card QR here"
+                        width="320px"
+                        submit=".onScanInputSubmit"
+                        change=".onScanInputSubmit"
+                    />
+                </HBox>
                 <HBox
                     alignItems="Center"
                     justifyContent="SpaceBetween"

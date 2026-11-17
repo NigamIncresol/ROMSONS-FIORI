@@ -65,6 +65,13 @@
                         justifyContent="Start"
                         class="sapUiSmallMarginBottom"
                     >
+                        <Input
+                            id="qrScanInput"
+                            placeholder="Scan QR code"
+                            width="14rem"
+                            submit="onQrScanSubmit"
+                            class="sapUiSmallMarginEnd"
+                        />
                         <SearchField
                             id="issueSearchField"
                             placeholder="Search by Material Doc. / Order / Reservation No."
@@ -301,47 +308,43 @@
                                                 title="Mat Doc"
                                                 text="{materialsModel>materialDoc}"
                                                 state="Indication05"
-                                                class="sapUiTinyMarginEnd boldStatus"
-                                            />
-                                            <Text
-                                                text="|"
-                                                class="sapUiTinyMarginEnd"
+                                                class="sapUiSmallMarginEnd boldStatus panelHeaderStatus"
                                             />
                                             <ObjectStatus
                                                 title="Year"
                                                 text="{materialsModel>materialDocYear}"
                                                 state="Indication03"
-                                                class="sapUiTinyMarginEnd boldStatus"
-                                            />
-                                            <Text
-                                                text="|"
-                                                class="sapUiTinyMarginEnd"
+                                                class="sapUiSmallMarginEnd boldStatus panelHeaderStatus"
                                             />
                                             <ObjectStatus
                                                 title="Order"
                                                 text="{path: 'materialsModel>order', formatter: '.formatOrNA'}"
                                                 state="Indication02"
-                                                class="sapUiTinyMarginEnd boldStatus"
-                                            />
-                                            <Text
-                                                text="|"
-                                                class="sapUiTinyMarginEnd"
+                                                class="sapUiSmallMarginEnd boldStatus panelHeaderStatus"
                                             />
                                             <ObjectStatus
                                                 title="Res No"
                                                 text="{path: 'materialsModel>reservationNumber', formatter: '.formatIssueNumber'}"
                                                 state="Indication04"
-                                                class="sapUiTinyMarginEnd boldStatus"
-                                            />
-                                            <Text
-                                                text="|"
-                                                class="sapUiTinyMarginEnd"
+                                                class="sapUiSmallMarginEnd boldStatus panelHeaderStatus"
                                             />
                                             <ObjectStatus
                                                 title="Created DateTime"
                                                 text="{materialsModel>createdDateTime}"
                                                 state="Information"
-                                                class="boldStatus"
+                                                class="sapUiSmallMarginEnd boldStatus panelHeaderStatus"
+                                            />
+                                            <ObjectStatus
+                                                title="House"
+                                                text="{materialsModel>houseId} - {materialsModel>houseDesc}"
+                                                state="Indication06"
+                                                class="sapUiSmallMarginEnd boldStatus panelHeaderStatus"
+                                            />
+                                            <ObjectStatus
+                                                title="Department"
+                                                text="{path: 'materialsModel>department', formatter: '.formatOrNA'}"
+                                                state="Indication07"
+                                                class="boldStatus panelHeaderStatus"
                                             />
                                         </HBox>
                                         <HBox alignItems="Center">
@@ -352,7 +355,7 @@
                                                 class="sapUiTinyMarginBegin"
                                             />
                                             <ObjectStatus
-                                                text="Issue Loc: {materialsModel>issueSloc} → Receive Loc: {materialsModel>receiveSloc}"
+                                                text="{materialsModel>issueSloc} → {materialsModel>receiveSloc}"
                                                 state="Information"
                                                 inverted="true"
                                                 class="sapUiTinyMarginBegin"
@@ -362,23 +365,6 @@
                                 </Toolbar>
                             </headerToolbar>
                             <content>
-                                <HBox
-                                    alignItems="Center"
-                                    wrap="NoWrap"
-                                    class="sapUiTinyMarginBottom"
-                                >
-                                    <ObjectStatus
-                                        title="House"
-                                        text="{materialsModel>houseId} - {materialsModel>houseDesc}"
-                                        state="None"
-                                        class="sapUiSmallMarginEnd"
-                                    />
-                                    <ObjectStatus
-                                        title="Department"
-                                        text="{path: 'materialsModel>department', formatter: '.formatOrNA'}"
-                                        state="None"
-                                    />
-                                </HBox>
                                 <Panel
                                     expandable="false"
                                     expanded="true"

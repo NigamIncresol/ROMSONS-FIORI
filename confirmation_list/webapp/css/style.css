@@ -80,3 +80,12 @@ html body .materialTable .sapMInputBaseInner {
     border: 1px solid #d1d5db;
     border-radius: 0.5rem;
 }
+
+/* ── Panel header: smaller font ── */
+.storagePanel .sapMPanelHeaderTB,
+.storagePanel .sapMPanelHeaderTB *,
+.storagePanel .boldStatus .sapMObjectStatusText,
+.storagePanel .sapMObjectStatusTitle,
+.storagePanel .sapMObjectStatusText {
+    font-size: 0.65rem !important;
+}

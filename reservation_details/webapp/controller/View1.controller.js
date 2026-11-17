@@ -67,6 +67,10 @@ sap.ui.define(
               "reservationdetails/images/logoNew.svg",
             );
             this.byId("logoImage").setSrc(sImageUrl);
+            if (!this._bScanFocused) {
+              this._bScanFocused = true;
+              this._focusScanInput();
+            }
           }.bind(this),
         );
 
@@ -330,6 +334,43 @@ sap.ui.define(
         this._sReservationNumber = sQuery;
         oAppModel.setProperty("/reservationNumber", sQuery);
         this._loadReservationDetails(sQuery);
+      },
+
+      _focusScanInput: function () {
+        var oInput = this.byId("scanInput");
+        if (oInput) {
+          setTimeout(function () {
+            oInput.focus();
+          }, 0);
+        }
+      },
+
+      onScanInputSubmit: function (oEvent) {
+        var that = this;
+        var oInput = oEvent.getSource();
+        var sRaw = (oInput.getValue() || "").trim();
+
+        oInput.setValue("");
+        if (!sRaw) {
+          this._focusScanInput();
+          return;
+        }
+
+        var sReservationNo = this._extractReservationNumber(sRaw);
+        if (!sReservationNo) {
+          MessageBox.error("Invalid QR scanned", {
+            onClose: function () {
+              that._focusScanInput();
+            },
+          });
+          return;
+        }
+
+        this.getView()
+          .getModel("appModel")
+          .setProperty("/searchValue", sReservationNo);
+        this.onApplyReservationSearch();
+        this._focusScanInput();
       },
 
       /**

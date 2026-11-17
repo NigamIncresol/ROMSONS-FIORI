@@ -61,6 +61,12 @@ sap.ui.define(
               "materialrequest/images/logoNew.svg",
             );
             this.byId("logoImage").setSrc(sImageUrl);
+            // Auto-focus physical scanner input
+            var that = this;
+            setTimeout(function () {
+              var oScanInput = that.byId("qrScanInput");
+              if (oScanInput) { oScanInput.focus(); }
+            }, 300);
           }.bind(this),
         );
 
@@ -656,6 +662,52 @@ sap.ui.define(
        * Confirms logout with the user, clears all session cookies,
        * then redirects to the login page.
        */
+
+      onQrScanSubmit: function (oEvent) {
+        var that = this;
+        var oInput = oEvent.getSource();
+        var sRaw = (oInput.getValue() || "").trim();
+
+        // Always clear and refocus the scan input
+        var fnReset = function () {
+          oInput.setValue("");
+          oInput.focus();
+        };
+
+        if (!sRaw) {
+          fnReset();
+          return;
+        }
+
+        var oData;
+        try {
+          oData = JSON.parse(sRaw);
+        } catch (e) {
+          MessageBox.error(
+            "Invalid QR code scanned. Expected JSON format: {\"Order No\":\"...\"}",
+            { title: "Invalid QR Code", onClose: fnReset }
+          );
+          return;
+        }
+
+        var sOrderNo = (oData["Order No"] || "").trim();
+        if (!sOrderNo) {
+          MessageBox.error(
+            "QR code is missing the required \"Order No\" field.",
+            { title: "Invalid QR Code", onClose: fnReset }
+          );
+          return;
+        }
+
+        // Map fields to filters and auto-apply
+        var oAppModel = that.getView().getModel("appModel");
+        oAppModel.setProperty("/searchOrderId", sOrderNo);
+        oAppModel.setProperty("/orderId", sOrderNo);
+        oAppModel.setProperty("/orderLoaded", false);
+        that._sOrderId = sOrderNo;
+        fnReset();
+        that._loadMaterialRequests();
+      },
 
       onScanOrder: function () {
         var that = this;

@@ -217,6 +217,7 @@ sap.ui.define(
 
             // Apply whatever filters are currently set (Status defaults to OPEN)
             this._applyAllFilters();
+            this._focusQrScanInput();
 
             setTimeout(
               function () {
@@ -743,6 +744,130 @@ sap.ui.define(
           "storage_locations",
           "/filterReceivingLoc",
         );
+      },
+
+      // ── QR scan input (physical scanner types the code and sends Enter) ──
+
+      _focusQrScanInput: function () {
+        setTimeout(
+          function () {
+            var oInput = this.byId("qrScanInput");
+            if (oInput) {
+              oInput.focus();
+            }
+          }.bind(this),
+          0,
+        );
+      },
+
+      /**
+       * Parses scanned text of the form "Label-Value, Label-Value, ..."
+       * (separators , ; | or new line; "-", ":" or "=" between label and value)
+       * into { filterProperty: value }. Returns null when invalid.
+       */
+      _parseQrScan: function (sText) {
+        var mLabelToFilter = {
+          "reservation no": "/filterReservationNo",
+          reservation: "/filterReservationNo",
+          "res no": "/filterReservationNo",
+          "reservation number": "/filterReservationNo",
+          order: "/filterOrder",
+          "order no": "/filterOrder",
+          "production order": "/filterOrder",
+          "issue loc": "/filterIssueLoc",
+          "issue storage loc": "/filterIssueLoc",
+          "receiving loc": "/filterReceivingLoc",
+          "receiving storage loc": "/filterReceivingLoc",
+          department: "/filterDepartment",
+          dept: "/filterDepartment",
+          house: "/filterHouse",
+          "house id": "/filterHouse",
+          material: "/filterMaterial",
+          status: "/filterStatus",
+          "created date": "/filterCreatedDate",
+          "created on": "/filterCreatedDate",
+        };
+        var mResult = {};
+        var aParts = String(sText || "")
+          .split(/[,;|\r\n]+/)
+          .map(function (s) {
+            return s.trim();
+          })
+          .filter(Boolean);
+
+        for (var i = 0; i < aParts.length; i++) {
+          var aMatch = /^([A-Za-z ]+?)\s*[-:=]\s*(.+)$/.exec(aParts[i]);
+          if (!aMatch) {
+            return null;
+          }
+          var sProperty = mLabelToFilter[aMatch[1].trim().toLowerCase()];
+          if (!sProperty) {
+            return null;
+          }
+          var sValue = aMatch[2].trim();
+          if (sProperty === "/filterReservationNo") {
+            if (!/^\d+$/.test(sValue)) {
+              return null;
+            }
+          } else if (sProperty === "/filterCreatedDate") {
+            var aDate =
+              /^(\d{2})[.\/](\d{2})[.\/](\d{4})$/.exec(sValue) ||
+              /^(\d{4})-(\d{2})-(\d{2})$/.exec(sValue);
+            if (!aDate) {
+              return null;
+            }
+            sValue =
+              aDate[1].length === 4
+                ? sValue
+                : aDate[3] + "-" + aDate[2] + "-" + aDate[1];
+          }
+          mResult[sProperty] = sValue;
+        }
+
+        // Reservation No is required
+        return mResult["/filterReservationNo"] ? mResult : null;
+      },
+
+      onQrScanSubmit: function (oEvent) {
+        var oInput = oEvent.getSource();
+        var sScanned = (oInput.getValue() || "").trim();
+        oInput.setValue("");
+        if (!sScanned) {
+          this._focusQrScanInput();
+          return;
+        }
+
+        var mParsed = this._parseQrScan(sScanned);
+        if (!mParsed) {
+          MessageBox.error(
+            "Invalid QR scanned. Expected e.g. \"Reservation No-368126\".",
+            { onClose: this._focusQrScanInput.bind(this) },
+          );
+          return;
+        }
+
+        // A scan replaces all current filters (incl. the default Status = OPEN)
+        var oAppModel = this.getView().getModel("appModel");
+        [
+          "/quickSearch",
+          "/filterReservationNo",
+          "/filterOrder",
+          "/filterCreatedDate",
+          "/filterIssueLoc",
+          "/filterReceivingLoc",
+          "/filterDepartment",
+          "/filterHouse",
+          "/filterMaterial",
+          "/filterStatus",
+        ].forEach(function (sPath) {
+          oAppModel.setProperty(sPath, "");
+        });
+        Object.keys(mParsed).forEach(function (sPath) {
+          oAppModel.setProperty(sPath, mParsed[sPath]);
+        });
+
+        this._applyAllFilters();
+        this._focusQrScanInput();
       },
 
       onValueHelpDepartment: function () {

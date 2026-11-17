@@ -85,6 +85,23 @@ sap.ui.define(
         );
         this._updateIsPastDate();
 
+        this.getView().addEventDelegate(
+          {
+            onAfterRendering: function () {
+              if (this._bScanFocused) return;
+              this._bScanFocused = true;
+              setTimeout(
+                function () {
+                  var oScan = this.byId("scanInput");
+                  if (oScan) oScan.focus();
+                }.bind(this),
+                300,
+              );
+            }.bind(this),
+          },
+          this,
+        );
+
         this.getView().setModel(
           new JSONModel({ houseId: "", houseDesc: "" }),
           "productionOrderModel",
@@ -1341,6 +1358,100 @@ sap.ui.define(
         } else {
           this.onApplyFilter();
         }
+      },
+
+      // ── QR scan input (physical scanner types the JSON, then sends Enter) ──
+      onScanInputSubmit: function (oEvent) {
+        var oInput = oEvent.getSource();
+        var sRaw = (oInput.getValue() || "").trim();
+        var that = this;
+
+        var fnReset = function () {
+          oInput.setValue("");
+          setTimeout(function () {
+            oInput.focus();
+          }, 0);
+        };
+        var fnFail = function (sMsg) {
+          fnReset();
+          MessageBox.error(sMsg, {
+            title: "Invalid QR Code",
+            onClose: function () {
+              oInput.focus();
+            },
+          });
+        };
+
+        if (!sRaw) {
+          fnReset();
+          return;
+        }
+
+        var oScanned;
+        try {
+          oScanned = JSON.parse(sRaw);
+        } catch (e) {
+          fnFail("The scanned code is not valid JSON.");
+          return;
+        }
+        if (!oScanned || typeof oScanned !== "object") {
+          fnFail("The scanned code is not valid JSON.");
+          return;
+        }
+
+        var sOrderNo = (oScanned["Order No"] || "").toString().trim();
+        var sDateRaw = (oScanned["Shift Date"] || "").toString().trim();
+        var sShiftId = (oScanned["Shift ID"] || "").toString().trim();
+
+        var aMissing = [];
+        if (!sOrderNo) aMissing.push("Order No");
+        if (!sDateRaw) aMissing.push("Shift Date");
+        if (!sShiftId) aMissing.push("Shift ID");
+        if (aMissing.length) {
+          fnFail("Scanned code is missing: " + aMissing.join(", ") + ".");
+          return;
+        }
+
+        // Accept yyyy-MM-dd or dd.MM.yyyy
+        var sFilterDate = null;
+        var aIso = sDateRaw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+        var aDot = sDateRaw.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+        if (aIso) {
+          sFilterDate =
+            aIso[1] + "-" + aIso[2].padStart(2, "0") + "-" + aIso[3].padStart(2, "0");
+        } else if (aDot) {
+          sFilterDate =
+            aDot[3] + "-" + aDot[2].padStart(2, "0") + "-" + aDot[1].padStart(2, "0");
+        }
+        if (!sFilterDate) {
+          fnFail("Shift Date '" + sDateRaw + "' is not a valid date.");
+          return;
+        }
+
+        fnReset();
+
+        var oModel = this.getView().getModel("viewModel");
+        oModel.setProperty("/filterOrder", sOrderNo);
+        oModel.setProperty("/filterDate", sFilterDate);
+        this._updateIsPastDate();
+        this._markFiltersDirty();
+
+        // Load the shift list so the scanned shift can be selected, then
+        // apply order + date + shift together.
+        this._loadShiftList(function () {
+          var oShiftSelect = that.byId("shiftSelect");
+          if (!oShiftSelect || !oShiftSelect.getItemByKey(sShiftId)) {
+            MessageBox.error("Shift '" + sShiftId + "' was not found.", {
+              title: "Invalid QR Code",
+              onClose: function () {
+                oInput.focus();
+              },
+            });
+            return;
+          }
+          oShiftSelect.setSelectedKey(sShiftId);
+          that._applyFilters(sOrderNo, sFilterDate, sShiftId);
+        });
       },
 
       _stopScanner: function () {

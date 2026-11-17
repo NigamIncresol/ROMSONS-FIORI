@@ -72,6 +72,12 @@ sap.ui.define(
               "materialissuelist/images/logoNew.svg",
             );
             this.byId("logoImage").setSrc(sImageUrl);
+
+            // focus the QR scan field once, after the first render
+            if (!this._bScanFocused) {
+              this._bScanFocused = true;
+              this._focusScanInput(15);
+            }
           }.bind(this),
         );
 
@@ -126,6 +132,26 @@ sap.ui.define(
           }.bind(this),
           300,
         );
+      },
+
+      /**
+       * Focuses the QR scan input, retrying until the browser actually
+       * reports it as the active element (UI5 may not have it in the DOM
+       * yet, or another control may grab focus during startup).
+       */
+      _focusScanInput: function (iTries) {
+        var oInput = this.byId("qrScanInput");
+        var oDom = oInput && oInput.getFocusDomRef();
+
+        if (oDom) {
+          oDom.focus();
+          if (document.activeElement === oDom) {
+            return;
+          }
+        }
+        if (iTries > 0) {
+          setTimeout(this._focusScanInput.bind(this, iTries - 1), 200);
+        }
       },
 
       // ─────────────────────────────────────────────────────────────
@@ -540,6 +566,100 @@ sap.ui.define(
             : "",
         );
         oMaterialsModel.setProperty("/issues", aFiltered);
+      },
+
+      /**
+       * Parses an issue-slip QR payload such as
+       * "Material Doc-4904980045,Doc Year-2026" into filter values.
+       * Each "Label-Value" pair is mapped to its filterModel property.
+       * Returns null when Material Doc or Doc Year is missing.
+       */
+      _parseIssueSlipQr: function (sText) {
+        var mLabelToFilter = {
+          materialdoc: "matDoc",
+          docyear: "docYear",
+          order: "order",
+          orderno: "order",
+          reservationno: "reservationNo",
+          reservationnumber: "reservationNo",
+          issueloc: "issueLoc",
+          receiveloc: "receiveLoc",
+          receivingloc: "receiveLoc",
+          department: "department",
+          houseid: "houseId",
+          house: "houseId",
+        };
+        var oResult = {};
+
+        String(sText || "")
+          .split(",")
+          .forEach(function (sPair) {
+            var iSep = sPair.search(/[-:]/);
+            if (iSep < 1) {
+              return;
+            }
+            var sLabel = sPair
+              .substring(0, iSep)
+              .toLowerCase()
+              .replace(/[^a-z0-9]/g, "");
+            var sValue = sPair.substring(iSep + 1).trim();
+            if (mLabelToFilter[sLabel] && sValue) {
+              oResult[mLabelToFilter[sLabel]] = sValue;
+            }
+          });
+
+        return oResult.matDoc && oResult.docYear ? oResult : null;
+      },
+
+      /**
+       * Physical scanner input: the scanner types the QR text and sends
+       * Enter, which fires `submit`. Applies the parsed filters, then
+       * clears and refocuses the field for the next scan.
+       */
+      onQrScanSubmit: function (oEvent) {
+        var oInput = oEvent.getSource();
+        var sText = (oInput.getValue() || "").trim();
+        var fnRefocus = function () {
+          oInput.setValue("");
+          setTimeout(function () {
+            oInput.focus();
+          }, 0);
+        };
+
+        if (!sText) {
+          return;
+        }
+        console.log("🟢 QR scan input:", sText);
+
+        var oParsed = this._parseIssueSlipQr(sText);
+        if (!oParsed) {
+          oInput.setValue("");
+          MessageBox.error(
+            "Invalid QR code scanned. Material Doc and Doc Year are required.",
+            { onClose: fnRefocus },
+          );
+          return;
+        }
+
+        this.getView().getModel("filterModel").setData(
+          Object.assign(
+            {
+              matDoc: "",
+              docYear: "",
+              order: "",
+              reservationNo: "",
+              createdDate: "",
+              issueLoc: "",
+              receiveLoc: "",
+              department: "",
+              houseId: "",
+              rcptStatus: "",
+            },
+            oParsed,
+          ),
+        );
+        this._applyFilters();
+        fnRefocus();
       },
 
       /**

@@ -198,6 +198,16 @@ sap.ui.define(
               "downloaddocument/images/logoNew.svg",
             );
             this.byId("logoImage").setSrc(sImageUrl);
+
+            if (!this._bQrFocused) {
+              this._bQrFocused = true;
+              setTimeout(
+                function () {
+                  this.byId("qrInput").focus();
+                }.bind(this),
+                400,
+              );
+            }
           }.bind(this),
         );
 

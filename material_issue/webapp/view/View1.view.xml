@@ -61,9 +61,16 @@
             <f:DynamicPageHeader pinnable="true">
                 <HBox
                     alignItems="End"
-                    justifyContent="End"
+                    justifyContent="SpaceBetween"
                     width="100%"
                 >
+                    <Input
+                        id="qrScanInput"
+                        placeholder="Scan requisition slip QR here"
+                        width="260px"
+                        submit=".onQrScanSubmit"
+                    />
+                    <HBox alignItems="End">
                     <VBox class="sapUiSmallMarginEnd">
                         <Label text="RESERVATION NO" class="sectionLabel" />
                         <Input
@@ -89,6 +96,7 @@
                         icon="sap-icon://filter"
                         press=".onApplyReservationSearch"
                     />
+                    </HBox>
                 </HBox>
             </f:DynamicPageHeader>
         </f:header>

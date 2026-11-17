@@ -93,6 +93,7 @@ sap.ui.define(
 
             if (this._enforceSession()) {
               this._startSessionCheck();
+              this._focusQrScanInput();
               this._loadConfirmationList();
             }
           }.bind(this),
@@ -803,6 +804,104 @@ sap.ui.define(
         var sMaterialDocYear = sYearMatch ? sYearMatch[1] : "";
 
         this._applyMaterialDocFilterFields(sMaterialDoc, sMaterialDocYear);
+      },
+
+      // ─────────────────────────────────────────────────────────────
+      // PHYSICAL QR SCANNER INPUT (keyboard-wedge scanner sends Enter)
+      // ─────────────────────────────────────────────────────────────
+
+      /**
+       * Scanned label (normalised: lowercase, letters only) -> filter input id.
+       */
+      _mQrFieldMap: {
+        materialdoc: "filterMaterialDoc",
+        materialdocument: "filterMaterialDoc",
+        docyear: "filterMaterialDocYear",
+        materialdocyear: "filterMaterialDocYear",
+        order: "filterOrder",
+        orderno: "filterOrder",
+        reservationno: "filterReservationNumber",
+        reservationnumber: "filterReservationNumber",
+        reservation: "filterReservationNumber",
+        issueloc: "filterIssueSloc",
+        issuesloc: "filterIssueSloc",
+        receivingloc: "filterReceiveSloc",
+        receiveloc: "filterReceiveSloc",
+        receivesloc: "filterReceiveSloc",
+        department: "filterDepartment",
+        house: "filterHouse",
+        houseid: "filterHouse",
+      },
+
+      _focusQrScanInput: function () {
+        setTimeout(
+          function () {
+            var oInput = this.byId("qrScanInput");
+            if (oInput) {
+              oInput.focus();
+            }
+          }.bind(this),
+          0,
+        );
+      },
+
+      /**
+       * Parses scanned text such as "Material Doc-4904980047,Doc Year-2026"
+       * into { filterInputId: value }. Unknown labels are ignored.
+       */
+      _parseQrScan: function (sText) {
+        var mResult = {};
+        (sText || "")
+          .split(/[,;|\r\n]+/)
+          .forEach(function (sPart) {
+            var aMatch = /^\s*([A-Za-z][A-Za-z .]*?)\s*[-:=]\s*(\S.*?)\s*$/.exec(
+              sPart,
+            );
+            if (!aMatch) {
+              return;
+            }
+            var sKey = aMatch[1].toLowerCase().replace(/[^a-z]/g, "");
+            var sInputId = this._mQrFieldMap[sKey];
+            if (sInputId) {
+              mResult[sInputId] = aMatch[2];
+            }
+          }, this);
+        return mResult;
+      },
+
+      onQrScanInputSubmit: function (oEvent) {
+        var oInput = oEvent.getSource();
+        var sScanned = (oInput.getValue() || "").trim();
+
+        oInput.setValue("");
+        if (!sScanned) {
+          this._focusQrScanInput();
+          return;
+        }
+        console.log("🟡 Scanner input value:", sScanned);
+
+        var mFields = this._parseQrScan(sScanned);
+
+        if (!mFields.filterMaterialDoc) {
+          MessageBox.error(
+            "Invalid QR code scanned. Material Doc is missing.",
+            { onClose: this._focusQrScanInput.bind(this) },
+          );
+          return;
+        }
+
+        var oSearchField = this.byId("confirmationSearchField");
+        if (oSearchField) {
+          oSearchField.setValue("");
+        }
+        this._clearFilterFields();
+        Object.keys(mFields).forEach(function (sInputId) {
+          this.byId(sInputId).setValue(mFields[sInputId]);
+        }, this);
+
+        this._expandExactMaterialDocMatches(mFields.filterMaterialDoc);
+        this.onApplyFilters();
+        this._focusQrScanInput();
       },
 
       /**

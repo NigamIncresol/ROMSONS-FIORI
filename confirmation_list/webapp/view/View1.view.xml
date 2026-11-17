@@ -65,6 +65,13 @@
                         class="sapUiTinyMarginBottom"
                     >
                         <HBox alignItems="Center">
+                            <Input
+                                id="qrScanInput"
+                                placeholder="Scan receiving slip QR here"
+                                width="16rem"
+                                submit="onQrScanInputSubmit"
+                                class="sapUiTinyMarginEnd"
+                            />
                             <SearchField
                                 id="confirmationSearchField"
                                 placeholder="Search by Material Doc. / Order / Reservation No."
@@ -304,48 +311,38 @@
                                         >
                                             <ObjectStatus
                                                 title="Material Doc"
-                                                text="{confirmationsModel>materialDoc}"
+                                                text="{confirmationsModel>materialDoc}-{confirmationsModel>materialDocYear}"
                                                 state="Indication05"
-                                                class="sapUiTinyMarginEnd boldStatus"
-                                            />
-                                            <Text
-                                                text="|"
-                                                class="sapUiTinyMarginEnd"
-                                            />
-                                            <ObjectStatus
-                                                title="Doc Year"
-                                                text="{confirmationsModel>materialDocYear}"
-                                                state="Indication03"
-                                                class="sapUiTinyMarginEnd boldStatus"
-                                            />
-                                            <Text
-                                                text="|"
-                                                class="sapUiTinyMarginEnd"
+                                                class="sapUiSmallMarginEnd boldStatus"
                                             />
                                             <ObjectStatus
                                                 title="Order"
                                                 text="{path: 'confirmationsModel>order', formatter: '.formatOrNA'}"
                                                 state="Indication02"
-                                                class="sapUiTinyMarginEnd boldStatus"
-                                            />
-                                            <Text
-                                                text="|"
-                                                class="sapUiTinyMarginEnd"
+                                                class="sapUiSmallMarginEnd boldStatus"
                                             />
                                             <ObjectStatus
                                                 title="Reservation No"
                                                 text="{path: 'confirmationsModel>reservationNumber', formatter: '.formatIssueNumber'}"
                                                 state="Indication04"
-                                                class="boldStatus"
-                                            />
-                                            <Text
-                                                text="|"
-                                                class="sapUiTinyMarginBegin sapUiTinyMarginEnd"
+                                                class="sapUiSmallMarginEnd boldStatus"
                                             />
                                             <ObjectStatus
                                                 title="Created Date Time"
                                                 text="{parts: [{path: 'confirmationsModel>createdDate'}, {path: 'confirmationsModel>createdTime'}], formatter: '.formatCreatedDateTime'}"
                                                 state="Information"
+                                                class="sapUiSmallMarginEnd"
+                                            />
+                                            <ObjectStatus
+                                                title="Department"
+                                                text="{path: 'confirmationsModel>department', formatter: '.formatOrNA'}"
+                                                state="None"
+                                                class="sapUiSmallMarginEnd"
+                                            />
+                                            <ObjectStatus
+                                                title="House"
+                                                text="{parts: [{path: 'confirmationsModel>houseId'}, {path: 'confirmationsModel>houseDesc'}], formatter: '.formatHouse'}"
+                                                state="None"
                                             />
                                         </HBox>
                                         <ObjectStatus
@@ -358,23 +355,6 @@
                                 </Toolbar>
                             </headerToolbar>
                             <content>
-                                <HBox
-                                    alignItems="Center"
-                                    wrap="Wrap"
-                                    class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
-                                >
-                                    <ObjectStatus
-                                        title="Department"
-                                        text="{path: 'confirmationsModel>department', formatter: '.formatOrNA'}"
-                                        state="None"
-                                        class="sapUiSmallMarginEnd"
-                                    />
-                                    <ObjectStatus
-                                        title="House"
-                                        text="{parts: [{path: 'confirmationsModel>houseId'}, {path: 'confirmationsModel>houseDesc'}], formatter: '.formatHouse'}"
-                                        state="None"
-                                    />
-                                </HBox>
                                 <Panel
                                     expandable="false"
                                     expanded="true"

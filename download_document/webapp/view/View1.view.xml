@@ -75,8 +75,8 @@
                     justifyContent="End"
                     class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop sapUiSmallMarginBottom"
                 >
-                    <!-- ── Job Card fields ── -->
-                    <VBox class="sapUiSmallMarginEnd" visible="{appModel>/showOrderShiftDate}">
+                    <!-- ── QR Code (hardware scanner) – all doctypes ── -->
+                    <VBox class="sapUiSmallMarginEnd">
                         <Label text="QR Code" />
                         <Input
                             id="qrInput"

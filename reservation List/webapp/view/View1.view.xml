@@ -64,12 +64,18 @@
                         justifyContent="SpaceBetween"
                     >
                         <HBox alignItems="Center">
+                            <Input
+                                id="qrScanInput"
+                                width="20rem"
+                                placeholder="Scan Requisition Slip QR here"
+                                submit=".onQrScanSubmit"
+                                class="sapUiSmallMarginEnd"
+                            />
                             <SearchField
                                 id="reservationSearchField"
                                 placeholder="Search Reservation / Order / Loc"
                                 width="25rem"
                                 liveChange="onSearchReservation"
-                                class="sapUiTinyMarginEnd"
                             />
                         </HBox>
                     </HBox>
@@ -312,7 +318,7 @@
                             class="sapUiSmallMarginBottom storagePanel"
                         >
                             <headerToolbar>
-                                <Toolbar>
+                                <Toolbar class="reservationHeaderToolbar">
                                     <HBox
                                         width="100%"
                                         alignItems="Center"
@@ -326,40 +332,25 @@
                                                 title="Res No"
                                                 text="{path: 'materialsModel>reservationNumber', formatter: '.formatReservationNumber'}"
                                                 state="Success"
-                                                class="boldStatus"
-                                            />
-                                            <Text
-                                                text="|"
-                                                class="sapUiTinyMarginBeginEnd"
+                                                class="boldStatus sapUiSmallMarginEnd"
                                             />
                                             <ObjectStatus
                                                 title="Order"
                                                 text="{materialsModel>order}"
                                                 state="Warning"
-                                                class="boldStatus"
-                                            />
-                                            <Text
-                                                text="|"
-                                                class="sapUiTinyMarginBeginEnd"
+                                                class="boldStatus sapUiSmallMarginEnd"
                                             />
                                             <ObjectStatus
                                                 title="Created"
                                                 text="{parts: ['materialsModel>createdDate', 'materialsModel>createdTime'], formatter: '.formatCreatedDateTime'}"
                                                 state="Information"
-                                            />
-                                            <Text
-                                                text="|"
-                                                class="sapUiTinyMarginBeginEnd"
+                                                class="sapUiSmallMarginEnd"
                                             />
                                             <ObjectStatus
                                                 title="House"
                                                 text="{parts: ['materialsModel>houseId', 'materialsModel>houseDesc'], formatter: '.formatHouse'}"
                                                 state="None"
-                                                class="boldStatus"
-                                            />
-                                            <Text
-                                                text="|"
-                                                class="sapUiTinyMarginBeginEnd"
+                                                class="boldStatus sapUiSmallMarginEnd"
                                             />
                                             <ObjectStatus
                                                 title="Dept"

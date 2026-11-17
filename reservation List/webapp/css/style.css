@@ -44,6 +44,21 @@
     background-color: transparent !important;
 }
 
+/* ── Reservation panel header: smaller font, bolder labels ── */
+html body .reservationHeaderToolbar,
+html body .reservationHeaderToolbar *,
+html body .reservationHeaderToolbar .sapMObjectStatus,
+html body .reservationHeaderToolbar .sapMObjectStatusTitle,
+html body .reservationHeaderToolbar .sapMObjectStatusText,
+html body .reservationHeaderToolbar .sapMObjectStatusIcon,
+html body .reservationHeaderToolbar .sapMText {
+    font-size: 0.65rem !important;
+}
+
+html body .reservationHeaderToolbar .sapMObjectStatusTitle {
+    font-weight: 700 !important;
+}
+
 /* ── Bold reservation/order number ── */
 .boldStatus .sapMObjectStatusText {
     font-weight: 700 !important;

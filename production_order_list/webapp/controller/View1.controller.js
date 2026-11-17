@@ -85,6 +85,11 @@ sap.ui.define(
               "productionorder/images/logoNew.svg",
             );
             this.byId("logoImage").setSrc(sImageUrl);
+            // Focus scan input on load
+            setTimeout(function () {
+              var oScan = this.byId("qrScanInput");
+              if (oScan && oScan.getDomRef()) { oScan.focus(); }
+            }.bind(this), 500);
           }.bind(this),
         );
         this.getView().setModel(
@@ -183,6 +188,10 @@ sap.ui.define(
         this._debounceFilter();
       },
 
+      onSearchLiveChange: function () {
+        this._debounceFilter();
+      },
+
       onScanBarcode: function () {
         var that = this;
         var oScanner = null;
@@ -241,7 +250,7 @@ sap.ui.define(
                   var sOrderNo =
                     oParsed["Order No"].replace(/^0+/, "") ||
                     oParsed["Order No"];
-                  that.byId("searchField").setValue(sOrderNo);
+                  // searchField removed
                   that._applyFilters();
                   setTimeout(function () {
                     var aPanels = that
@@ -282,6 +291,58 @@ sap.ui.define(
         oDialog.open();
       },
 
+      // ── QR Scan Input ─────────────────────────────────────────
+      _applyQRScan: function (sValue) {
+        if (this._qrScanBusy) { return; }
+        this._qrScanBusy = true;
+        setTimeout(function () { this._qrScanBusy = false; }.bind(this), 500);
+        var sRaw = (sValue || "").trim();
+        if (!sRaw) { return; }
+
+        var oParsed;
+        try {
+          oParsed = JSON.parse(sRaw);
+        } catch (e) {
+          MessageBox.error("Invalid QR code scanned. Expected JSON format.", { title: "Invalid QR" });
+          this.byId("qrScanInput").setValue("");
+          return;
+        }
+
+        var sOrderNo = oParsed["Order No"];
+        var sShiftDate = oParsed["Shift Date"];
+        var sShiftId = oParsed["Shift ID"];
+
+        if (!sOrderNo || !sShiftDate || !sShiftId) {
+          MessageBox.error("Invalid QR: missing Order No, Shift Date or Shift ID.", { title: "Invalid QR" });
+          this.byId("qrScanInput").setValue("");
+          return;
+        }
+
+        // Clear existing filters first (without triggering an extra _applyFilters)
+        this._clearFilterInputs();
+
+        // Set Order No token on filterOrder
+        var oOrderInput = this.byId("filterOrder");
+        var sCleanOrder = sOrderNo.replace(/^0+/, "") || sOrderNo;
+        oOrderInput.addToken(new Token({ key: sCleanOrder, text: sCleanOrder }));
+
+        this.byId("qrScanInput").setValue("");
+        this.onApplyFilters();
+        setTimeout(function () {
+          var oScan = this.byId("qrScanInput");
+          if (oScan && oScan.getDomRef()) { oScan.focus(); }
+        }.bind(this), 350);
+      },
+
+      onQRScanSubmit: function (oEvent) {
+        var sVal = oEvent.getParameter("value") || oEvent.getSource().getValue();
+        this._applyQRScan(sVal);
+      },
+
+      onQRScanLiveChange: function () {
+        // No auto-trigger — scanner sends Enter which fires onQRScanSubmit
+      },
+
       onApplyFilters: function () {
         this.byId("filterBar").setBusy(true);
         setTimeout(
@@ -307,8 +368,7 @@ sap.ui.define(
         );
       },
 
-      onClearFilters: function () {
-        this.byId("searchField").setValue("");
+      _clearFilterInputs: function () {
         [
           "filterHouseId",
           "filterOrder",
@@ -320,21 +380,18 @@ sap.ui.define(
           // "filterShift",
           "filterBatch",
           "filterWorklist",
-        ].forEach(
-          function (sId) {
-            this.byId(sId).removeAllTokens();
-          }.bind(this),
-        );
+        ].forEach(function (sId) { this.byId(sId).removeAllTokens(); }.bind(this));
         [
           "filterCreatedOn",
           "filterActualRelease",
           "filterStartDate",
           "filterFinishDate",
-        ].forEach(
-          function (sId) {
-            this.byId(sId).setValue("");
-          }.bind(this),
-        );
+        ].forEach(function (sId) { this.byId(sId).setValue(""); }.bind(this));
+        this.byId("searchField").setValue("");
+      },
+
+      onClearFilters: function () {
+        this._clearFilterInputs();
         this.byId("filterBar").setBusy(true);
         this.byId("ordersListVBox").setBusy(true);
         setTimeout(
@@ -778,9 +835,7 @@ sap.ui.define(
         }
         var aAll = oModel.getProperty("/_allOrders") || [];
 
-        var sQuery = (this.byId("searchField").getValue() || "")
-          .toLowerCase()
-          .trim();
+        var sQuery = (this.byId("searchField").getValue() || "").toLowerCase().trim();
 
         var _stripLeadingZeros = function (s) {
           return (s || "").replace(/^0+/, "") || "0";

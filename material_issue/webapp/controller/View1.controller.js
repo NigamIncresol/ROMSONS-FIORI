@@ -109,6 +109,7 @@ sap.ui.define(
 
             if (this._enforceSession()) {
               this._startSessionCheck();
+              this._focusQrScanInput();
 
               if (sReservationNo) {
                 this._fetchReservationByNumber(sReservationNo);
@@ -681,8 +682,7 @@ sap.ui.define(
         var that = this;
 
         this._openScanner("Scan Reservation QR / Barcode", function (sText) {
-          var oMatch = /Reservation\s*No\s*-\s*(\S+)/i.exec(sText || "");
-          var sReservationNo = oMatch ? oMatch[1].trim() : "";
+          var sReservationNo = that._parseReservationQr(sText);
 
           if (!sReservationNo) {
             MessageBox.error("invalid qr scanned");
@@ -695,6 +695,61 @@ sap.ui.define(
             .setProperty("/reservationNoInput", sReservationNo);
           that._fetchReservationByNumber(sReservationNo);
         });
+      },
+
+      /**
+       * Extracts the reservation number from scanned text such as
+       * "Reservation No-368181". Returns "" if it isn't in that format.
+       */
+      _parseReservationQr: function (sText) {
+        var oMatch = /Reservation\s*No\s*[-:]\s*(\d+)/i.exec(sText || "");
+        return oMatch ? oMatch[1] : "";
+      },
+
+      _focusQrScanInput: function () {
+        var oInput = this.byId("qrScanInput");
+        if (oInput) {
+          setTimeout(function () {
+            oInput.focus();
+          }, 0);
+        }
+      },
+
+      /**
+       * QR scan input above the filter bar. A physical scanner types the
+       * code and sends Enter (submit). Maps the scanned data to the
+       * reservation filter and applies it; on invalid data shows an error.
+       * The field is cleared and refocused after every scan.
+       */
+      onQrScanSubmit: function (oEvent) {
+        var oInput = oEvent.getSource();
+        var sScanned = (oInput.getValue() || "").trim();
+        oInput.setValue("");
+
+        if (!sScanned) {
+          this._focusQrScanInput();
+          return;
+        }
+
+        console.log("QR scan input:", sScanned);
+        var sReservationNo = this._parseReservationQr(sScanned);
+
+        if (!sReservationNo) {
+          MessageBox.error(
+            "Invalid QR scanned. Expected format: Reservation No-<number>.",
+            {
+              title: "Invalid QR",
+              onClose: this._focusQrScanInput.bind(this),
+            },
+          );
+          return;
+        }
+
+        this.getView()
+          .getModel("appModel")
+          .setProperty("/reservationNoInput", sReservationNo);
+        this._fetchReservationByNumber(sReservationNo);
+        this._focusQrScanInput();
       },
 
       /**

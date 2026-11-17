@@ -73,11 +73,20 @@
                     class="sapUiTinyMarginTop sapUiTinyMarginBottom sapUiSmallMarginEnd mrChipRow"
                 >
                     <VBox class="sapUiSmallMarginEnd">
+                        <Label text="QR Code" class="mrSectionLabel" design="Bold" />
+                        <Input
+                            id="qrScanInput"
+                            placeholder="Scan QR code"
+                            width="220px"
+                            submit=".onQrScanSubmit"
+                        />
+                    </VBox>
+                    <VBox class="sapUiSmallMarginEnd">
                         <Label text="Order ID" class="mrSectionLabel" design="Bold" />
                         <Input
                             id="orderIdInput"
                             value="{appModel>/searchOrderId}"
-                            placeholder="Enter or select Order ID"
+                            placeholder="Enter order ID"
                             width="220px"
                             submit=".onApplyOrder"
                             showValueHelp="true"
@@ -87,7 +96,7 @@
                     <Button
                         icon="sap-icon://bar-code"
                         type="Emphasized"
-                        tooltip="Scan Barcode"
+                        tooltip="Scan Barcode (Camera)"
                         press=".onScanOrder"
                         class="sapUiTinyMarginEnd"
                     />

@@ -88,13 +88,30 @@
     overflow: hidden;
 }
 
-/* Prevent date text from growing and overlapping */
+/* Panel header font sizes */
 .modernOrderPanel .sapMTB .sapMText {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 160px;
-    font-size: 0.72rem;
+    font-size: 0.65rem;
+}
+
+.modernOrderPanel .sapMTB .sapMObjStatus {
+    font-size: 0.65rem !important;
+}
+
+.modernOrderPanel .sapMTB .sapMObjStatusTitle,
+.modernOrderPanel .sapMTB .sapMObjStatusText {
+    font-size: 0.65rem !important;
+}
+
+.modernOrderPanel .sapMTB .sapMObjStatusTitle {
+    font-weight: 700 !important;
+}
+
+.modernOrderPanel .sapMTB .sapMObjStatusIcon {
+    font-size: 0.7rem !important;
 }
 
 /* ─── Panel header two-line wrap on small screens ─────────── */
@@ -183,14 +200,16 @@
 }
 
 .filterItem {
-    flex: 1 1 0;
-    min-width: 120px;
+    flex: 0 0 calc(12.5% - 0.5rem);
+    width: calc(12.5% - 0.5rem);
+    min-width: 0;
     box-sizing: border-box;
 }
 
 .filterActionBtns {
-    flex: 1 1 0;
-    min-width: 120px;
+    flex: 0 0 calc(12.5% - 0.5rem);
+    width: calc(12.5% - 0.5rem);
+    min-width: 0;
     box-sizing: border-box;
     align-self: flex-end;
     padding-bottom: 0;
@@ -200,6 +219,7 @@
     .filterItem,
     .filterActionBtns {
         flex: 1 1 calc(25% - 0.5rem);
+        min-width: 0;
         min-width: 120px;
     }
 }

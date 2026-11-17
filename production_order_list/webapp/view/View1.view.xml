@@ -75,23 +75,23 @@
                     width="100%"
                     class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop sapUiSmallMarginBottom"
                 >
-                    <!-- Row 1: Search + Scan -->
-                    <HBox width="100%" alignItems="Center" class="sapUiSmallMarginBottom">
+                    <!-- Row 1: QR Scan Input + Global Search -->
+                    <HBox alignItems="Center" class="sapUiSmallMarginBottom">
+                        <Input
+                            id="qrScanInput"
+                            placeholder="Scan Job Card QR here"
+                            showValueStateMessage="false"
+                            submit=".onQRScanSubmit"
+                            change=".onQRScanSubmit"
+                            width="14rem"
+                        />
                         <SearchField
                             id="searchField"
-                            placeholder="Search by Order, Material, Type, Status..."
-                            search="onSearch"
-                        >
-                            <layoutData>
-                                <FlexItemData growFactor="1" />
-                            </layoutData>
-                        </SearchField>
-                        <Button
-                            id="barcodeScannerBtn"
-                            icon="sap-icon://bar-code"
-                            type="Emphasized"
-                            press=".onScanBarcode"
-                            class="sapUiTinyMarginBegin"
+                            placeholder="Search orders..."
+                            search=".onSearch"
+                            liveChange=".onSearchLiveChange"
+                            width="20rem"
+                            class="sapUiSmallMarginBegin"
                         />
                     </HBox>
 
@@ -111,11 +111,22 @@
                         </VBox>
                         <VBox class="filterItem sapUiSmallMarginEnd sapUiSmallMarginBottom">
                             <Label text="Production Order" />
-                            <MultiInput id="filterOrder" width="100%" placeholder="Type to search..."
-                                showValueHelp="true" showSuggestion="true"
-                                valueHelpRequest=".onFilterValueHelp"
-                                suggest=".onOrderSuggest"
-                                suggestionItemSelected=".onOrderSuggestionSelected" />
+                            <HBox alignItems="Center">
+                                <MultiInput id="filterOrder" placeholder="Type to search..."
+                                    showValueHelp="true" showSuggestion="true"
+                                    valueHelpRequest=".onFilterValueHelp"
+                                    suggest=".onOrderSuggest"
+                                    suggestionItemSelected=".onOrderSuggestionSelected">
+                                    <layoutData><FlexItemData growFactor="1" /></layoutData>
+                                </MultiInput>
+                                <Button
+                                    id="barcodeScannerBtn"
+                                    icon="sap-icon://bar-code"
+                                    type="Emphasized"
+                                    press=".onScanBarcode"
+                                    class="sapUiTinyMarginBegin"
+                                />
+                            </HBox>
                         </VBox>
                         <VBox class="filterItem sapUiSmallMarginEnd sapUiSmallMarginBottom">
                             <Label text="Order Type" />
@@ -203,7 +214,7 @@
         ══════════════════════════════════════════ -->
         <f:content>
             <VBox
-                class="sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginBottom"
+                class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiTinyMarginBottom"
             >
                 <HBox
                     id="titleRefreshBar"
@@ -264,27 +275,23 @@
                             <headerToolbar>
                                 <OverflowToolbar>
                                     <ObjectStatus
-                                        text="{ordersModel>order}"
+                                        text="{= ${ordersModel>order} + ' / ' + ${ordersModel>orderType} + (${ordersModel>orderTypeDesc} ? ' - ' + ${ordersModel>orderTypeDesc} : '') }"
                                         title="Order"
+                                        tooltip="Production Order / Order Type - Description"
                                         state="Information"
                                         inverted="true"
-                                    />
-                                    <ObjectStatus
-                                        text="{= ${ordersModel>orderType} + (${ordersModel>orderTypeDesc} ? ' - ' + ${ordersModel>orderTypeDesc} : '') }"
-                                        title="Order Type"
-                                        state="Information"
-                                        inverted="true"
-                                        class="sapUiTinyMarginBegin"
                                     />
                                     <ObjectStatus
                                         text="{ordersModel>houseDesc}"
                                         title="House"
+                                        tooltip="{ordersModel>houseDesc}"
                                         state="None"
                                         class="sapUiTinyMarginBegin"
                                     />
                                     <ObjectStatus
                                         text="{ordersModel>Department}"
                                         title="Dept"
+                                        tooltip="{ordersModel>Department}"
                                         state="None"
                                         class="sapUiTinyMarginBegin"
                                         visible="{= !!${ordersModel>Department} }"
@@ -292,6 +299,7 @@
                                     <ObjectStatus
                                         text="{ordersModel>ShiftId}"
                                         title="Shift"
+                                        tooltip="{ordersModel>ShiftId}"
                                         state="None"
                                         class="sapUiTinyMarginBegin"
                                         visible="{= !!${ordersModel>ShiftId} }"
@@ -299,6 +307,7 @@
                                     <ObjectStatus
                                         text="{ordersModel>batch}"
                                         title="Batch"
+                                        tooltip="{ordersModel>batch}"
                                         state="None"
                                         class="sapUiTinyMarginBegin"
                                         visible="{= !!${ordersModel>batch} }"
@@ -309,6 +318,7 @@
                                             formatter: '.formatDate'
                                         }"
                                         title="Order Date"
+                                        tooltip="{= 'Order Date: ' + (${ordersModel>createdOn} ? ${ordersModel>createdOn} : '') }"
                                         state="None"
                                         class="sapUiTinyMarginBegin"
                                         visible="{= !!${ordersModel>createdOn} }"
@@ -326,6 +336,7 @@
                                             formatter: '.formatOperatorCount'
                                         }"
                                         title="Operators"
+                                        tooltip="{= 'Assigned Operators: ' + (${ordersModel>assigOper} || '0') }"
                                         icon="sap-icon://group"
                                         state="Indication13"
                                         inverted="true"
@@ -336,6 +347,7 @@
 
                                     <core:Icon
                                         src="sap-icon://calendar"
+                                        tooltip="Start Date – Finish Date"
                                         class="sapUiTinyMarginEnd"
                                     />
                                     <Text
@@ -346,10 +358,18 @@
                                             ],
                                             formatter: '.formatDateRange'
                                         }"
+                                        tooltip="{
+                                            parts: [
+                                                'ordersModel>startDate',
+                                                'ordersModel>finishDate'
+                                            ],
+                                            formatter: '.formatDateRange'
+                                        }"
                                         class="sapUiTinyMarginEnd"
                                     />
                                     <ObjectStatus
                                         text="{ordersModel>statusBadge}"
+                                        tooltip="{ordersModel>statusBadge}"
                                         inverted="true"
                                         state="{
                                             path: 'ordersModel>colorCode',

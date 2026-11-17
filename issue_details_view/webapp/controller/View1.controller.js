@@ -244,6 +244,7 @@ sap.ui.define(
 
             if (this._enforceSession()) {
               this._startSessionCheck();
+              this.byId("scanInput").focus();
 
               if (this._sMaterialDoc && this._sMaterialDocYear) {
                 this._loadIssueDetails(
@@ -616,7 +617,26 @@ sap.ui.define(
        * the search fields and triggers the search; otherwise shows an
        * "Invalid QR scanned" error.
        */
-      _handleScannedText: function (sDecodedText) {
+      // Physical scanner (keyboard wedge) types the code and sends Enter
+      onScanInputSubmit: function (oEvent) {
+        var oInput = oEvent.getSource();
+        var sValue = (oInput.getValue() || "").trim();
+        var fnRefocus = function () {
+          oInput.setValue("");
+          setTimeout(function () {
+            oInput.focus();
+          }, 100);
+        };
+
+        oInput.setValue("");
+        if (!sValue) {
+          fnRefocus();
+          return;
+        }
+        this._handleScannedText(sValue, fnRefocus);
+      },
+
+      _handleScannedText: function (sDecodedText, fnDone) {
         var oMatch =
           /Material\s*Doc\s*-\s*([^,]+?)\s*,\s*Doc\s*Year\s*-\s*([^,]+)/i.exec(
             sDecodedText || "",
@@ -626,7 +646,10 @@ sap.ui.define(
         var sMaterialDocYear = oMatch && oMatch[2] && oMatch[2].trim();
 
         if (!sMaterialDoc || !sMaterialDocYear) {
-          MessageBox.error("Invalid QR scanned.");
+          MessageBox.error(
+            "Invalid QR scanned. Expected: Material Doc-<number>,Doc Year-<year>",
+            { onClose: fnDone },
+          );
           return;
         }
 
@@ -634,6 +657,9 @@ sap.ui.define(
         oAppModel.setProperty("/searchMaterialDoc", sMaterialDoc);
         oAppModel.setProperty("/searchMaterialDocYear", sMaterialDocYear);
         this.onApplyIssueSearch();
+        if (fnDone) {
+          fnDone();
+        }
       },
 
       // ─────────────────────────────────────────────────────────────

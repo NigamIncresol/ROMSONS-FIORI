@@ -86,12 +86,20 @@
         ══════════════════════════════════════════ -->
         <f:header>
             <f:DynamicPageHeader pinnable="true">
+                <HBox alignItems="End" justifyContent="SpaceBetween" width="100%">
+                <!-- Physical QR scanner input (scanner types the text and sends Enter) -->
+                <Input
+                    id="qrScanInput"
+                    placeholder="Scan Issue Slip QR here"
+                    width="14rem"
+                    submit=".onQrScanSubmit"
+                />
+
                 <!-- Order-driven search (navType=order or absent) -->
                 <HBox
                     visible="{= ${appModel>/navType} !== 'matDoc' }"
                     alignItems="End"
                     justifyContent="End"
-                    width="100%"
                 >
                     <VBox class="sapUiSmallMarginEnd">
                         <Label text="ORDER NO" class="sectionLabel" />
@@ -116,7 +124,6 @@
                     visible="{= ${appModel>/navType} === 'matDoc' }"
                     alignItems="End"
                     justifyContent="End"
-                    width="100%"
                 >
                     <VBox class="sapUiSmallMarginEnd">
                         <Label text="ISSUE MAT. DOC" class="sectionLabel" />
@@ -155,6 +162,7 @@
                         icon="sap-icon://filter"
                         press=".onApplyMatDocSearch"
                     />
+                </HBox>
                 </HBox>
             </f:DynamicPageHeader>
         </f:header>

@@ -2031,7 +2031,14 @@ sap.ui.define(
       },
 
       // ── Shared filter-apply logic (manual Apply click or URL deep link) ──
-      _applyFilters: function (sOrderId, sFilterDate, sShiftId, sOperationId) {
+      // fnDone (optional) runs once both API calls have settled.
+      _applyFilters: function (
+        sOrderId,
+        sFilterDate,
+        sShiftId,
+        sOperationId,
+        fnDone,
+      ) {
         var oModel = this.getView().getModel("viewModel");
         var sToday = new Date().toISOString().split("T")[0];
         oModel.setProperty("/filtersDirty", false);
@@ -2107,6 +2114,9 @@ sap.ui.define(
             this.getView().setBusy(false);
             if (sOperationId) {
               this._renderOperationDetails(sOperationId);
+            }
+            if (fnDone) {
+              fnDone();
             }
           }
         }.bind(this);
@@ -2195,6 +2205,140 @@ sap.ui.define(
         if (oOperationSelect) {
           oOperationSelect.setSelectedKey(sOperationId);
         }
+      },
+
+      // ── Physical QR scanner input (keyboard wedge, sends Enter) ──────────
+      // Focus the scan field once the view is first rendered so the very
+      // first scan lands in it.
+      onAfterRendering: function () {
+        if (!this._bScanFocusDone) {
+          this._bScanFocusDone = true;
+          this._focusScanInput();
+        }
+      },
+
+      _focusScanInput: function () {
+        var oInput = this.byId("qrScanInput");
+        if (oInput) {
+          setTimeout(function () {
+            oInput.focus();
+          }, 0);
+        }
+      },
+
+      // Enter on the scan field: parse the QR payload, fill the Order /
+      // Date / Shift filters from it and apply them. The field is always
+      // cleared and refocused, whether the scan was valid or not.
+      onQrScanSubmit: function (oEvent) {
+        var oInput = oEvent.getSource();
+        var sRaw = (oInput.getValue() || "").trim();
+        oInput.setValue("");
+
+        if (!sRaw) {
+          this._focusScanInput();
+          return;
+        }
+
+        var oScan = this._parseScanData(sRaw);
+        if (oScan.error) {
+          MessageBox.error(oScan.error, {
+            title: "Invalid QR Code",
+            onClose: this._focusScanInput.bind(this),
+          });
+          return;
+        }
+
+        var oModel = this.getView().getModel("viewModel");
+        oModel.setProperty("/filterOrder", oScan.orderNo);
+        oModel.setProperty("/filterDate", oScan.filterDate);
+        oModel.setProperty("/filterShift", oScan.shiftId);
+        // The QR carries no operation — drop any previous pick so a later
+        // Apply can't silently reuse it for this new order.
+        oModel.setProperty("/filterOperation", "");
+        var oOperationSelect = this.byId("operationSelect");
+        if (oOperationSelect) {
+          oOperationSelect.setSelectedKey("");
+        }
+        this._sScannedJobCardId = oScan.jobCardId || null;
+
+        this._applyFilters(
+          oScan.orderNo,
+          oScan.filterDate,
+          oScan.shiftId,
+          "",
+          this._focusScanInput.bind(this),
+        );
+      },
+
+      // Validates the scanned text. Expected JSON:
+      //   { "Order No", "Shift Date" (DD.MM.YYYY), "Shift ID", "Job Card"? }
+      // Returns { orderNo, filterDate (yyyy-MM-dd), shiftId, jobCardId } or
+      // { error } with a user-facing message.
+      _parseScanData: function (sRaw) {
+        var oScanned = null;
+        try {
+          oScanned = JSON.parse(sRaw);
+        } catch (e) {
+          oScanned = null;
+        }
+        if (!oScanned || typeof oScanned !== "object" || Array.isArray(oScanned)) {
+          return {
+            error:
+              "The scanned value is not valid job card data. Expected " +
+              "Order No, Shift Date and Shift ID.",
+          };
+        }
+
+        var fnRead = function (sKey) {
+          var v = oScanned[sKey];
+          return v === null || v === undefined ? "" : String(v).trim();
+        };
+        var sOrderNo = fnRead("Order No");
+        var sShiftDate = fnRead("Shift Date");
+        var sShiftId = fnRead("Shift ID");
+
+        var aMissing = [];
+        if (!sOrderNo) aMissing.push("Order No");
+        if (!sShiftDate) aMissing.push("Shift Date");
+        if (!sShiftId) aMissing.push("Shift ID");
+        if (aMissing.length) {
+          return {
+            error: "The scanned value is missing: " + aMissing.join(", ") + ".",
+          };
+        }
+
+        var sIso = this._normalizeF4Date(sShiftDate);
+        var oDate = sIso ? new Date(sIso + "T00:00:00Z") : null;
+        if (
+          !oDate ||
+          isNaN(oDate.getTime()) ||
+          oDate.toISOString().slice(0, 10) !== sIso
+        ) {
+          return {
+            error:
+              'Shift Date "' + sShiftDate + '" is not a valid date (DD.MM.YYYY).',
+          };
+        }
+
+        // Only check the shift when the plant's shift list has loaded.
+        var aShifts =
+          this.getView().getModel("shiftListModel").getProperty("/results") ||
+          [];
+        if (
+          aShifts.length &&
+          !aShifts.some(function (o) {
+            return String(o.shiftId) === sShiftId;
+          })
+        ) {
+          return { error: 'Shift "' + sShiftId + '" is not defined for this plant.' };
+        }
+
+        return {
+          orderNo: sOrderNo,
+          filterDate: sIso,
+          shiftId: sShiftId,
+          jobCardId: fnRead("Job Card"),
+        };
       },
 
       // ── Order ID Scanner (QR / Barcode) ─────────────────────────────

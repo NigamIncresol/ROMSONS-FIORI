@@ -72,6 +72,12 @@ sap.ui.define(
             if (oImage) {
               oImage.setSrc(sImageUrl);
             }
+
+            // focus the QR scan field once, after the first render
+            if (!this._bScanFocused) {
+              this._bScanFocused = true;
+              this._focusScanInput(15);
+            }
           }.bind(this),
         );
 
@@ -156,6 +162,109 @@ sap.ui.define(
           }.bind(this),
           300,
         );
+      },
+
+      /**
+       * Focuses the QR scan input, retrying until the browser actually
+       * reports it as the active element (UI5 may not have it in the DOM
+       * yet, or another control may grab focus during startup).
+       */
+      _focusScanInput: function (iTries) {
+        var oInput = this.byId("qrScanInput");
+        var oDom = oInput && oInput.getFocusDomRef();
+
+        if (oDom) {
+          oDom.focus();
+          if (document.activeElement === oDom) {
+            return;
+          }
+        }
+        if (iTries > 0) {
+          setTimeout(this._focusScanInput.bind(this, iTries - 1), 200);
+        }
+      },
+
+      /**
+       * Parses a scanned QR payload such as
+       * "Material Doc-4904980045,Doc Year-2026" (or "Order-4000000308")
+       * by mapping each "Label-Value" pair to its filter. Returns null
+       * unless Material Doc + Doc Year, or Order, is present.
+       */
+      _parseScanData: function (sText) {
+        var mLabelToFilter = {
+          materialdoc: "matDoc",
+          docyear: "docYear",
+          order: "order",
+          orderno: "order",
+        };
+        var oResult = {};
+
+        String(sText || "")
+          .split(",")
+          .forEach(function (sPair) {
+            var iSep = sPair.search(/[-:]/);
+            if (iSep < 1) {
+              return;
+            }
+            var sLabel = sPair
+              .substring(0, iSep)
+              .toLowerCase()
+              .replace(/[^a-z0-9]/g, "");
+            var sValue = sPair.substring(iSep + 1).trim();
+            if (mLabelToFilter[sLabel] && sValue) {
+              oResult[mLabelToFilter[sLabel]] = sValue;
+            }
+          });
+
+        var bMatDoc = oResult.matDoc && oResult.docYear;
+        return bMatDoc || oResult.order ? oResult : null;
+      },
+
+      /**
+       * Physical scanner input: the scanner types the QR text and sends
+       * Enter, which fires `submit`. Fills the matching filter(s), applies
+       * them, then clears and refocuses the field for the next scan.
+       */
+      onQrScanSubmit: function (oEvent) {
+        var oInput = oEvent.getSource();
+        var sText = (oInput.getValue() || "").trim();
+        var fnRefocus = function () {
+          oInput.setValue("");
+          setTimeout(function () {
+            oInput.focus();
+          }, 0);
+        };
+
+        if (!sText) {
+          return;
+        }
+        console.log("QR scan input:", sText);
+
+        var oParsed = this._parseScanData(sText);
+        if (!oParsed) {
+          oInput.setValue("");
+          MessageBox.error(
+            "Invalid QR code scanned. Material Doc and Doc Year, or Order, are required.",
+            { onClose: fnRefocus },
+          );
+          return;
+        }
+
+        var oAppModel = this.getView().getModel("appModel");
+        if (oParsed.matDoc && oParsed.docYear) {
+          oAppModel.setProperty("/navType", "matDoc");
+          oAppModel.setProperty("/materialDocInput", oParsed.matDoc);
+          oAppModel.setProperty("/materialDocYearInput", oParsed.docYear);
+          this._sNavType = "matDoc";
+          this.onApplyMatDocSearch();
+        } else {
+          oAppModel.setProperty("/navType", "order");
+          oAppModel.setProperty("/orderIdInput", oParsed.order);
+          this._sNavType = "order";
+          this._sMaterialDoc = "";
+          this.onApplyOrderSearch();
+        }
+        fnRefocus();
       },
 
       // ─────────────────────────────────────────────────────────────
@@ -1024,10 +1133,12 @@ sap.ui.define(
             });
             MessageBox.error(
               "Could not load issue detail for the given material doc and year. Please try again.",
+              { onClose: this._focusScanInput.bind(this, 5) },
             );
           }.bind(this),
           complete: function () {
             this.byId("page").setBusy(false);
+            this._focusScanInput(5);
           }.bind(this),
         });
       },
@@ -1124,10 +1235,12 @@ sap.ui.define(
           error: function () {
             MessageBox.error(
               "Could not load material issue data. Please try again.",
+              { onClose: this._focusScanInput.bind(this, 5) },
             );
-          },
+          }.bind(this),
           complete: function () {
             this.byId("page").setBusy(false);
+            this._focusScanInput(5);
           }.bind(this),
         });
       },

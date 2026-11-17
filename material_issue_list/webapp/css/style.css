@@ -90,3 +90,21 @@ html body .materialTable .sapMInputBaseInner {
     border-radius: 0.5rem;
     overflow: hidden;
 }
+
+/* ── Panel header info (Mat Doc / Year / Order / Res No / Created DateTime) ── */
+html body .panelHeaderStatus,
+html body .panelHeaderStatus * {
+    font-size: 0.65rem !important;
+    line-height: 1.2 !important;
+}
+
+/* label bold, value normal */
+html body .panelHeaderStatus .sapMObjectStatusTitle {
+    font-weight: 900 !important;
+}
+
+html body .panelHeaderStatus .sapMObjectStatusText,
+html body .panelHeaderStatus .sapMObjectStatusTextInner,
+html body .boldStatus.panelHeaderStatus .sapMObjectStatusText {
+    font-weight: 400 !important;
+}

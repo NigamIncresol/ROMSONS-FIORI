@@ -61,9 +61,17 @@
             <f:DynamicPageHeader pinnable="true">
                 <HBox
                     alignItems="End"
-                    justifyContent="End"
+                    justifyContent="SpaceBetween"
                     width="100%"
                 >
+                    <Input
+                        id="scanInput"
+                        placeholder="Scan issue slip QR here"
+                        width="260px"
+                        class="sapUiSmallMarginEnd"
+                        submit=".onScanInputSubmit"
+                    />
+                    <HBox alignItems="End">
                     <VBox class="sapUiTinyMarginEnd">
                         <Label text="MATERIAL DOC" class="sectionLabel" />
                         <Input
@@ -100,6 +108,7 @@
                         icon="sap-icon://filter"
                         press=".onApplyIssueSearch"
                     />
+                    </HBox>
                 </HBox>
             </f:DynamicPageHeader>
         </f:header>
