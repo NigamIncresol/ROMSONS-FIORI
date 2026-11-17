@@ -40,6 +40,7 @@
         "sap.m": {},
         "sap.f": {},
         "sap.ui.export": {},
+        "sap.ui.table": {},
         "sap.ui.core": {}
       }
     },

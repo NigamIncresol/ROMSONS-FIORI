@@ -18,6 +18,7 @@ sap.ui.define(
     "sap/m/VBox",
     "sap/m/Column",
     "sap/m/ColumnListItem",
+    "sap/ui/table/Column",
   ],
   function (
     Controller,
@@ -38,6 +39,7 @@ sap.ui.define(
     VBox,
     Column,
     ColumnListItem,
+    UiColumn,
   ) {
     "use strict";
 
@@ -93,6 +95,9 @@ sap.ui.define(
       { key: "YieldQty", label: "Yield Qty", width: "6rem" },
     ];
 
+    // Converted to numbers so the table sorts and filters them numerically
+    const NUM_KEYS = ["TargetQty", "AchievedQty", "Efficiency", "ReworkQty", "SampleQty", "YieldQty"];
+
     const ngrokHeaders = {
       "ngrok-skip-browser-warning": "69420",
     };
@@ -132,6 +137,7 @@ sap.ui.define(
           }),
           "perfModel",
         );
+        this.getView().getModel("perfModel").setSizeLimit(100000);
 
         setTimeout(
           function () {
@@ -146,7 +152,7 @@ sap.ui.define(
 
             if (this._enforceSession()) {
               this._startSessionCheck();
-              this._openCriteriaDialog();
+              this._oCriteria = {};
             }
           }.bind(this),
           300,
@@ -248,30 +254,31 @@ sap.ui.define(
         if (!oTable || oTable.getColumns().length) {
           return;
         }
-        var oTemplate = new ColumnListItem();
         COLUMNS.forEach(function (oCol) {
           oTable.addColumn(
-            new Column({
+            new UiColumn({
               width: oCol.width || "7rem",
-              header: new Text({ text: oCol.label, wrapping: true }),
+              label: new Text({ text: oCol.label, wrapping: true }),
+              template: new Text({
+                text: "{perfModel>" + oCol.key + "}",
+                wrapping: false,
+              }),
+              sortProperty: oCol.key,
+              filterProperty: oCol.key,
+              autoResizable: true,
             }),
           );
-          oTemplate.addCell(
-            new Text({ text: "{perfModel>" + oCol.key + "}", wrapping: true }),
-          );
         });
-        oTable.setWidth(
-          COLUMNS.reduce(function (n, c) {
-            return n + parseFloat(c.width || "7");
-          }, 0) + "rem",
-        );
-        oTable.bindItems({ path: "perfModel>/items", template: oTemplate });
       },
 
       /** Exports the rows currently shown in the table to an Excel file. */
       onExport: function () {
         var aRows =
-          this.getView().getModel("perfModel").getProperty("/items") || [];
+          (this.byId("perfTable").getBinding("rows").getContexts(0, 100000) || []).map(
+            function (oCtx) {
+              return oCtx.getObject();
+            },
+          );
         if (!aRows.length) {
           MessageToast.show("No data to export.");
           return;
@@ -317,6 +324,11 @@ sap.ui.define(
             "." +
             d.getUTCFullYear();
         }
+        NUM_KEYS.forEach(function (k) {
+          if (oRow[k] !== undefined && oRow[k] !== "") {
+            oRow[k] = Number(oRow[k]);
+          }
+        });
         return oRow;
       },
 
@@ -344,82 +356,48 @@ sap.ui.define(
         );
       },
 
-      _openCriteriaDialog: function () {
-        var that = this;
-        this._oCriteria = {};
-        var oContent = new VBox().addStyleClass("sapUiTinyMargin");
+      /** Selection criteria live in the page header (see View1.view.xml). */
+      _fieldOf: function (oEvt) {
+        var sKey = oEvt.getSource().data("field");
+        return F4_FIELDS.filter(function (o) {
+          return o.key === sKey;
+        })[0];
+      },
 
-        F4_FIELDS.forEach(function (oField) {
-          oContent.addItem(
-            new Label({ text: oField.label, required: !!oField.required }),
-          );
-          if (oField.dateRange) {
-            oContent.addItem(
-              new DateRangeSelection({
-                width: "100%",
-                valueFormat: "yyyy-MM-dd",
-                displayFormat: "dd.MM.yyyy",
-                change: function (oEvt) {
-                  var oFrom = oEvt.getSource().getDateValue();
-                  var oTo = oEvt.getSource().getSecondDateValue();
-                  var oFmt = DateFormat.getDateInstance({
-                    pattern: "yyyy-MM-dd",
-                  });
-                  that._oCriteria.fromDate = oFrom ? oFmt.format(oFrom) : "";
-                  that._oCriteria.toDate = oTo ? oFmt.format(oTo) : "";
-                },
-              }).addStyleClass("sapUiTinyMarginBottom"),
-            );
-            return;
-          }
-          oContent.addItem(
-            new Input({
-              width: "100%",
-              showValueHelp: true,
-              liveChange: function (oEvt) {
-                that._oCriteria[oField.key] = oEvt.getParameter("value");
-              },
-              valueHelpRequest: function (oEvt) {
-                that._openValueHelp(oField, oEvt.getSource());
-              },
-            }).addStyleClass("sapUiTinyMarginBottom"),
-          );
-        });
+      onCriteriaChange: function (oEvt) {
+        this._oCriteria[this._fieldOf(oEvt).key] = oEvt.getParameter("value");
+      },
 
-        this._oCriteriaDialog = new Dialog({
-          title: "Operator Performance Selection",
-          contentWidth: "28rem",
-          resizable: false,
-          draggable: false,
-          escapeHandler: function (oPromise) {
-            oPromise.reject();
-          },
-          content: [oContent],
-          beginButton: new Button({
-            text: "Find",
-            icon: "sap-icon://search",
-            type: "Emphasized",
-            press: function () {
-              var aMissing = F4_FIELDS.filter(function (o) {
-                return o.required && !(that._oCriteria[o.key] || "").trim();
-              });
-              if (aMissing.length) {
-                MessageToast.show(
-                  "Please fill: " +
-                    aMissing
-                      .map(function (o) {
-                        return o.label;
-                      })
-                      .join(", "),
-                );
-                return;
-              }
-              that._oCriteriaDialog.close();
-              that._loadReport();
-            },
-          }),
+      onDateRangeChange: function (oEvt) {
+        var oSrc = oEvt.getSource();
+        var oFrom = oSrc.getDateValue();
+        var oTo = oSrc.getSecondDateValue();
+        var oFmt = DateFormat.getDateInstance({ pattern: "yyyy-MM-dd" });
+        this._oCriteria.fromDate = oFrom ? oFmt.format(oFrom) : "";
+        this._oCriteria.toDate = oTo ? oFmt.format(oTo) : "";
+      },
+
+      onValueHelp: function (oEvt) {
+        this._openValueHelp(this._fieldOf(oEvt), oEvt.getSource());
+      },
+
+      onFind: function () {
+        var oC = this._oCriteria;
+        var aMissing = F4_FIELDS.filter(function (o) {
+          return o.required && !(oC[o.key] || "").trim();
         });
-        this._oCriteriaDialog.open();
+        if (aMissing.length) {
+          MessageToast.show(
+            "Please fill: " +
+              aMissing
+                .map(function (o) {
+                  return o.label;
+                })
+                .join(", "),
+          );
+          return;
+        }
+        this._loadReport();
       },
 
       _openValueHelp: function (oField, oInput) {

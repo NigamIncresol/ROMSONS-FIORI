@@ -14,8 +14,7 @@ sap.ui.define(
     "sap/m/StandardListItem",
     "sap/m/SearchField",
     "sap/m/VBox",
-    "sap/m/Column",
-    "sap/m/ColumnListItem",
+    "sap/ui/table/Column",
     "sap/ui/export/Spreadsheet",
   ],
   function (
@@ -34,7 +33,6 @@ sap.ui.define(
     SearchField,
     VBox,
     Column,
-    ColumnListItem,
     Spreadsheet,
   ) {
     "use strict";
@@ -164,7 +162,7 @@ sap.ui.define(
 
             if (this._enforceSession()) {
               this._startSessionCheck();
-              this._openCriteriaDialog();
+              this._oCriteria = {};
             }
           }.bind(this),
           300,
@@ -294,20 +292,21 @@ sap.ui.define(
         this._aExportColumns = aKeys.map(function (sKey) {
           return { label: toHeading(sKey), property: sKey, type: "string" };
         });
-        var oTemplate = new ColumnListItem();
         aKeys.forEach(function (sKey) {
           oTable.addColumn(
             new Column({
               width: "6rem",
-              header: new Text({ text: toHeading(sKey), wrapping: true }),
+              label: new Text({ text: toHeading(sKey), wrapping: true }),
+              template: new Text({
+                text: "{stockModel>" + sKey + "}",
+                wrapping: false,
+              }),
+              sortProperty: sKey,
+              filterProperty: sKey,
             }),
           );
-          oTemplate.addCell(
-            new Text({ text: "{stockModel>" + sKey + "}", wrapping: true }),
-          );
         });
-        oTable.setWidth(aKeys.length * 6 + "rem");
-        oTable.bindItems({ path: "stockModel>/items", template: oTemplate });
+        oTable.bindRows("stockModel>/items");
       },
 
       // ─────────────────────────────────────────────────────────────
@@ -334,63 +333,40 @@ sap.ui.define(
         );
       },
 
-      _openCriteriaDialog: function () {
+      _getField: function (oControl) {
+        var sKey = oControl.data("field");
+        return F4_FIELDS.filter(function (o) {
+          return o.key === sKey;
+        })[0];
+      },
+
+      onCriteriaChange: function (oEvt) {
+        var oField = this._getField(oEvt.getSource());
+        this._oCriteria[oField.key] = oEvt.getParameter("value");
+      },
+
+      onValueHelp: function (oEvt) {
+        var oInput = oEvt.getSource();
+        this._openValueHelp(this._getField(oInput), oInput);
+      },
+
+      onFind: function () {
         var that = this;
-        this._oCriteria = {};
-        var oContent = new VBox().addStyleClass("sapUiTinyMargin");
-
-        F4_FIELDS.forEach(function (oField) {
-          oContent.addItem(
-            new Label({ text: oField.label, required: !!oField.required }),
-          );
-          oContent.addItem(
-            new Input({
-              width: "100%",
-              showValueHelp: true,
-              liveChange: function (oEvt) {
-                that._oCriteria[oField.key] = oEvt.getParameter("value");
-              },
-              valueHelpRequest: function (oEvt) {
-                that._openValueHelp(oField, oEvt.getSource());
-              },
-            }).addStyleClass("sapUiTinyMarginBottom"),
-          );
+        var aMissing = F4_FIELDS.filter(function (o) {
+          return o.required && !(that._oCriteria[o.key] || "").trim();
         });
-
-        this._oCriteriaDialog = new Dialog({
-          title: "Stock Report Selection",
-          contentWidth: "28rem",
-          resizable: false,
-          draggable: false,
-          escapeHandler: function (oPromise) {
-            oPromise.reject();
-          },
-          content: [oContent],
-          beginButton: new Button({
-            text: "Find",
-            icon: "sap-icon://search",
-            type: "Emphasized",
-            press: function () {
-              var aMissing = F4_FIELDS.filter(function (o) {
-                return o.required && !(that._oCriteria[o.key] || "").trim();
-              });
-              if (aMissing.length) {
-                MessageToast.show(
-                  "Please fill: " +
-                    aMissing
-                      .map(function (o) {
-                        return o.label;
-                      })
-                      .join(", "),
-                );
-                return;
-              }
-              that._oCriteriaDialog.close();
-              that._loadStock();
-            },
-          }),
-        });
-        this._oCriteriaDialog.open();
+        if (aMissing.length) {
+          MessageToast.show(
+            "Please fill: " +
+              aMissing
+                .map(function (o) {
+                  return o.label;
+                })
+                .join(", "),
+          );
+          return;
+        }
+        this._loadStock();
       },
 
       _openValueHelp: function (oField, oInput) {

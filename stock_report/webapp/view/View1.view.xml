@@ -4,6 +4,7 @@
     xmlns="sap.m"
     xmlns:f="sap.f"
     xmlns:core="sap.ui.core"
+    xmlns:table="sap.ui.table"
 >
     <f:DynamicPage
         id="dynamicPage"
@@ -50,6 +51,132 @@
             </f:DynamicPageTitle>
         </f:title>
 
+        <f:header>
+            <f:DynamicPageHeader pinnable="true">
+                <HBox width="100%" alignItems="End" wrap="Wrap">
+                    <VBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                        <layoutData>
+                            <FlexItemData growFactor="1" baseSize="0" minWidth="10rem" />
+                        </layoutData>
+                        <Label text="Plant" required="true" />
+                        <Input
+                            width="100%"
+                            showValueHelp="true"
+                            liveChange=".onCriteriaChange"
+                            valueHelpRequest=".onValueHelp"
+                        >
+                            <customData>
+                                <core:CustomData key="field" value="plant" />
+                            </customData>
+                        </Input>
+                    </VBox>
+                    <VBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                        <layoutData>
+                            <FlexItemData growFactor="1" baseSize="0" minWidth="10rem" />
+                        </layoutData>
+                        <Label text="MRP Controller" required="true" />
+                        <Input
+                            width="100%"
+                            showValueHelp="true"
+                            liveChange=".onCriteriaChange"
+                            valueHelpRequest=".onValueHelp"
+                        >
+                            <customData>
+                                <core:CustomData key="field" value="mrpController" />
+                            </customData>
+                        </Input>
+                    </VBox>
+                    <VBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                        <layoutData>
+                            <FlexItemData growFactor="1" baseSize="0" minWidth="10rem" />
+                        </layoutData>
+                        <Label text="Material Code" required="false" />
+                        <Input
+                            width="100%"
+                            showValueHelp="true"
+                            liveChange=".onCriteriaChange"
+                            valueHelpRequest=".onValueHelp"
+                        >
+                            <customData>
+                                <core:CustomData key="field" value="material" />
+                            </customData>
+                        </Input>
+                    </VBox>
+                    <VBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                        <layoutData>
+                            <FlexItemData growFactor="1" baseSize="0" minWidth="10rem" />
+                        </layoutData>
+                        <Label text="Material Type" required="false" />
+                        <Input
+                            width="100%"
+                            showValueHelp="true"
+                            liveChange=".onCriteriaChange"
+                            valueHelpRequest=".onValueHelp"
+                        >
+                            <customData>
+                                <core:CustomData key="field" value="materialType" />
+                            </customData>
+                        </Input>
+                    </VBox>
+                    <VBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                        <layoutData>
+                            <FlexItemData growFactor="1" baseSize="0" minWidth="10rem" />
+                        </layoutData>
+                        <Label text="House ID" required="false" />
+                        <Input
+                            width="100%"
+                            showValueHelp="true"
+                            liveChange=".onCriteriaChange"
+                            valueHelpRequest=".onValueHelp"
+                        >
+                            <customData>
+                                <core:CustomData key="field" value="house" />
+                            </customData>
+                        </Input>
+                    </VBox>
+                    <VBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                        <layoutData>
+                            <FlexItemData growFactor="1" baseSize="0" minWidth="10rem" />
+                        </layoutData>
+                        <Label text="Department" required="false" />
+                        <Input
+                            width="100%"
+                            showValueHelp="true"
+                            liveChange=".onCriteriaChange"
+                            valueHelpRequest=".onValueHelp"
+                        >
+                            <customData>
+                                <core:CustomData key="field" value="department" />
+                            </customData>
+                        </Input>
+                    </VBox>
+                    <VBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                        <layoutData>
+                            <FlexItemData growFactor="1" baseSize="0" minWidth="10rem" />
+                        </layoutData>
+                        <Label text="Family" required="false" />
+                        <Input
+                            width="100%"
+                            showValueHelp="true"
+                            liveChange=".onCriteriaChange"
+                            valueHelpRequest=".onValueHelp"
+                        >
+                            <customData>
+                                <core:CustomData key="field" value="family" />
+                            </customData>
+                        </Input>
+                    </VBox>
+                    <Button
+                        text="Find"
+                        icon="sap-icon://search"
+                        type="Emphasized"
+                        class="sapUiTinyMarginBottom"
+                        press=".onFind"
+                    />
+                </HBox>
+            </f:DynamicPageHeader>
+        </f:header>
+
         <f:content>
             <VBox
                 visible="{stockModel>/hasResults}"
@@ -69,15 +196,15 @@
                         press=".onExportExcel"
                     />
                 </HBox>
-                <ScrollContainer horizontal="true" vertical="false" width="100%">
-                    <Table
-                        id="stockTable"
-                        alternateRowColors="true"
-                        sticky="ColumnHeaders"
-                        noDataText="No stock found for the selected criteria."
-                        class="materialTable"
-                    />
-                </ScrollContainer>
+                <table:Table
+                    id="stockTable"
+                    selectionMode="None"
+                    visibleRowCountMode="Fixed"
+                    rowCount="15"
+                    enableColumnReordering="false"
+                    noData="No stock found for the selected criteria."
+                    class="materialTable"
+                />
                 <HBox justifyContent="Center" class="sapUiSmallMarginTop">
                     <Button
                         text="Load More"

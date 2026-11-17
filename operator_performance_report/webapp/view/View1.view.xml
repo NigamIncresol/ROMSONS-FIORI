@@ -4,6 +4,8 @@
     xmlns="sap.m"
     xmlns:f="sap.f"
     xmlns:core="sap.ui.core"
+    xmlns:t="sap.ui.table"
+    xmlns:rm="sap.ui.table.rowmodes"
 >
     <f:DynamicPage
         id="dynamicPage"
@@ -50,6 +52,48 @@
             </f:DynamicPageTitle>
         </f:title>
 
+        <f:header>
+            <f:DynamicPageHeader pinnable="true">
+                <HBox width="100%" alignItems="End">
+                    <VBox class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                        <layoutData><FlexItemData growFactor="1" baseSize="0" /></layoutData>
+                        <Label text="Plant" required="true" />
+                        <Input id="inPlant" width="100%" showValueHelp="true"
+                            liveChange=".onCriteriaChange" valueHelpRequest=".onValueHelp">
+                            <customData><core:CustomData key="field" value="plant" /></customData>
+                        </Input>
+                    </VBox>
+                    <VBox class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                        <layoutData><FlexItemData growFactor="1" baseSize="0" /></layoutData>
+                        <Label text="Shift Date Range" />
+                        <DateRangeSelection id="inRange" width="100%"
+                            valueFormat="yyyy-MM-dd" displayFormat="dd.MM.yyyy"
+                            change=".onDateRangeChange" />
+                    </VBox>
+                    <VBox class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                        <layoutData><FlexItemData growFactor="1" baseSize="0" /></layoutData>
+                        <Label text="Order" required="true" />
+                        <Input id="inOrder" width="100%" showValueHelp="true"
+                            liveChange=".onCriteriaChange" valueHelpRequest=".onValueHelp">
+                            <customData><core:CustomData key="field" value="order" /></customData>
+                        </Input>
+                    </VBox>
+                    <VBox class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                        <layoutData><FlexItemData growFactor="1" baseSize="0" /></layoutData>
+                        <Label text="House ID" />
+                        <Input id="inHouse" width="100%" showValueHelp="true"
+                            liveChange=".onCriteriaChange" valueHelpRequest=".onValueHelp">
+                            <customData><core:CustomData key="field" value="house" /></customData>
+                        </Input>
+                    </VBox>
+                    <HBox class="sapUiTinyMarginBottom">
+                        <Button text="Find" icon="sap-icon://search" type="Emphasized"
+                            press=".onFind" class="sapUiTinyMarginEnd" />
+                    </HBox>
+                </HBox>
+            </f:DynamicPageHeader>
+        </f:header>
+
         <f:content>
             <VBox
                 visible="{perfModel>/hasResults}"
@@ -69,15 +113,19 @@
                         press=".onExport"
                     />
                 </HBox>
-                <ScrollContainer horizontal="true" vertical="false" width="100%">
-                    <Table
-                        id="perfTable"
-                        alternateRowColors="true"
-                        sticky="ColumnHeaders"
-                        noDataText="No data found for the selected criteria."
-                        class="materialTable"
-                    />
-                </ScrollContainer>
+                <t:Table
+                    id="perfTable"
+                    rows="{perfModel>/items}"
+                    selectionMode="None"
+                    alternateRowColors="true"
+                    enableColumnReordering="true"
+                    noData="No data found for the selected criteria."
+                    class="materialTable"
+                >
+                    <t:rowMode>
+                        <rm:Fixed rowCount="15" />
+                    </t:rowMode>
+                </t:Table>
                 <HBox justifyContent="Center" class="sapUiSmallMarginTop">
                     <Button
                         text="Load More"
