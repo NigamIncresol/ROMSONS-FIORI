@@ -223,6 +223,20 @@
                     />
                 </VBox>
 
+                <!-- Export (just above the table) -->
+                <HBox
+                    justifyContent="End"
+                    visible="{= ${jobCardsModel>/jobCards/length} > 0 }"
+                    class="sapUiTinyMarginBottom"
+                >
+                    <Button
+                        icon="sap-icon://excel-attachment"
+                        text="Export as Excel"
+                        type="Emphasized"
+                        press="onExportExcel"
+                    />
+                </HBox>
+
                 <!-- One entry per job card -->
                 <Table
                     visible="{= ${jobCardsModel>/jobCards/length} > 0 }"

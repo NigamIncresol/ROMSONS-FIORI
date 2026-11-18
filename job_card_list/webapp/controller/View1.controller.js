@@ -11,6 +11,7 @@ sap.ui.define(
     "sap/m/List",
     "sap/m/StandardListItem",
     "sap/m/SearchField",
+    "sap/ui/export/Spreadsheet",
   ],
   function (
     Controller,
@@ -24,6 +25,7 @@ sap.ui.define(
     List,
     StandardListItem,
     SearchField,
+    Spreadsheet,
   ) {
     "use strict";
 
@@ -248,6 +250,79 @@ sap.ui.define(
         } else {
           this.onApplyDateFilter();
         }
+      },
+
+      /**
+       * Exports the job cards currently displayed (after search/filters)
+       * to an Excel file, with the same formatting as the table.
+       */
+      onExportExcel: function () {
+        var aRows = this.getView()
+          .getModel("jobCardsModel")
+          .getProperty("/jobCards");
+
+        if (!aRows || !aRows.length) {
+          MessageToast.show("No data to export.");
+          return;
+        }
+
+        var aData = aRows.map(
+          function (o) {
+            return {
+              order: this.formatIssueNumber(o.order),
+              houseId: this.formatOrNA(o.houseId),
+              houseDesc: this.formatOrNA(o.houseDesc),
+              batch: this.formatOrNA(o.Charg),
+              shiftDt: this.formatCreatedDate(o.shiftDt),
+              shiftId: this.formatOrNA(o.shiftId),
+              assigOper: this.formatIssueNumber(o.assigOper),
+            };
+          }.bind(this),
+        );
+
+        var aCols = [
+          { label: "Order", property: "order", type: "string" },
+          { label: "House ID", property: "houseId", type: "string" },
+          { label: "House Description", property: "houseDesc", type: "string" },
+          { label: "Batch", property: "batch", type: "string" },
+          { label: "Shift Date", property: "shiftDt", type: "string" },
+          { label: "Shift", property: "shiftId", type: "string" },
+          {
+            label: "Assigned Operators",
+            property: "assigOper",
+            type: "string",
+          },
+        ];
+
+        var oNow = new Date();
+        var p2 = function (n) {
+          return ("0" + n).slice(-2);
+        };
+        // ":" is not allowed in file names, so the time uses "-"
+        var sTimestamp =
+          p2(oNow.getDate()) +
+          "-" +
+          p2(oNow.getMonth() + 1) +
+          "-" +
+          oNow.getFullYear() +
+          "_" +
+          p2(oNow.getHours()) +
+          "-" +
+          p2(oNow.getMinutes());
+
+        var oSheet = new Spreadsheet({
+          workbook: { columns: aCols },
+          dataSource: aData,
+          fileName: "JobCardList_" + sTimestamp + ".xlsx",
+        });
+        oSheet
+          .build()
+          .catch(function () {
+            MessageToast.show("Excel export failed.");
+          })
+          .finally(function () {
+            oSheet.destroy();
+          });
       },
 
       /**

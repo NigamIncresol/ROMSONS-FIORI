@@ -352,7 +352,7 @@ sap.ui.define(
 
       /**
        * Combines the created date and time into a single display value,
-       * e.g. "27.07.2026 14:32:05", or "NA" if both are empty.
+       * e.g. "27-07-2026 14:32", or "NA" if both are empty.
        */
       formatCreatedDateTime: function (vCreatedDate, sCreatedTime) {
         var sDate = this.formatCreatedDate(vCreatedDate);
@@ -361,7 +361,11 @@ sap.ui.define(
         if (sDate === "NA" && sTime === "NA") {
           return "NA";
         }
-        return sDate + " " + sTime;
+        return (
+          sDate.replace(/\./g, "-") +
+          " " +
+          (sTime === "NA" ? "NA" : sTime.slice(0, 5))
+        );
       },
 
       /**
@@ -743,6 +747,130 @@ sap.ui.define(
           "Receiving Loc",
           "storage_locations",
           "/filterReceivingLoc",
+        );
+      },
+
+      // ── Export displayed (filtered) reservations to Excel ──
+      onExportExcel: function () {
+        var aReservations =
+          this.getView().getModel("materialsModel").getProperty("/reservations") ||
+          [];
+        if (!aReservations.length) {
+          MessageToast.show("No data to export.");
+          return;
+        }
+
+        var that = this;
+        var fnNum = function (v) {
+          var n = parseFloat(v);
+          return isNaN(n) ? null : n;
+        };
+
+        // One row per item, with the reservation header repeated
+        var aRows = [];
+        aReservations.forEach(function (oRes) {
+          var oHeader = {
+            reservationNo: that.formatReservationNumber(oRes.reservationNumber),
+            order: oRes.order,
+            status: that.formatStatusText(oRes.resStatus),
+            createdOn: that.formatCreatedDateTime(
+              oRes.createdDate,
+              oRes.createdTime,
+            ),
+            createdBy: oRes.createdBy,
+            employeeId: oRes.employeeId,
+            house: that.formatHouse(oRes.houseId, oRes.houseDesc),
+            department: oRes.department,
+            issueLoc: oRes.issueStorgaeLoc,
+            receivingLoc: oRes.receivingStorgaeLoc,
+          };
+          var aItems = oRes.items && oRes.items.length ? oRes.items : [{}];
+          aItems.forEach(function (oItem) {
+            aRows.push(
+              Object.assign({}, oHeader, {
+                item: oItem.reservationItemNo,
+                material: oItem.material,
+                materialDesc: oItem.materialDesc,
+                stockSf: fnNum(oItem.stockSf),
+                stockSrc: fnNum(oItem.stockSrc),
+                stockPlant: fnNum(oItem.stockPlant),
+                requirementQty: fnNum(oItem.requirementQty),
+                withdrawalQty: fnNum(oItem.withdrawalQty),
+                pendingQty: fnNum(oItem.pendingQty),
+                units: oItem.units,
+              }),
+            );
+          });
+        });
+
+        var fnText = function (sLabel, sProperty) {
+          return { label: sLabel, property: sProperty, type: "String" };
+        };
+        var fnNumber = function (sLabel, sProperty) {
+          return {
+            label: sLabel,
+            property: sProperty,
+            type: "Number",
+            scale: 3,
+          };
+        };
+        var aColumns = [
+          fnText("Reservation No", "reservationNo"),
+          fnText("Order", "order"),
+          fnText("Status", "status"),
+          fnText("Created On", "createdOn"),
+          fnText("Created By", "createdBy"),
+          fnText("Employee ID", "employeeId"),
+          fnText("House", "house"),
+          fnText("Department", "department"),
+          fnText("Issue Loc", "issueLoc"),
+          fnText("Receiving Loc", "receivingLoc"),
+          fnText("Item", "item"),
+          fnText("Material", "material"),
+          fnText("Description", "materialDesc"),
+          fnNumber("Stock (Shop Floor)", "stockSf"),
+          fnNumber("Stock (Source)", "stockSrc"),
+          fnNumber("Stock (Plant)", "stockPlant"),
+          fnNumber("Required Qty", "requirementQty"),
+          fnNumber("Issued Qty", "withdrawalQty"),
+          fnNumber("Pending Qty", "pendingQty"),
+          fnText("UoM", "units"),
+        ];
+
+        var d = new Date();
+        var p = function (n) {
+          return String(n).padStart(2, "0");
+        };
+        var sFileName =
+          "ReservationList_" +
+          d.getFullYear() +
+          p(d.getMonth() + 1) +
+          p(d.getDate()) +
+          "_" +
+          p(d.getHours()) +
+          p(d.getMinutes()) +
+          ".xlsx";
+
+        sap.ui.require(
+          ["sap/ui/export/Spreadsheet"],
+          function (Spreadsheet) {
+            var oSheet = new Spreadsheet({
+              workbook: { columns: aColumns, context: { sheetName: "Reservations" } },
+              dataSource: aRows,
+              fileName: sFileName,
+            });
+            oSheet
+              .build()
+              .catch(function () {
+                MessageBox.error("Excel export failed.");
+              })
+              .finally(function () {
+                oSheet.destroy();
+              });
+          },
+          function () {
+            MessageBox.error("Excel export library could not be loaded.");
+          },
         );
       },
 

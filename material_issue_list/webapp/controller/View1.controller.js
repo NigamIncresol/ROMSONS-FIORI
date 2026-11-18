@@ -12,6 +12,8 @@ sap.ui.define(
     "sap/m/StandardListItem",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
+    "sap/ui/export/Spreadsheet",
+    "sap/ui/export/library",
   ],
   function (
     Controller,
@@ -26,6 +28,8 @@ sap.ui.define(
     StandardListItem,
     Filter,
     FilterOperator,
+    Spreadsheet,
+    exportLibrary,
   ) {
     "use strict";
 
@@ -566,6 +570,127 @@ sap.ui.define(
             : "",
         );
         oMaterialsModel.setProperty("/issues", aFiltered);
+      },
+
+      /**
+       * Exports every currently displayed (filtered) issue to Excel, one
+       * row per issue item (issues without items get a single row).
+       */
+      onExportToExcel: function () {
+        var aIssues =
+          this.getView().getModel("materialsModel").getProperty("/issues") ||
+          [];
+        var aRows = [];
+
+        aIssues.forEach(function (oIssue) {
+          var oBase = {
+            materialDoc: oIssue.materialDoc,
+            materialDocYear: oIssue.materialDocYear,
+            order: oIssue.order,
+            reservationNumber: oIssue.reservationNumber,
+            createdDateTime: oIssue.createdDateTime,
+            houseId: oIssue.houseId,
+            houseDesc: oIssue.houseDesc,
+            department: oIssue.department,
+            issueSloc: oIssue.issueSloc,
+            receiveSloc: oIssue.receiveSloc,
+            rcptStatus: oIssue.rcptStatus,
+            plant: oIssue.plant,
+            employeeId: oIssue.employeeId,
+            createdBy: oIssue.createdBy,
+          };
+          var aItems = oIssue.items && oIssue.items.length ? oIssue.items : [{}];
+          aItems.forEach(function (oItem) {
+            aRows.push(
+              Object.assign({}, oBase, {
+                materialDocItem: oItem.materialDocItem,
+                material: oItem.material,
+                materialDesc: oItem.materialDesc,
+                batch: oItem.batch,
+                targetQty: parseFloat(oItem.targetQty),
+                issuedQty: parseFloat(oItem.issuedQty),
+                receivedQty: parseFloat(oItem.receivedQty),
+                unit: oItem.unit,
+              }),
+            );
+          });
+        });
+
+        if (!aRows.length) {
+          MessageToast.show("No data to export.");
+          return;
+        }
+
+        var oNow = new Date();
+        var fnPad = function (n) {
+          return String(n).padStart(2, "0");
+        };
+        // ":" is not allowed in file names, so the time uses "-"
+        var sTimestamp =
+          fnPad(oNow.getDate()) +
+          "-" +
+          fnPad(oNow.getMonth() + 1) +
+          "-" +
+          oNow.getFullYear() +
+          " " +
+          fnPad(oNow.getHours()) +
+          "-" +
+          fnPad(oNow.getMinutes());
+
+        var EdmType = exportLibrary.EdmType;
+        var fnText = function (sLabel, sProperty) {
+          return { label: sLabel, property: sProperty, type: EdmType.String };
+        };
+        var fnQty = function (sLabel, sProperty) {
+          return {
+            label: sLabel,
+            property: sProperty,
+            type: EdmType.Number,
+            delimiter: true,
+            scale: 3,
+          };
+        };
+
+        var oSheet = new Spreadsheet({
+          workbook: {
+            columns: [
+              fnText("Material Doc", "materialDoc"),
+              fnText("Doc Year", "materialDocYear"),
+              fnText("Order", "order"),
+              fnText("Reservation No", "reservationNumber"),
+              fnText("Created DateTime", "createdDateTime"),
+              fnText("House ID", "houseId"),
+              fnText("House Desc", "houseDesc"),
+              fnText("Department", "department"),
+              fnText("Issue Loc", "issueSloc"),
+              fnText("Receive Loc", "receiveSloc"),
+              fnText("Receipt Status", "rcptStatus"),
+              fnText("Plant", "plant"),
+              fnText("Employee ID", "employeeId"),
+              fnText("Created By", "createdBy"),
+              fnText("Item", "materialDocItem"),
+              fnText("Material", "material"),
+              fnText("Description", "materialDesc"),
+              fnText("Batch", "batch"),
+              fnQty("Target Qty", "targetQty"),
+              fnQty("Issued Qty", "issuedQty"),
+              fnQty("Received Qty", "receivedQty"),
+              fnText("UoM", "unit"),
+            ],
+          },
+          dataSource: aRows,
+          fileName: "Material_Issues_" + sTimestamp + ".xlsx",
+        });
+
+        oSheet
+          .build()
+          .catch(function (oError) {
+            console.log("🔴 Excel export failed:", oError);
+            MessageBox.error("Excel export failed.");
+          })
+          .finally(function () {
+            oSheet.destroy();
+          });
       },
 
       /**

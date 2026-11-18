@@ -465,6 +465,134 @@ sap.ui.define(
         );
       },
 
+      // ── Export displayed (filtered) confirmations to Excel ──
+      onExportExcel: function () {
+        var aConfirmations =
+          this.getView()
+            .getModel("confirmationsModel")
+            .getProperty("/confirmations") || [];
+        if (!aConfirmations.length) {
+          MessageToast.show("No data to export.");
+          return;
+        }
+
+        var that = this;
+        var fnNum = function (v) {
+          var n = parseFloat(v);
+          return isNaN(n) ? null : n;
+        };
+
+        // One row per item, with the confirmation header repeated
+        var aRows = [];
+        aConfirmations.forEach(function (oConf) {
+          var oHeader = {
+            materialDoc: oConf.materialDoc,
+            materialDocYear: oConf.materialDocYear,
+            order: that.formatOrNA(oConf.order),
+            reservationNo: that.formatIssueNumber(oConf.reservationNumber),
+            issueDoc: that.formatIssueNumber(oConf.issueDocument),
+            issueDocYear: that.formatOrNA(oConf.issueDocumentYear),
+            issueLoc: that.formatOrNA(oConf.issueSloc),
+            receiveLoc: that.formatOrNA(oConf.receiveSloc),
+            department: that.formatOrNA(oConf.department),
+            house: that.formatHouse(oConf.houseId, oConf.houseDesc),
+            plant: that.formatOrNA(oConf.plant),
+            employeeId: that.formatOrNA(oConf.employeeId),
+            createdBy: that.formatOrNA(oConf.createdBy),
+            createdOn: that.formatCreatedDateTime(
+              oConf.createdDate,
+              oConf.createdTime,
+            ),
+          };
+          var aItems = oConf.items && oConf.items.length ? oConf.items : [{}];
+          aItems.forEach(function (oItem) {
+            aRows.push(
+              Object.assign({}, oHeader, {
+                item: oItem.materialDocItem,
+                material: oItem.material,
+                materialDesc: oItem.materialDesc,
+                batch: oItem.batch,
+                quantity: fnNum(oItem.quantity),
+                unit: oItem.unit,
+              }),
+            );
+          });
+        });
+
+        var fnText = function (sLabel, sProperty) {
+          return { label: sLabel, property: sProperty, type: "String" };
+        };
+        var aColumns = [
+          fnText("Material Doc", "materialDoc"),
+          fnText("Doc Year", "materialDocYear"),
+          fnText("Order", "order"),
+          fnText("Reservation No", "reservationNo"),
+          fnText("Issue Doc", "issueDoc"),
+          fnText("Issue Doc Year", "issueDocYear"),
+          fnText("Issue Loc", "issueLoc"),
+          fnText("Receiving Loc", "receiveLoc"),
+          fnText("Department", "department"),
+          fnText("House", "house"),
+          fnText("Plant", "plant"),
+          fnText("Employee ID", "employeeId"),
+          fnText("Created By", "createdBy"),
+          fnText("Created Date Time", "createdOn"),
+          fnText("Item", "item"),
+          fnText("Material", "material"),
+          fnText("Description", "materialDesc"),
+          fnText("Batch", "batch"),
+          {
+            label: "Quantity",
+            property: "quantity",
+            type: "Number",
+            scale: 3,
+          },
+          fnText("UoM", "unit"),
+        ];
+
+        var d = new Date();
+        var p = function (n) {
+          return String(n).padStart(2, "0");
+        };
+        var sFileName =
+          "ConfirmationList_" +
+          p(d.getDate()) +
+          "-" +
+          p(d.getMonth() + 1) +
+          "-" +
+          d.getFullYear() +
+          " " +
+          p(d.getHours()) +
+          "-" +
+          p(d.getMinutes()) +
+          ".xlsx";
+
+        sap.ui.require(
+          ["sap/ui/export/Spreadsheet"],
+          function (Spreadsheet) {
+            var oSheet = new Spreadsheet({
+              workbook: {
+                columns: aColumns,
+                context: { sheetName: "Confirmations" },
+              },
+              dataSource: aRows,
+              fileName: sFileName,
+            });
+            oSheet
+              .build()
+              .catch(function () {
+                MessageBox.error("Excel export failed.");
+              })
+              .finally(function () {
+                oSheet.destroy();
+              });
+          },
+          function () {
+            MessageBox.error("Excel export library could not be loaded.");
+          },
+        );
+      },
+
       onValueHelpDepartment: function () {
         this._openValueHelp("Department", "departments", "filterDepartment");
       },

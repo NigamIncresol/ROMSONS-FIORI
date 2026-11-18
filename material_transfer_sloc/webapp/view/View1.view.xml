@@ -91,6 +91,15 @@
                         press=".onTransfer"
                     />
                 </HBox>
+                <HBox justifyContent="End" class="sapUiSmallMarginTop" visible="{transferModel>/hasResults}">
+                    <Button
+                        text="Export as Excel"
+                        icon="sap-icon://excel-attachment"
+                        type="Emphasized"
+                        enabled="{transferModel>/hasItems}"
+                        press=".onExportExcel"
+                    />
+                </HBox>
                 <ScrollContainer horizontal="true" vertical="false" width="100%" class="sapUiSmallMarginTop">
                     <Table
                         id="stockTable"

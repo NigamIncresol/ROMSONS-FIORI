@@ -251,6 +251,20 @@
             <VBox
                 class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop sapUiSmallMarginBottom"
             >
+                <!-- Export (top right of the content) -->
+                <HBox
+                    width="100%"
+                    justifyContent="End"
+                    class="sapUiTinyMarginBottom"
+                >
+                    <Button
+                        text="Export as Excel"
+                        icon="sap-icon://excel-attachment"
+                        type="Emphasized"
+                        press=".onExportExcel"
+                    />
+                </HBox>
+
                 <!-- Active filters message strip -->
                 <MessageStrip
                     text="{materialsModel>/activeFiltersText}"

@@ -14,6 +14,7 @@ sap.ui.define(
     "sap/m/List",
     "sap/m/StandardListItem",
     "sap/m/SearchField",
+    "sap/ui/export/Spreadsheet",
   ],
   function (
     Controller,
@@ -30,6 +31,7 @@ sap.ui.define(
     List,
     StandardListItem,
     SearchField,
+    Spreadsheet,
   ) {
     "use strict";
 
@@ -203,6 +205,7 @@ sap.ui.define(
 
         if (!sLoc) {
           oModel.setProperty("/hasResults", false);
+          oModel.setProperty("/hasItems", false);
           return;
         }
 
@@ -233,6 +236,7 @@ sap.ui.define(
           }.bind(this),
           error: function () {
             oModel.setProperty("/hasResults", false);
+          oModel.setProperty("/hasItems", false);
             MessageToast.show("Could not load stock info. Please try again.");
           },
           complete: function () {
@@ -289,6 +293,7 @@ sap.ui.define(
           });
         }
         oTable.setModel(new JSONModel({ items: aItems }), "stockModel");
+        this.getView().getModel("transferModel").setProperty("/hasItems", aItems.length > 0);
       },
 
       /** Keeps the entered transfer qty within 0..available qty for that line. */
@@ -430,6 +435,46 @@ sap.ui.define(
             oPage.setBusy(false);
           },
         });
+      },
+
+      /** Exports every displayed stock row to Excel, named after the From Location. */
+      onExportExcel: function () {
+        var oModel = this.byId("stockTable").getModel("stockModel");
+        var aItems = (oModel && oModel.getProperty("/items")) || [];
+        if (!aItems.length) {
+          MessageToast.show("No data to export.");
+          return;
+        }
+        var sLoc = this.getView().getModel("transferModel").getProperty("/fromLoc");
+        var oNow = new Date();
+        var p = function (n) {
+          return String(n).padStart(2, "0");
+        };
+        // ":" is not allowed in file names, so the time is written hh-mm
+        var sStamp =
+          p(oNow.getDate()) + "-" + p(oNow.getMonth() + 1) + "-" + oNow.getFullYear() +
+          " " + p(oNow.getHours()) + "-" + p(oNow.getMinutes());
+        var aCols = [
+          { label: "Material Code", property: "Matnr", type: "String" },
+          { label: "Material Description", property: "Maktx", type: "String" },
+          { label: "Batch", property: "Charg", type: "String" },
+          { label: "Expiry Date", property: "Vfdat", type: "String" },
+          { label: "Available Qty", property: "AvailQty", type: "String" },
+          { label: "UoM", property: "Meins", type: "String" },
+        ];
+        var oSheet = new Spreadsheet({
+          workbook: { columns: aCols, context: { sheetName: sLoc || "Stock" } },
+          dataSource: aItems,
+          fileName: "stock report - " + (sLoc || "") + " - " + sStamp + ".xlsx",
+        });
+        oSheet
+          .build()
+          .catch(function () {
+            MessageToast.show("Could not export to Excel.");
+          })
+          .finally(function () {
+            oSheet.destroy();
+          });
       },
 
       /** Converts "/Date(ms)/" to dd.mm.yyyy; empty for null. */
